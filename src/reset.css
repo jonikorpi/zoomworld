@@ -1,0 +1,99 @@
+@charset "utf-8";
+@viewport {
+  width: device-width;
+}
+
+/*
+  Resets annoying things */
+
+* {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  vertical-align: baseline;
+  box-sizing: border-box;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  border-radius: 0;
+}
+
+/*
+  Misc element fixes */
+
+a {
+  background-color: transparent;
+}
+
+/*
+  Buttons and forms */
+
+button,
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  white-space: normal;
+}
+
+::-webkit-input-placeholder {
+  opacity: 1;
+  color: inherit;
+}
+
+::-moz-placeholder {
+  opacity: 1;
+  color: inherit;
+}
+
+:-ms-input-placeholder {
+  opacity: 1;
+  color: inherit;
+}
+
+::placeholder {
+  opacity: 1;
+  color: inherit;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+input[type="search"] {
+  -webkit-appearance: textfield;
+}
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+textarea {
+  resize: vertical;
+  display: block;
+}
+
+/*
+  Removes touch input lag from tappable things */
+
+a,
+button,
+input,
+textarea,
+select,
+label,
+canvas {
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
