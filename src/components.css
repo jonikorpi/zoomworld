@@ -1,5 +1,14 @@
+body {
+  min-height: 200vh;
+}
+
 .world {
   --unit: 1vmin;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .positioner {

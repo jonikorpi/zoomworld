@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-firebase";
 import { Loop } from "react-game-kit";
 
+import Zoomer from "./Zoomer";
 import PlayerEntity from "./PlayerEntity";
 
 // https://medium.com/@dtipson/creating-an-es6ish-compose-in-javascript-ac580b95104a
@@ -19,6 +20,10 @@ class World extends React.Component {
   playerPosition = { x: 0, y: 0 };
   zoom = { scale: 1 };
 
+  updateZoom = newScale => {
+    this.zoom.scale = newScale;
+  };
+
   render() {
     const { entityID, sectorID } = this.props;
 
@@ -30,6 +35,7 @@ class World extends React.Component {
             this.world = element;
           }}
         >
+          <Zoomer zoom={this.zoom} onChange={this.updateZoom} />
           {/* <Map zoom={this.zoom}/> */}
           {/* <Sectors playerPosition={this.playerPosition} zoom={this.zoom}/> */}
           <PlayerEntity
