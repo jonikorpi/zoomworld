@@ -12,6 +12,11 @@ class PlayerEntity extends React.Component {
     command: null,
   };
 
+  updatePlayerPosition = newPosition => {
+    this.props.playerPosition.x = newPosition.x;
+    this.props.playerPosition.y = newPosition.y;
+  };
+
   render() {
     const {
       entityID,
@@ -27,6 +32,7 @@ class PlayerEntity extends React.Component {
         position={playerPosition}
         offsetPosition={playerPosition}
         zoom={zoom}
+        onChange={this.updatePlayerPosition}
       >
         <div className="playerEntity">Player</div>
       </Positioner>

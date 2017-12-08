@@ -21,13 +21,15 @@ class Positioner extends React.Component {
   }
 
   update = () => {
-    const { position, offsetPosition, zoom } = this.props;
+    const { position, offsetPosition, zoom, onChange } = this.props;
+    let changed = false;
 
     const currentPosition = {
       x: +getComputedStyle(this.element).getPropertyValue("--x"),
       y: +getComputedStyle(this.element).getPropertyValue("--y"),
       scale: +getComputedStyle(this.element).getPropertyValue("--scale"),
     };
+
     const newPosition = {
       x: position.x - offsetPosition.x,
       y: position.y - offsetPosition.y,
@@ -36,12 +38,19 @@ class Positioner extends React.Component {
 
     if (currentPosition.x !== newPosition.x) {
       this.element.style.setProperty("--x", newPosition.x);
+      changed = true;
     }
     if (currentPosition.y !== newPosition.y) {
       this.element.style.setProperty("--y", newPosition.y);
+      changed = true;
     }
     if (currentPosition.scale !== newPosition.scale) {
       this.element.style.setProperty("--scale", zoom.scale);
+      // zoom doesn't trigger changes
+    }
+
+    if (changed && onChange) {
+      onChange(newPosition);
     }
   };
 
