@@ -3,6 +3,7 @@ import { connect } from "react-firebase";
 import { Loop } from "react-game-kit";
 
 import Zoomer from "./Zoomer";
+import Positioner from "./Positioner";
 import PlayerEntity from "./PlayerEntity";
 
 // https://medium.com/@dtipson/creating-an-es6ish-compose-in-javascript-ac580b95104a
@@ -44,6 +45,18 @@ class World extends React.Component {
             playerPosition={this.playerPosition}
             zoom={this.zoom}
           />
+          {[...new Array(100)].map((nada, index) => (
+            <Positioner
+              position={{
+                x: Math.random() * 500 - 250,
+                y: Math.random() * 500 - 250,
+              }}
+              offsetPosition={this.playerPosition}
+              zoom={this.zoom}
+            >
+              {index}
+            </Positioner>
+          ))}
         </div>
       </Loop>
     );

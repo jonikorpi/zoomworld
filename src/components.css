@@ -16,13 +16,10 @@ body {
   --y: 0;
   --scale: 1;
 
+  will-change: transform;
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate3d(
-      calc(var(--x) * var(--unit)),
-      calc(var(--y) * var(--unit)),
-      0
-    )
-    translate(-50%, -50%) scale(var(--scale));
+  transform: translate(-50%, -50%) scale(var(--scale))
+    translate3d(calc(var(--x) * var(--unit)), calc(var(--y) * var(--unit)), 0);
 }
