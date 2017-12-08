@@ -1,0 +1,19 @@
+.world {
+  --unit: 1vmin;
+}
+
+.positioner {
+  --x: 0;
+  --y: 0;
+  --scale: 1;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(
+      calc(var(--x) * var(--unit)),
+      calc(var(--y) * var(--unit)),
+      0
+    )
+    translate(-50%, -50%) scale(var(--scale));
+}
