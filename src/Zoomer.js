@@ -21,7 +21,9 @@ class Zoomer extends React.Component {
 
   update = () => {
     const currentScale = this.props.zoom.scale;
-    const newScale = Math.abs(1 - window.pageYOffset / window.innerHeight);
+    const height = document.documentElement.clientHeight;
+    const scrolled = window.pageYOffset;
+    const newScale = 1 - scrolled / height + 0.2 * (scrolled / height);
 
     if (currentScale !== newScale) {
       this.props.onChange(newScale);

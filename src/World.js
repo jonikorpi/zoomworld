@@ -30,13 +30,14 @@ class World extends React.Component {
 
     return (
       <Loop>
+        <Zoomer zoom={this.zoom} onChange={this.updateZoom} />
+
         <div
           className="world"
           ref={element => {
             this.world = element;
           }}
         >
-          <Zoomer zoom={this.zoom} onChange={this.updateZoom} />
           {/* <Map zoom={this.zoom}/> */}
           {/* <Sectors playerPosition={this.playerPosition} zoom={this.zoom}/> */}
           <PlayerEntity
