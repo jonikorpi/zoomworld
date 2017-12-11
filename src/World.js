@@ -48,6 +48,7 @@ class World extends React.Component {
           />
           {[...new Array(100)].map((nada, index) => (
             <Positioner
+              key={index}
               position={{
                 x: Math.random() * 500 - 250,
                 y: Math.random() * 500 - 250,
