@@ -16,6 +16,7 @@ body {
   --scale: 1;
 
   will-change: transform;
+  backface-visibility: hidden;
   position: absolute;
   left: 50%;
   top: 50%;
