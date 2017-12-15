@@ -39,13 +39,9 @@ class World extends React.Component {
           }}
         >
           {/* <Map zoom={this.zoom}/> */}
+
           {/* <Sectors playerPosition={this.playerPosition} zoom={this.zoom}/> */}
-          <PlayerEntity
-            entityID={entityID}
-            sectorID={sectorID}
-            playerPosition={this.playerPosition}
-            zoom={this.zoom}
-          />
+          {/* Test entities */}
           {[...new Array(100)].map((nada, index) => (
             <Positioner
               key={index}
@@ -59,7 +55,16 @@ class World extends React.Component {
               {index}
             </Positioner>
           ))}
+
+          <PlayerEntity
+            entityID={entityID}
+            sectorID={sectorID}
+            playerPosition={this.playerPosition}
+            zoom={this.zoom}
+          />
         </div>
+
+        {/* PlayerUI? */}
       </Loop>
     );
   }
