@@ -12,6 +12,9 @@ class Positioner extends React.Component {
     zoom: { scale: 1 },
   };
 
+  currentX = 0;
+  currentY = 0;
+
   componentDidMount() {
     this.context.loop.subscribe(this.update);
   }
@@ -21,36 +24,25 @@ class Positioner extends React.Component {
   }
 
   update = () => {
-    const { position, offsetPosition, zoom, onChange } = this.props;
+    const { position, onChange } = this.props;
     let changed = false;
 
-    const currentPosition = {
-      x: +getComputedStyle(this.element).getPropertyValue("--x"),
-      y: +getComputedStyle(this.element).getPropertyValue("--y"),
-      scale: +getComputedStyle(this.element).getPropertyValue("--scale"),
-    };
+    const newX = onChange !== undefined ? this.currentX + 0.1 : position.x;
+    const newY = onChange !== undefined ? this.currentY + 0.1 : position.y;
 
-    const newPosition = {
-      x: position.x - offsetPosition.x,
-      y: position.y - offsetPosition.y,
-      scale: zoom.scale,
-    };
-
-    if (currentPosition.x !== newPosition.x) {
-      this.element.style.setProperty("--x", newPosition.x);
+    if (this.currentX !== newX) {
+      this.currentX = newX;
+      this.element.style.setProperty("--x", newX);
       changed = true;
     }
-    if (currentPosition.y !== newPosition.y) {
-      this.element.style.setProperty("--y", newPosition.y);
+    if (this.currentY !== newY) {
+      this.currentY = newY;
+      this.element.style.setProperty("--y", newY);
       changed = true;
     }
-    if (currentPosition.scale !== newPosition.scale) {
-      this.element.style.setProperty("--scale", zoom.scale);
-      // zoom doesn't trigger changes
-    }
 
-    if (changed && onChange) {
-      onChange(newPosition);
+    if (changed && onChange !== undefined) {
+      onChange({ x: newX, y: newY });
     }
   };
 

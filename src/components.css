@@ -1,13 +1,13 @@
+html,
 body {
-  height: 200vh;
-  width: 100%;
+  /* overflow: hidden; */
 }
 
 .world {
   --unit: 1vmin;
-  position: fixed;
-  left: 50vw;
-  top: 50vh;
+  width: 500vw;
+  height: 500vh;
+  position: relative;
 }
 
 .positioner {
@@ -21,5 +21,13 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%) scale(var(--scale))
-    translate3d(calc(var(--x) * var(--unit)), calc(var(--y) * var(--unit)), 0);
+    translate3d(
+      calc(var(--x) * var(--unit)),
+      calc(var(--y) * var(--unit)),
+      calc(1073741823px + var(--y) * 1px)
+    );
+}
+
+#playerEntity {
+  color: red;
 }

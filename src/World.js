@@ -49,8 +49,6 @@ class World extends React.Component {
                 x: Math.random() * 500 - 250,
                 y: Math.random() * 500 - 250,
               }}
-              offsetPosition={this.playerPosition}
-              zoom={this.zoom}
             >
               {index}
             </Positioner>
