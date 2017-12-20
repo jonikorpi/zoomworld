@@ -3,7 +3,7 @@ import { connect } from "react-firebase";
 
 import Positioner from "./Positioner";
 
-class PlayerEntity extends React.Component {
+class PlayerData extends React.Component {
   static defaultProps = {
     entityID: null,
     camera: { x: 0, y: 0, scale: 1 },
@@ -39,4 +39,4 @@ export default connect(
           command: `entities/${props.entityID}/command`,
         }
       : {}
-)(PlayerEntity);
+)(PlayerData);

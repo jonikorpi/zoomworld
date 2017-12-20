@@ -4,7 +4,7 @@ import { Loop } from "react-game-kit";
 
 import Zoomer from "./Zoomer";
 import Positioner from "./Positioner";
-import PlayerEntity from "./PlayerEntity";
+import PlayerData from "./PlayerData";
 
 // https://medium.com/@dtipson/creating-an-es6ish-compose-in-javascript-ac580b95104a
 const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
@@ -59,7 +59,7 @@ class World extends React.Component {
             </Positioner>
           ))}
 
-          <PlayerEntity
+          <PlayerData
             entityID={entityID}
             sectorID={sectorID}
             camera={this.camera}
