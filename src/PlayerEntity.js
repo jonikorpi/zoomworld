@@ -6,24 +6,23 @@ import Positioner from "./Positioner";
 class PlayerEntity extends React.Component {
   static defaultProps = {
     entityID: null,
-    playerPosition: { x: 0, y: 0 },
+    camera: { x: 0, y: 0, scale: 1 },
     stats: null,
     command: null,
   };
 
-  updateViewport = (/*{ x, y }*/) => {
-    const dimensions = this.element.getBoundingClientRect();
-    const x = -window.innerWidth / 2 + dimensions.left + window.pageXOffset;
-    const y = -window.innerHeight / 2 + dimensions.top + window.pageYOffset;
-
-    window.scroll(x, y);
-  };
-
   render() {
-    const { entityID, sectorID, playerPosition, stats, command } = this.props;
+    const {
+      entityID,
+      sectorID,
+      camera,
+      stats,
+      command,
+      updateCamera,
+    } = this.props;
 
     return (
-      <Positioner position={playerPosition} onChange={this.updateViewport}>
+      <Positioner position={camera} camera={camera} onChange={updateCamera}>
         <div ref={element => (this.element = element)} id="playerEntity">
           Player
         </div>

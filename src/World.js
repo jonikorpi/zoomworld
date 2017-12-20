@@ -18,11 +18,15 @@ class World extends React.Component {
     system: null,
   };
 
-  playerPosition = { x: 0, y: 0 };
-  zoom = { scale: 1 };
+  camera = { x: 0, y: 0, scale: 1 };
 
-  updateZoom = newScale => {
-    this.zoom.scale = newScale;
+  updateCamera = ({ x, y }) => {
+    this.camera.x = x;
+    this.camera.y = y;
+  };
+
+  updateScale = scale => {
+    this.camera.scale = scale;
   };
 
   render() {
@@ -30,7 +34,7 @@ class World extends React.Component {
 
     return (
       <Loop>
-        <Zoomer zoom={this.zoom} onChange={this.updateZoom} />
+        <Zoomer onChange={this.updateScale} />
 
         <div
           className="world"
@@ -40,15 +44,16 @@ class World extends React.Component {
         >
           {/* <Map zoom={this.zoom}/> */}
 
-          {/* <Sectors playerPosition={this.playerPosition} zoom={this.zoom}/> */}
+          {/* <Sectors offsetPosition={this.camera} zoom={this.zoom}/> */}
           {/* Test entities */}
-          {[...new Array(100)].map((nada, index) => (
+          {[...new Array(200)].map((nada, index) => (
             <Positioner
               key={index}
               position={{
                 x: Math.random() * 500 - 250,
                 y: Math.random() * 500 - 250,
               }}
+              camera={this.camera}
             >
               {index}
             </Positioner>
@@ -57,8 +62,8 @@ class World extends React.Component {
           <PlayerEntity
             entityID={entityID}
             sectorID={sectorID}
-            playerPosition={this.playerPosition}
-            zoom={this.zoom}
+            camera={this.camera}
+            updateCamera={this.updateCamera}
           />
         </div>
 

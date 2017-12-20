@@ -8,12 +8,12 @@ class Positioner extends React.Component {
 
   static defaultProps = {
     position: { x: 0, y: 0 },
-    offsetPosition: { x: 0, y: 0 },
-    zoom: { scale: 1 },
+    camera: { x: 0, y: 0, scale: 1 },
   };
 
   currentX = 0;
   currentY = 0;
+  currentScale = 1;
 
   componentDidMount() {
     this.context.loop.subscribe(this.update);
@@ -24,11 +24,12 @@ class Positioner extends React.Component {
   }
 
   update = () => {
-    const { position, onChange } = this.props;
+    const { position, camera, onChange } = this.props;
     let changed = false;
 
-    const newX = onChange !== undefined ? this.currentX + 0.1 : position.x;
-    const newY = onChange !== undefined ? this.currentY + 0.1 : position.y;
+    const newX = position.x - camera.x;
+    const newY = position.y - camera.y;
+    const newScale = camera.scale;
 
     if (this.currentX !== newX) {
       this.currentX = newX;
@@ -40,9 +41,15 @@ class Positioner extends React.Component {
       this.element.style.setProperty("--y", newY);
       changed = true;
     }
+    if (this.currentScale !== newScale) {
+      this.currentScale = newScale;
+      this.element.style.setProperty("--scale", newScale);
+    }
 
-    if (changed && onChange !== undefined) {
-      onChange({ x: newX, y: newY });
+    if (onChange !== undefined) {
+      // TODO: prototype code
+      onChange({ x: position.x + 0.1, y: position.y - 0.1 });
+      // onChange({ x: newX, y: newY });
     }
   };
 
