@@ -11,13 +11,12 @@ class PlayerEntity extends React.Component {
     command: null,
   };
 
-  updateViewport = ({ x, y }) => {
+  updateViewport = (/*{ x, y }*/) => {
     const dimensions = this.element.getBoundingClientRect();
+    const x = -window.innerWidth / 2 + dimensions.left + window.pageXOffset;
+    const y = -window.innerHeight / 2 + dimensions.top + window.pageYOffset;
 
-    window.scroll(
-      -window.innerWidth / 2 + dimensions.left + window.pageXOffset,
-      -window.innerHeight / 2 + dimensions.top + window.pageYOffset
-    );
+    window.scroll(x, y);
   };
 
   render() {
