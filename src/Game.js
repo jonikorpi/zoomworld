@@ -1,11 +1,10 @@
 import React from "react";
 
-import FirebaseProvider from "./FirebaseProvider";
+import FirebaseUser from "./FirebaseUser";
 import Player from "./Player";
 
-// Wrap in FirebaseAuth render prop
 const Game = () => (
-  <FirebaseProvider render={({ ...props }) => <Player {...props} />} />
+  <FirebaseUser>{props => <Player {...props} />}</FirebaseUser>
 );
 
 export default Game;

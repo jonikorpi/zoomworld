@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-firebase";
+// import { connect } from "react-firebase";
 import { Loop } from "react-game-kit";
 
 import Zoomer from "./Zoomer";
@@ -7,7 +7,7 @@ import Positioner from "./Positioner";
 import PlayerData from "./PlayerData";
 
 // https://medium.com/@dtipson/creating-an-es6ish-compose-in-javascript-ac580b95104a
-const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
+// const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
 
 class World extends React.Component {
   static defaultProps = {
@@ -42,10 +42,6 @@ class World extends React.Component {
             this.world = element;
           }}
         >
-          {/* <Map zoom={this.zoom}/> */}
-
-          {/* <Sectors offsetPosition={this.camera} zoom={this.zoom}/> */}
-          {/* Test entities */}
           {[...new Array(200)].map((nada, index) => (
             <Positioner
               key={index}
@@ -66,27 +62,27 @@ class World extends React.Component {
             updateCamera={this.updateCamera}
           />
         </div>
-
-        {/* PlayerUI? */}
       </Loop>
     );
   }
 }
 
-export default compose(
-  connect(
-    (props, ref) =>
-      props.entityID
-        ? {
-            sectorID: `entities/${props.entityID}/state/sectorID`,
-            canSee: `entities/${props.entityID}/state/canSee`,
-          }
-        : {}
-  ),
-  connect(
-    (props, ref) =>
-      props.sectorID
-        ? { system: `systems/${props.sectorID.split("~")[0]}` }
-        : {}
-  )
-)(World);
+export default World;
+
+// export default compose(
+//   connect(
+//     (props, ref) =>
+//       props.entityID
+//         ? {
+//             sectorID: `entities/${props.entityID}/state/sectorID`,
+//             canSee: `entities/${props.entityID}/state/canSee`,
+//           }
+//         : {}
+//   ),
+//   connect(
+//     (props, ref) =>
+//       props.sectorID
+//         ? { system: `systems/${props.sectorID.split("~")[0]}` }
+//         : {}
+//   )
+// )(World);
