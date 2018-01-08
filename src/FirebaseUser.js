@@ -2,15 +2,6 @@ import React from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 
-const isDevelopment = process.env.NODE_ENV === "development";
-
-firebase.initializeApp({
-  apiKey: "AIzaSyCLaSIY4KA5C8ywOaVQ5aRNCwWTm50YXF8",
-  authDomain: "valtameri-dev.firebaseapp.com",
-  databaseURL: "https://valtameri-dev.firebaseio.com",
-  projectId: "valtameri-dev",
-});
-
 class FirebaseUser extends React.Component {
   state = { userID: null, isAnonymous: null };
 
@@ -25,7 +16,7 @@ class FirebaseUser extends React.Component {
     firebase
       .auth()
       .signInAnonymously()
-      .catch(error => isDevelopment && console.log(error));
+      .catch(error => console.log(error));
   }
 
   render() {
