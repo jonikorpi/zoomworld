@@ -1,7 +1,7 @@
 import React from "react";
 // import { connect } from "react-firebase";
-import { Loop } from "react-game-kit";
 
+import Loop from "./Loop";
 import Zoomer from "./Zoomer";
 import Positioner from "./Positioner";
 import PlayerData from "./PlayerData";
