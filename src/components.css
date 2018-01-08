@@ -7,6 +7,23 @@ body {
   height: 300vh;
 }
 
+#log {
+  pointer-events: none;
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
+  z-index: 9999;
+}
+
+@supports (top: max(1px, env(safe-area-inset-top))) {
+  #log {
+    top: max(0.5rem, env(safe-area-inset-top));
+    right: max(0.5rem, env(safe-area-inset-right));
+    left: max(0.5rem, env(safe-area-inset-left));
+  }
+}
+
 .world {
   --unit: 1vmin;
   position: fixed;
