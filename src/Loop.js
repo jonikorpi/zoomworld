@@ -33,7 +33,7 @@ export default class Loop extends React.Component {
       : Date.now();
 
     this.subscribers.forEach(callback => {
-      callback.call(time);
+      callback.call(callback, time);
     });
 
     this.loopID = window.requestAnimationFrame(this.loop);

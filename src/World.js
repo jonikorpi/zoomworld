@@ -2,7 +2,8 @@ import React from "react";
 
 import Loop from "./Loop";
 import Zoomer from "./Zoomer";
-import Positioner from "./Positioner";
+import Position from "./Position";
+import TestEntity from "./TestEntity";
 
 class World extends React.Component {
   static defaultProps = {
@@ -32,27 +33,31 @@ class World extends React.Component {
           }}
         >
           {[...new Array(200)].map((nada, index) => (
-            <Positioner
+            <TestEntity
               key={index}
-              position={{
-                x: Math.random() * 500 - 250,
-                y: Math.random() * 500 - 250,
-              }}
-              camera={this.camera}
+              x={Math.random() * 500 - 250}
+              y={Math.random() * 500 - 250}
             >
-              {index}
-            </Positioner>
+              {({ state, events }) => (
+                <Position state={state} events={events} camera={this.camera}>
+                  <div className="positioner">{index}</div>
+                </Position>
+              )}
+            </TestEntity>
           ))}
 
-          <Positioner
-            position={this.camera}
-            camera={this.camera}
-            onChange={this.updateCamera}
-          >
-            <div ref={element => (this.element = element)} id="playerEntity">
-              Player
-            </div>
-          </Positioner>
+          <TestEntity>
+            {({ state, events }) => (
+              <Position
+                state={state}
+                events={events}
+                camera={this.camera}
+                onChange={this.updateCamera}
+              >
+                <div id="playerEntity">Player</div>
+              </Position>
+            )}
+          </TestEntity>
         </div>
       </Loop>
     );

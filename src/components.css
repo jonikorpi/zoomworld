@@ -32,11 +32,14 @@ body {
   perspective: none;
 }
 
-.positioner {
+.position {
   --x: 0;
   --y: 0;
   --scale: 1;
+  --angle: 0;
+}
 
+.positioner {
   will-change: transform;
   backface-visibility: hidden;
   position: absolute;
@@ -47,9 +50,14 @@ body {
       calc(var(--x) * var(--unit)),
       calc(var(--y) * var(--unit)),
       calc(1073741823px + var(--y) * 1px)
-    );
+    )
+    rotate(var(--angle));
 }
 
 #playerEntity {
   color: red;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(var(--scale)) rotate(var(--angle));
 }
