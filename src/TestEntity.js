@@ -29,7 +29,7 @@ export default class TestEntity extends React.Component {
   };
 
   componentDidMount() {
-    this.timer = setInterval(this.addEvent, 1000 + Math.random() * 10000);
+    this.timer = setInterval(this.addEvent, 1000 + Math.random() * 5000);
   }
 
   componentWillUnmount() {

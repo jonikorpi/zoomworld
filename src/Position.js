@@ -4,6 +4,15 @@ import PropTypes from "prop-types";
 // https://gist.github.com/gre/1650294
 // const easing = t => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 const easing = time => (1 + Math.sin(Math.PI * time - Math.PI / 2)) / 2;
+
+// https://gist.github.com/shaunlebron/8832585
+const shortAngleDist = (current, target) => {
+  const max = Math.PI * 2;
+  const da = (target - current) % max;
+  return (2 * da) % max - da;
+};
+const angleLerp = (current, target, time) =>
+  current + shortAngleDist(current, target) * time;
 const lerp = (current, target, time) => current * (1 - time) + target * time;
 
 const updateRadius = Math.pow(90, 2); // magic number
@@ -52,12 +61,8 @@ class Position extends React.Component {
         return {
           x: actualState.x + easing(completion) * speed * data.x,
           y: actualState.y + easing(completion) * speed * data.y,
-          velocityX:
-            actualState.velocityX +
-            (completed ? 0 : easing(completion) * speed * data.x),
-          velocityY:
-            actualState.velocityY +
-            (completed ? 0 : easing(completion) * speed * data.y),
+          velocityX: actualState.velocityX + (completed ? 0 : speed * data.x),
+          velocityY: actualState.velocityY + (completed ? 0 : speed * data.y),
         };
       },
       { x: state.x, y: state.y, velocityX: 0, velocityY: 0 }
@@ -85,7 +90,7 @@ class Position extends React.Component {
     // Calculate angle
     const nextAngle = Math.atan2(actualState.velocityY, actualState.velocityX);
     // const newAngle = nextAngle;
-    const newAngle = lerp(this.currentAngle, nextAngle, 0.146);
+    const newAngle = angleLerp(this.currentAngle, nextAngle, 0.146);
 
     // Update properties
     if (this.currentX !== newX) {
