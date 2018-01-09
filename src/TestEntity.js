@@ -5,7 +5,10 @@ export default class TestEntity extends React.Component {
     x: 0,
     y: 0,
   };
-  state = { state: { ...this.props }, events: [] };
+  state = {
+    state: { ...this.props, speed: 25 + Math.random() * 25 },
+    events: [],
+  };
 
   addEvent = () => {
     this.setState({
@@ -15,6 +18,7 @@ export default class TestEntity extends React.Component {
           ".key": "event-" + Date.now(),
           type: "impulse",
           time: Date.now() - 100,
+          duration: 5000,
           data: {
             x: Math.random() * 2 - 1,
             y: Math.random() * 2 - 1,

@@ -6,8 +6,6 @@ import PropTypes from "prop-types";
 const easing = time => (1 + Math.sin(Math.PI * time - Math.PI / 2)) / 2;
 const lerp = (current, target, time) => current * (1 - time) + target * time;
 
-const duration = 5000;
-const speed = 50;
 const updateRadius = Math.pow(90, 2); // magic number
 
 class Position extends React.Component {
@@ -36,10 +34,11 @@ class Position extends React.Component {
 
   update = now => {
     const { state, events, camera, onChange, disableCulling } = this.props;
+    const { speed } = state;
     let changed = false;
 
     const actualState = events.reduce(
-      (actualState, { type, time, data }) => {
+      (actualState, { type, time, duration, data }) => {
         if (type !== "impulse") {
           return actualState;
         }
@@ -81,7 +80,7 @@ class Position extends React.Component {
     const newAngle = lerp(
       this.currentAngle,
       Math.atan2(actualState.velocityY, actualState.velocityX),
-      0.1
+      0.05
     );
 
     if (this.currentX !== newX) {
