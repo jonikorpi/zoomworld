@@ -53,6 +53,7 @@ class World extends React.Component {
                 events={events}
                 camera={this.camera}
                 onChange={this.updateCamera}
+                disableCulling
               >
                 <div id="playerEntity">Player</div>
               </Position>

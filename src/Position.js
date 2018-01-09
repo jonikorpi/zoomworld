@@ -6,6 +6,10 @@ import PropTypes from "prop-types";
 const easing = time => (1 + Math.sin(Math.PI * time - Math.PI / 2)) / 2;
 const lerp = (current, target, time) => current * (1 - time) + target * time;
 
+const duration = 5000;
+const speed = 50;
+const updateRadius = Math.pow(90, 2); // magic number
+
 class Position extends React.Component {
   static contextTypes = {
     loop: PropTypes.object,
@@ -31,10 +35,8 @@ class Position extends React.Component {
   }
 
   update = now => {
-    const { state, events, camera, onChange } = this.props;
+    const { state, events, camera, onChange, disableCulling } = this.props;
     let changed = false;
-    const duration = 5000;
-    const speed = 50;
 
     const actualState = events.reduce(
       (actualState, { type, time, data }) => {
@@ -61,12 +63,26 @@ class Position extends React.Component {
 
     const newX = actualState.x - camera.x;
     const newY = actualState.y - camera.y;
+    const newScale = camera.scale;
+
+    if (!disableCulling) {
+      const distance = Math.abs(Math.pow(newX, 2) + Math.pow(newY, 2));
+
+      if (distance > updateRadius / newScale) {
+        if (this.currentScale !== 0) {
+          this.currentScale = 0;
+          this.element.style.setProperty("--scale", 0);
+        }
+
+        return;
+      }
+    }
+
     const newAngle = lerp(
       this.currentAngle,
       Math.atan2(actualState.velocityY, actualState.velocityX),
       0.1
     );
-    const newScale = camera.scale;
 
     if (this.currentX !== newX) {
       this.currentX = newX;
