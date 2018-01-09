@@ -37,6 +37,7 @@ class Position extends React.Component {
     const { speed } = state;
     let changed = false;
 
+    // Reduce events
     const actualState = events.reduce(
       (actualState, { type, time, duration, data }) => {
         if (type !== "impulse") {
@@ -46,24 +47,28 @@ class Position extends React.Component {
         const elapsed = now - time;
         const endsAt = time + duration;
         const completion = endsAt < now ? 1 : elapsed / duration;
-
-        const velocityX = easing(completion) * speed * data.x;
-        const velocityY = easing(completion) * speed * data.y;
+        const completed = completion === 1;
 
         return {
-          x: actualState.x + velocityX,
-          y: actualState.y + velocityY,
-          velocityX: velocityX,
-          velocityY: velocityY,
+          x: actualState.x + easing(completion) * speed * data.x,
+          y: actualState.y + easing(completion) * speed * data.y,
+          velocityX:
+            actualState.velocityX +
+            (completed ? 0 : easing(completion) * speed * data.x),
+          velocityY:
+            actualState.velocityY +
+            (completed ? 0 : easing(completion) * speed * data.y),
         };
       },
       { x: state.x, y: state.y, velocityX: 0, velocityY: 0 }
     );
 
+    // New values
     const newX = actualState.x - camera.x;
     const newY = actualState.y - camera.y;
     const newScale = camera.scale;
 
+    // Distance culling
     if (!disableCulling) {
       const distance = Math.abs(Math.pow(newX, 2) + Math.pow(newY, 2));
 
@@ -77,12 +82,12 @@ class Position extends React.Component {
       }
     }
 
-    const newAngle = lerp(
-      this.currentAngle,
-      Math.atan2(actualState.velocityY, actualState.velocityX),
-      0.05
-    );
+    // Calculate angle
+    const nextAngle = Math.atan2(actualState.velocityY, actualState.velocityX);
+    // const newAngle = nextAngle;
+    const newAngle = lerp(this.currentAngle, nextAngle, 0.146);
 
+    // Update properties
     if (this.currentX !== newX) {
       this.currentX = newX;
       this.element.style.setProperty("--x", newX);
@@ -93,7 +98,7 @@ class Position extends React.Component {
       this.element.style.setProperty("--y", newY);
       changed = true;
     }
-    if (this.currentAngle !== newAngle) {
+    if (this.currentAngle !== newAngle && nextAngle !== 0) {
       this.currentAngle = newAngle;
       this.element.style.setProperty("--angle", newAngle + "rad");
     }
@@ -102,6 +107,7 @@ class Position extends React.Component {
       this.element.style.setProperty("--scale", newScale);
     }
 
+    // Callback
     if (onChange !== undefined && changed) {
       onChange({ x: actualState.x, y: actualState.y });
     }
