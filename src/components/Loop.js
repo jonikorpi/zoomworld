@@ -1,23 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 export default class Loop extends React.Component {
-  static childContextTypes = {
-    loop: PropTypes.object,
-  };
-
-  getChildContext() {
-    return {
-      loop: this,
-    };
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.subscribers = [];
-    this.loopID = null;
-  }
+  subscribers = [];
+  loopID = null;
 
   componentDidMount() {
     this.start();
@@ -52,15 +37,11 @@ export default class Loop extends React.Component {
     }
   };
 
-  subscribe = callback => {
-    return this.subscribers.push(callback);
-  };
+  subscribe = callback => this.subscribers.push(callback);
 
-  unsubscribe = id => {
-    this.subscribers.splice(id - 1, 1);
-  };
+  unsubscribe = id => this.subscribers.splice(id - 1, 1);
 
   render() {
-    return this.props.children;
+    return this.props.children(this);
   }
 }

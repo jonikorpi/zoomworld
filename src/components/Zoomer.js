@@ -1,23 +1,18 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 const minimum = 0.414;
 
 class Zoomer extends React.Component {
-  static contextTypes = {
-    loop: PropTypes.object,
-  };
-
   static defaultProps = {
     camera: { scale: 1 },
   };
 
   componentDidMount() {
-    this.context.loop.subscribe(this.update);
+    this.props.loop.subscribe(this.update);
   }
 
   componentWillUnmount() {
-    this.context.loop.unsubscribe(this.update);
+    this.props.loop.unsubscribe(this.update);
   }
 
   update = () => {

@@ -1,13 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import { easing, angleLerp } from "../utilities/graphics.js";
 
 class Position extends React.Component {
-  static contextTypes = {
-    loop: PropTypes.object,
-  };
-
   static defaultProps = {
     state: { x: 0, y: 0 },
     events: [],
@@ -29,11 +24,11 @@ class Position extends React.Component {
   currentScale = 1;
 
   componentDidMount() {
-    this.context.loop.subscribe(this.update);
+    this.props.loop.subscribe(this.update);
   }
 
   componentWillUnmount() {
-    this.context.loop.unsubscribe(this.update);
+    this.props.loop.unsubscribe(this.update);
   }
 
   update = now => {
