@@ -14,7 +14,7 @@ export default class Loop extends React.Component {
 
   loop = timestamp => {
     const time = timestamp
-      ? performance.timing.navigationStart + timestamp - 100
+      ? performance.timing.navigationStart + timestamp - 200
       : Date.now();
 
     this.subscribers.forEach(callback => {
