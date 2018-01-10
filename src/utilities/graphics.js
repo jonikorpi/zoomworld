@@ -60,4 +60,27 @@ const baseTile = inputSeed => {
   return shape;
 };
 
-export { config, random, getSeed, baseTile };
+// https://gist.github.com/gre/1650294
+// const easing = t => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+const easing = time => (1 + Math.sin(Math.PI * time - Math.PI / 2)) / 2;
+
+// https://gist.github.com/shaunlebron/8832585
+const shortAngleDist = (current, target) => {
+  const max = Math.PI * 2;
+  const da = (target - current) % max;
+  return (2 * da) % max - da;
+};
+const angleLerp = (current, target, time) =>
+  current + shortAngleDist(current, target) * time;
+const lerp = (current, target, time) => current * (1 - time) + target * time;
+
+export {
+  config,
+  random,
+  getSeed,
+  baseTile,
+  easing,
+  shortAngleDist,
+  angleLerp,
+  lerp,
+};

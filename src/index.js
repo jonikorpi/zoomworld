@@ -3,10 +3,10 @@ import { hydrate, render } from "react-dom";
 // import registerServiceWorker from './registerServiceWorker';
 import firebase from "firebase/app";
 
-import "./reset.css";
-import "./globals.css";
-import "./components.css";
-import Game from "./Game";
+import "./css/reset.css";
+import "./css/globals.css";
+import "./css/components.css";
+import Game from "./components/Game";
 
 // const isDevelopment = process.env.NODE_ENV === "development";
 

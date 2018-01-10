@@ -1,10 +1,10 @@
 import React from "react";
 
-import Loop from "./Loop";
-import Zoomer from "./Zoomer";
-import Position from "./Position";
-import TestEntity from "./TestEntity";
-import Tile from "./Tile";
+import Loop from "../components/Loop";
+import Zoomer from "../components/Zoomer";
+import Position from "../components/Position";
+import TestEntity from "../components/TestEntity";
+import Tile from "../components/Tile";
 
 class Camera extends React.Component {
   static defaultProps = {
@@ -64,9 +64,7 @@ class Camera extends React.Component {
               <TestEntity key={index} x={x} y={y} moveAround={false}>
                 {({ state, events }) => (
                   <Position state={state} events={events} camera={this.camera}>
-                    <div className="positioner">
-                      <Tile x={x} y={y} tile={{ type: "plains" }} />
-                    </div>
+                    <Tile x={x} y={y} tile={{ type: "plains" }} />
                   </Position>
                 )}
               </TestEntity>

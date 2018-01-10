@@ -1,7 +1,7 @@
 import React from "react";
 
-import TileType from "./TileType";
-import { getSeed, baseTile, random } from "./graphics.js";
+import TileType from "../components/TileType";
+import { getSeed, baseTile, random } from "../utilities/graphics.js";
 
 export default class Tile extends React.Component {
   constructor(props) {
@@ -20,14 +20,12 @@ export default class Tile extends React.Component {
     const { x, y, shoreVisible, tile } = this.props;
 
     return (
-      <div className="sector">
-        <TileType
-          {...tile}
-          baseTile={this.baseTile}
-          seed={this.seed}
-          shoreVisible={true}
-        />
-      </div>
+      <TileType
+        {...tile}
+        baseTile={this.baseTile}
+        seed={this.seed}
+        shoreVisible={true}
+      />
     );
   }
 }

@@ -1,8 +1,8 @@
 import React from "react";
 
-import SVG from "./SVG";
-import Graphic from "./Graphic";
-import { config } from "./graphics.js";
+import SVG from "../components/SVG";
+import Graphic from "../components/Graphic";
+import { config } from "../utilities/graphics.js";
 
 const TileType = ({ type, baseTile, seed, shoreVisible }) => {
   let key = 0;
