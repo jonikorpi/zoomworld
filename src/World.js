@@ -10,7 +10,28 @@ class World extends React.Component {
     userID: null,
   };
 
-  camera = { x: 0, y: 0, scale: 1 };
+  camera = {
+    x: 0,
+    y: 0,
+    scale: 1,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateViewport);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateViewport);
+  }
+
+  updateViewport = () =>
+    (this.camera = {
+      ...this.camera,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
 
   updateCamera = ({ x, y }) => {
     this.camera.x = x;
