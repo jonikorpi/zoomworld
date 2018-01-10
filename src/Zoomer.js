@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const minimum = 0.333;
+const minimum = 0.414;
 
 class Zoomer extends React.Component {
   static contextTypes = {

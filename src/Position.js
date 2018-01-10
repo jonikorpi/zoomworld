@@ -15,8 +15,6 @@ const angleLerp = (current, target, time) =>
   current + shortAngleDist(current, target) * time;
 const lerp = (current, target, time) => current * (1 - time) + target * time;
 
-const updateRadius = Math.pow(100, 2); // magic number
-
 class Position extends React.Component {
   static contextTypes = {
     loop: PropTypes.object,
@@ -25,7 +23,15 @@ class Position extends React.Component {
   static defaultProps = {
     state: { x: 0, y: 0 },
     events: [],
-    camera: { x: 0, y: 0, scale: 1 },
+    camera: {
+      x: 0,
+      y: 0,
+      scale: 1,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      unit: Math.max(window.innerWidth / 100, window.innerHeight / 100),
+    },
+    distanceCulling: true,
   };
 
   currentX = 0;
@@ -42,7 +48,7 @@ class Position extends React.Component {
   }
 
   update = now => {
-    const { state, events, camera, onChange, disableCulling } = this.props;
+    const { state, events, camera, onChange, distanceCulling } = this.props;
     const { speed } = state;
     let changed = false;
 
@@ -74,10 +80,13 @@ class Position extends React.Component {
     const newScale = camera.scale;
 
     // Distance culling
-    if (!disableCulling) {
-      const distance = Math.abs(Math.pow(newX, 2) + Math.pow(newY, 2));
+    if (distanceCulling) {
+      const outsideX =
+        Math.abs(newX) * camera.unit > camera.width / 2 / newScale;
+      const outsideY =
+        Math.abs(newY) * camera.unit > camera.height / 2 / newScale;
 
-      if (distance > updateRadius / newScale) {
+      if (outsideX || outsideY) {
         if (this.currentScale !== 0) {
           this.currentScale = 0;
           this.element.style.setProperty("--scale", 0);

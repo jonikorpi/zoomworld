@@ -24,8 +24,8 @@ body {
   }
 }
 
-.world {
-  --unit: 1vmin;
+.camera {
+  --unit: 1vmax;
   position: fixed;
   left: 50vw;
   top: 50vh;

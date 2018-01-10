@@ -16,6 +16,7 @@ class Camera extends React.Component {
     scale: 1,
     width: window.innerWidth,
     height: window.innerHeight,
+    unit: Math.max(window.innerWidth / 100, window.innerHeight / 100),
   };
 
   componentDidMount() {
@@ -31,6 +32,7 @@ class Camera extends React.Component {
       ...this.camera,
       width: window.innerWidth,
       height: window.innerHeight,
+      unit: Math.max(window.innerWidth / 100, window.innerHeight / 100),
     });
 
   updateCamera = ({ x, y }) => {
@@ -48,7 +50,7 @@ class Camera extends React.Component {
         <Zoomer onChange={this.updateScale} />
 
         <div
-          className="world"
+          className="camera"
           ref={element => {
             this.world = element;
           }}
@@ -74,7 +76,7 @@ class Camera extends React.Component {
                 events={events}
                 camera={this.camera}
                 onChange={this.updateCamera}
-                disableCulling
+                distanceCulling={false}
               >
                 <div id="playerEntity">Player</div>
               </Position>
