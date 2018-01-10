@@ -1,12 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import {
-  easing,
-  shortAngleDist,
-  angleLerp,
-  lerp,
-} from "../utilities/graphics.js";
+import { easing, angleLerp } from "../utilities/graphics.js";
 
 class Position extends React.Component {
   static contextTypes = {
