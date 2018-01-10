@@ -4,6 +4,7 @@ import Loop from "./Loop";
 import Zoomer from "./Zoomer";
 import Position from "./Position";
 import TestEntity from "./TestEntity";
+import Tile from "./Tile";
 
 class Camera extends React.Component {
   static defaultProps = {
@@ -16,7 +17,7 @@ class Camera extends React.Component {
     scale: 1,
     width: window.innerWidth,
     height: window.innerHeight,
-    unit: Math.max(window.innerWidth / 100, window.innerHeight / 100),
+    unit: Math.max(window.innerWidth / 100, window.innerHeight / 100) * 10,
   };
 
   componentDidMount() {
@@ -55,11 +56,28 @@ class Camera extends React.Component {
             this.world = element;
           }}
         >
-          {[...new Array(200)].map((nada, index) => (
+          {[...new Array(50)].map((nada, index) => {
+            const x = Math.random() * 50 - 25;
+            const y = Math.random() * 50 - 25;
+
+            return (
+              <TestEntity key={index} x={x} y={y} moveAround={false}>
+                {({ state, events }) => (
+                  <Position state={state} events={events} camera={this.camera}>
+                    <div className="positioner">
+                      <Tile x={x} y={y} tile={{ type: "plains" }} />
+                    </div>
+                  </Position>
+                )}
+              </TestEntity>
+            );
+          })}
+
+          {[...new Array(100)].map((nada, index) => (
             <TestEntity
               key={index}
-              x={Math.random() * 500 - 250}
-              y={Math.random() * 500 - 250}
+              x={(Math.random() * 500 - 250) / 10}
+              y={(Math.random() * 500 - 250) / 10}
             >
               {({ state, events }) => (
                 <Position state={state} events={events} camera={this.camera}>

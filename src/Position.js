@@ -29,9 +29,10 @@ class Position extends React.Component {
       scale: 1,
       width: window.innerWidth,
       height: window.innerHeight,
-      unit: Math.max(window.innerWidth / 100, window.innerHeight / 100),
+      unit: Math.max(window.innerWidth / 100, window.innerHeight / 100) * 10,
     },
     distanceCulling: true,
+    centered: true,
   };
 
   currentX = 0;
@@ -49,7 +50,6 @@ class Position extends React.Component {
 
   update = now => {
     const { state, events, camera, onChange, distanceCulling } = this.props;
-    const { speed } = state;
     let changed = false;
 
     // Reduce events
@@ -59,16 +59,17 @@ class Position extends React.Component {
           return actualState;
         }
 
+        const { x, y, speed } = data;
         const elapsed = now - time;
         const endsAt = time + duration;
         const completion = endsAt < now ? 1 : elapsed / duration;
         const completed = completion === 1;
 
         return {
-          x: actualState.x + easing(completion) * speed * data.x,
-          y: actualState.y + easing(completion) * speed * data.y,
-          velocityX: actualState.velocityX + (completed ? 0 : speed * data.x),
-          velocityY: actualState.velocityY + (completed ? 0 : speed * data.y),
+          x: actualState.x + easing(completion) * speed * x,
+          y: actualState.y + easing(completion) * speed * y,
+          velocityX: actualState.velocityX + (completed ? 0 : speed * x),
+          velocityY: actualState.velocityY + (completed ? 0 : speed * y),
         };
       },
       { x: state.x, y: state.y, velocityX: 0, velocityY: 0 }
@@ -82,9 +83,9 @@ class Position extends React.Component {
     // Distance culling
     if (distanceCulling) {
       const outsideX =
-        Math.abs(newX) * camera.unit > camera.width / 2 / newScale;
+        (Math.abs(newX) - 1) * camera.unit > camera.width / 2 / newScale;
       const outsideY =
-        Math.abs(newY) * camera.unit > camera.height / 2 / newScale;
+        (Math.abs(newY) - 1) * camera.unit > camera.height / 2 / newScale;
 
       if (outsideX || outsideY) {
         if (this.currentScale !== 0) {
@@ -128,9 +129,11 @@ class Position extends React.Component {
   };
 
   render() {
+    const { centered } = this.props;
+
     return (
       <div
-        className="position"
+        className={`position ${centered ? "centered" : ""}`}
         ref={element => {
           this.element = element;
         }}

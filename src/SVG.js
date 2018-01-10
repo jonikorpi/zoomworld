@@ -1,0 +1,29 @@
+import React from "react";
+
+import { config } from "./graphics.js";
+
+const tileWidth = config.tileSize * config.tileCanvasMultiplier;
+const viewBox = `-${tileWidth / 2} -${tileWidth / 2} ${tileWidth} ${tileWidth}`;
+
+const SVG = ({ children, z }) => {
+  return (
+    <div
+      className="svgContainer"
+      style={{
+        "--z": z || config.waterLevel,
+        "--tileCanvasMultiplier": config.tileCanvasMultiplier,
+      }}
+    >
+      <svg
+        className="svg"
+        shapeRendering="optimizeSpeed"
+        preserveAspectRatio="none"
+        viewBox={viewBox}
+      >
+        {children}
+      </svg>
+    </div>
+  );
+};
+
+export default SVG;

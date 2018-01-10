@@ -25,7 +25,7 @@ body {
 }
 
 .camera {
-  --unit: 1vmax;
+  --unit: 10vmax;
   position: fixed;
   left: 50vw;
   top: 50vh;
@@ -45,6 +45,16 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
+  transform: scale(var(--scale))
+    translate3d(
+      calc(var(--x) * var(--unit)),
+      calc(var(--y) * var(--unit)),
+      calc(1073741823px + var(--y) * 1px)
+    )
+    rotate(var(--angle));
+}
+
+.centered .positioner {
   transform: translate(-50%, -50%) scale(var(--scale))
     translate3d(
       calc(var(--x) * var(--unit)),
@@ -60,4 +70,26 @@ body {
   left: 50vw;
   top: 50vh;
   transform: translate(-50%, -50%) scale(var(--scale)) rotate(var(--angle));
+}
+
+.sector {
+  position: relative;
+  width: var(--unit);
+  height: var(--unit);
+}
+
+.svgContainer {
+  position: absolute;
+  left: calc(var(--tileCanvasMultiplier) * 100% / -4);
+  top: calc(var(--tileCanvasMultiplier) * 100% / -4);
+  width: calc(var(--tileCanvasMultiplier) * 100%);
+  height: calc(var(--tileCanvasMultiplier) * 100%);
+}
+
+.svg {
+  position: absolute;
+  left: 0;
+  top: calc(var(--z) * var(--unit) / -20);
+  width: 100%;
+  height: 100%;
 }

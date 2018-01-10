@@ -4,9 +4,10 @@ export default class TestEntity extends React.Component {
   static defaultProps = {
     x: 0,
     y: 0,
+    moveAround: true,
   };
   state = {
-    state: { ...this.props, speed: 25 + Math.random() * 25 },
+    state: { ...this.props },
     events: [],
   };
 
@@ -22,6 +23,7 @@ export default class TestEntity extends React.Component {
           data: {
             x: Math.random() * 2 - 1,
             y: Math.random() * 2 - 1,
+            speed: 1 + Math.random() * 1,
           },
         },
       ],
@@ -29,7 +31,9 @@ export default class TestEntity extends React.Component {
   };
 
   componentDidMount() {
-    this.timer = setInterval(this.addEvent, 1000 + Math.random() * 5000);
+    if (this.props.moveAround) {
+      this.timer = setInterval(this.addEvent, 1000 + Math.random() * 5000);
+    }
   }
 
   componentWillUnmount() {
