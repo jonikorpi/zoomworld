@@ -1,6 +1,7 @@
 import React from "react";
 
-import { easing, angleLerp } from "../utilities/graphics.js";
+import { angleLerp } from "../utilities/graphics.js";
+import { positionAtTime } from "../utilities/state.js";
 
 class Position extends React.Component {
   static defaultProps = {
@@ -36,27 +37,7 @@ class Position extends React.Component {
     let changed = false;
 
     // Reduce events
-    const actualState = events.reduce(
-      (actualState, { type, time, duration, data }) => {
-        if (type !== "impulse") {
-          return actualState;
-        }
-
-        const { x, y, speed } = data;
-        const elapsed = now - time;
-        const endsAt = time + duration;
-        const completion = endsAt < now ? 1 : elapsed / duration;
-        const completed = completion === 1;
-
-        return {
-          x: actualState.x + easing(completion) * speed * x,
-          y: actualState.y + easing(completion) * speed * y,
-          velocityX: actualState.velocityX + (completed ? 0 : speed * x),
-          velocityY: actualState.velocityY + (completed ? 0 : speed * y),
-        };
-      },
-      { x: state.x, y: state.y, velocityX: 0, velocityY: 0 }
-    );
+    const actualState = positionAtTime(now, state, events);
 
     // New values
     const newX = actualState.x - camera.x;
