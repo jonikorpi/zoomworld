@@ -5,7 +5,7 @@ import Zoomer from "./Zoomer";
 import Position from "./Position";
 import TestEntity from "./TestEntity";
 
-class World extends React.Component {
+class Camera extends React.Component {
   static defaultProps = {
     userID: null,
   };
@@ -86,4 +86,4 @@ class World extends React.Component {
   }
 }
 
-export default World;
+export default Camera;

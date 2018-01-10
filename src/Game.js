@@ -2,14 +2,14 @@ import React from "react";
 
 import FirebaseUser from "./FirebaseUser";
 import StatusMessage from "./StatusMessage";
-import World from "./World";
+import Camera from "./Camera";
 
 const Game = () => (
   <FirebaseUser>
     {props => (
       <React.Fragment>
         {!props.userID && <StatusMessage>Signing in…</StatusMessage>}
-        <World {...props} />
+        <Camera {...props} />
       </React.Fragment>
     )}
   </FirebaseUser>

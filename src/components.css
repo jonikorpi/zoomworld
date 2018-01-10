@@ -25,7 +25,7 @@ body {
 }
 
 .world {
-  --unit: 1vmax;
+  --unit: 1vmin;
   position: fixed;
   left: 50vw;
   top: 50vh;

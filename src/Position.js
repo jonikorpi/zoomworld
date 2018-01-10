@@ -15,7 +15,7 @@ const angleLerp = (current, target, time) =>
   current + shortAngleDist(current, target) * time;
 const lerp = (current, target, time) => current * (1 - time) + target * time;
 
-const updateRadius = Math.pow(90, 2); // magic number
+const updateRadius = Math.pow(100, 2); // magic number
 
 class Position extends React.Component {
   static contextTypes = {
