@@ -1,6 +1,5 @@
 import React from "react";
 
-import Loop from "../components/Loop";
 import Zoomer from "../components/Zoomer";
 import Position from "../components/Position";
 import TestEntity from "../components/TestEntity";
@@ -15,26 +14,7 @@ class Camera extends React.Component {
     x: 0,
     y: 0,
     scale: 1,
-    width: window.innerWidth,
-    height: window.innerHeight,
-    unit: Math.max(window.innerWidth / 100, window.innerHeight / 100) * 10,
   };
-
-  componentDidMount() {
-    window.addEventListener("resize", this.updateViewport);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateViewport);
-  }
-
-  updateViewport = () =>
-    (this.camera = {
-      ...this.camera,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      unit: Math.max(window.innerWidth / 100, window.innerHeight / 100),
-    });
 
   updateCamera = ({ x, y }) => {
     this.camera.x = x;
@@ -47,74 +27,67 @@ class Camera extends React.Component {
 
   render() {
     return (
-      <Loop>
-        {loop => (
-          <React.Fragment>
-            <Zoomer onChange={this.updateScale} loop={loop} />
+      <React.Fragment>
+        <Zoomer onChange={this.updateScale} />
 
-            <div
-              className="camera"
-              ref={element => {
-                this.world = element;
-              }}
-            >
-              {[...new Array(50)].map((nada, index) => {
-                const x = Math.random() * 50 - 25;
-                const y = Math.random() * 50 - 25;
+        <div
+          className="camera"
+          ref={element => {
+            this.world = element;
+          }}
+        >
+          {[...new Array(50)].map((nada, index) => {
+            const x = Math.random() * 500 - 250;
+            const y = Math.random() * 500 - 250;
 
-                return (
-                  <TestEntity key={index} x={x} y={y} moveAround={false}>
-                    {({ state, events }) => (
-                      <Position
-                        state={state}
-                        events={events}
-                        camera={this.camera}
-                        loop={loop}
-                      >
-                        <Tile x={x} y={y} tile={{ type: "plains" }} />
-                      </Position>
-                    )}
-                  </TestEntity>
-                );
-              })}
-
-              {[...new Array(100)].map((nada, index) => (
-                <TestEntity
-                  key={index}
-                  x={(Math.random() * 500 - 250) / 10}
-                  y={(Math.random() * 500 - 250) / 10}
-                >
-                  {({ state, events }) => (
-                    <Position
-                      state={state}
-                      events={events}
-                      camera={this.camera}
-                      loop={loop}
-                    >
-                      <div className="positioner">{index}</div>
-                    </Position>
-                  )}
-                </TestEntity>
-              ))}
-
-              <TestEntity>
+            return (
+              <TestEntity key={index} x={x} y={y} moveAround={false}>
                 {({ state, events }) => (
                   <Position
                     state={state}
                     events={events}
                     camera={this.camera}
-                    onChange={this.updateCamera}
-                    distanceCulling={false}
-                    loop={loop}
+                    centered={false}
                   >
-                    <div id="playerEntity">Player</div>
+                    <Tile x={x} y={y} tile={{ type: "plains" }} />
                   </Position>
                 )}
               </TestEntity>
-            </div>
-          </React.Fragment>
-        )}
-      </Loop>
+            );
+          })}
+
+          {[...new Array(100)].map((nada, index) => (
+            <TestEntity
+              key={index}
+              x={(Math.random() * 500 - 250) / 10}
+              y={(Math.random() * 500 - 250) / 10}
+            >
+              {({ state, events }) => (
+                <Position state={state} events={events} camera={this.camera}>
+                  <div className="positioner">{index}</div>
+                </Position>
+              )}
+            </TestEntity>
+          ))}
+
+          <TestEntity>
+            {({ state, events }) => (
+              <div id="playerEntity">
+                <Position
+                  state={state}
+                  events={events}
+                  camera={this.camera}
+                  onChange={this.updateCamera}
+                  distanceCulling={false}
+                  translate={false}
+                >
+                  Player
+                </Position>
+              </div>
+            )}
+          </TestEntity>
+        </div>
+      </React.Fragment>
     );
   }
 }

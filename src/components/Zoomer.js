@@ -7,13 +7,13 @@ class Zoomer extends React.Component {
     camera: { scale: 1 },
   };
 
-  componentDidMount() {
-    this.props.loop.subscribe(this.update);
-  }
-
-  componentWillUnmount() {
-    this.props.loop.unsubscribe(this.update);
-  }
+  // componentDidMount() {
+  //   this.props.loop.subscribe(this.update);
+  // }
+  //
+  // componentWillUnmount() {
+  //   this.props.loop.unsubscribe(this.update);
+  // }
 
   update = () => {
     const { onChange, camera } = this.props;

@@ -40,30 +40,10 @@ body {
   position: absolute;
 }
 
-.positioner {
-  will-change: transform;
-  backface-visibility: hidden;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: scale(var(--scale))
-    translate3d(calc(var(--x) * var(--unit)), calc(var(--y) * var(--unit)), 0)
-    rotate(var(--angle));
-  /* calc(1073741823px + var(--y) * 1px) */
-}
-
-.centered .positioner {
-  transform: translate(-50%, -50%) scale(var(--scale))
-    translate3d(calc(var(--x) * var(--unit)), calc(var(--y) * var(--unit)), 0)
-    rotate(var(--angle));
-  /* calc(1073741823px + var(--y) * 1px) */
-}
-
 #playerEntity {
   position: fixed;
   left: 50vw;
   top: 50vh;
-  transform: translate(-50%, -50%) scale(var(--scale)) rotate(var(--angle));
 }
 
 .svgContainer {

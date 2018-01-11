@@ -19,11 +19,11 @@ export default class TestEntity extends React.Component {
           ".key": "event-" + Date.now(),
           type: "impulse",
           time: Date.now() - 200,
-          duration: 5000,
+          duration: 1000 + Math.random() * 5000,
           data: {
             x: Math.random() * 2 - 1,
             y: Math.random() * 2 - 1,
-            speed: 1 + Math.random() * 1,
+            speed: 5 + Math.random() * 40,
           },
         },
       ],
