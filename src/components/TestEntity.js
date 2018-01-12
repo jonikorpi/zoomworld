@@ -1,5 +1,7 @@
 import React from "react";
 
+import { random } from "../utilities/graphics.js";
+
 export default class TestEntity extends React.Component {
   static defaultProps = {
     x: 0,
@@ -11,6 +13,8 @@ export default class TestEntity extends React.Component {
     events: [],
   };
 
+  counter = 123;
+
   addEvent = () => {
     this.setState({
       events: [
@@ -21,8 +25,8 @@ export default class TestEntity extends React.Component {
           time: Date.now() - 200,
           duration: 5000,
           data: {
-            x: Math.random() * 2 - 1,
-            y: Math.random() * 2 - 1,
+            x: random(1, this.counter++) * 2 - 1,
+            y: random(1, this.counter++) * 2 - 1,
             speed: 20,
           },
         },
@@ -32,7 +36,11 @@ export default class TestEntity extends React.Component {
 
   componentDidMount() {
     if (this.props.moveAround) {
-      this.timer = setInterval(this.addEvent, 1000 + Math.random() * 5000);
+      this.counter = this.props.index || 123;
+      this.timer = setInterval(
+        this.addEvent,
+        1000 + random(1, this.counter++) * 5000
+      );
     }
   }
 

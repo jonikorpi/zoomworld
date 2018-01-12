@@ -36,12 +36,18 @@ class Camera extends React.Component {
             this.world = element;
           }}
         >
-          {[...new Array(50)].map((nada, index) => {
+          {[...new Array(25)].map((nada, index) => {
             const x = Math.random() * 500 - 250;
             const y = Math.random() * 500 - 250;
 
             return (
-              <TestEntity key={index} x={x} y={y} moveAround={false}>
+              <TestEntity
+                index={index + 134}
+                key={index}
+                x={x}
+                y={y}
+                moveAround={false}
+              >
                 {({ state, events }) => (
                   <Position
                     state={state}
@@ -56,9 +62,10 @@ class Camera extends React.Component {
             );
           })}
 
-          {[...new Array(100)].map((nada, index) => (
+          {[...new Array(25)].map((nada, index) => (
             <TestEntity
               key={index}
+              index={index + 123}
               x={(Math.random() * 500 - 250) / 10}
               y={(Math.random() * 500 - 250) / 10}
             >
