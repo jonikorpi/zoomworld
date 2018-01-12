@@ -62,8 +62,7 @@ class Position extends React.Component {
     }
 
     // Calculate angle
-    const nextAngle = Math.atan2(actualState.velocityY, actualState.velocityX);
-    // const newAngle = nextAngle;
+    const nextAngle = actualState.angle;
     const newAngle = angleLerp(this.currentAngle, nextAngle, 0.146);
 
     // Update properties
