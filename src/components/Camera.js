@@ -5,7 +5,10 @@ import Zoomer from "../components/Zoomer";
 import Positioner from "../components/Positioner";
 import Layer from "../components/Layer";
 import TestEntity from "../components/TestEntity";
-import Tile from "../components/Tile";
+import SVG from "../components/SVG";
+import Graphic from "../components/Graphic";
+
+import { config, getSeed, baseTile } from "../utilities/graphics.js";
 
 const unit = 10;
 const xUnitType = "vw";
@@ -88,12 +91,12 @@ class Camera extends React.Component {
                 this.world = element;
               }}
             >
-              {[...new Array(50)].map((nada, index) => {
+              {[...new Array(100)].map((nada, index) => {
                 const x = randomPosition();
                 const y = randomPosition();
 
                 return (
-                  <TestEntity key={index} x={x} y={y} moveAround={false}>
+                  <TestEntity key={index} x={x} y={y}>
                     {({ state, events }) => (
                       <Positioner
                         state={state}
@@ -101,39 +104,53 @@ class Camera extends React.Component {
                         camera={this.camera}
                         loop={loop}
                       >
-                        {positioner => (
-                          <Layer positioner={positioner}>
-                            <Tile x={x} y={y} tile={{ type: "plains" }} />
-                          </Layer>
-                        )}
+                        {positioner => {
+                          const tile = baseTile(getSeed(x, y))
+                            .join(" ")
+                            .toString();
+
+                          return (
+                            <React.Fragment>
+                              <Layer positioner={positioner}>
+                                <SVG>
+                                  <Graphic type="waterLine" points={tile} />
+                                </SVG>
+                              </Layer>
+                              <Layer positioner={positioner} z={1}>
+                                <SVG>
+                                  <Graphic
+                                    type="ground"
+                                    fill="var(--ground3)"
+                                    points={tile}
+                                  />
+                                </SVG>
+                              </Layer>
+                              <Layer positioner={positioner} z={2}>
+                                <SVG>
+                                  <Graphic
+                                    type="ground"
+                                    fill="var(--ground2)"
+                                    points={tile}
+                                  />
+                                </SVG>
+                              </Layer>
+                              <Layer positioner={positioner} z={3}>
+                                <SVG z={config.groundLevel}>
+                                  <Graphic
+                                    type="ground"
+                                    fill="var(--ground)"
+                                    points={tile}
+                                  />
+                                </SVG>
+                              </Layer>
+                            </React.Fragment>
+                          );
+                        }}
                       </Positioner>
                     )}
                   </TestEntity>
                 );
               })}
-
-              {[...new Array(100)].map((nada, index) => (
-                <TestEntity
-                  key={index}
-                  x={randomPosition()}
-                  y={randomPosition()}
-                >
-                  {({ state, events }) => (
-                    <Positioner
-                      state={state}
-                      events={events}
-                      camera={this.camera}
-                      loop={loop}
-                    >
-                      {positioner => (
-                        <Layer positioner={positioner}>
-                          <div className="positioner">{index}</div>
-                        </Layer>
-                      )}
-                    </Positioner>
-                  )}
-                </TestEntity>
-              ))}
 
               <TestEntity>
                 {({ state, events }) => (

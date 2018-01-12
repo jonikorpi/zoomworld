@@ -16,6 +16,9 @@ export default class Layer extends React.Component {
     return (
       <div
         className="layer"
+        style={{
+          zIndex: this.props.z || 0,
+        }}
         ref={element => {
           this.element = element;
         }}
