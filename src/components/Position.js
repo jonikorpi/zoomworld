@@ -3,6 +3,11 @@ import React from "react";
 import { angleLerp } from "../utilities/graphics.js";
 import { positionAtTime } from "../utilities/state.js";
 
+const findLastEventEndingTime = ({ now, end }, { time, duration }) => ({
+  now: now,
+  end: time + duration > end ? time + duration : end,
+});
+
 class Position extends React.Component {
   static defaultProps = {
     state: { x: 0, y: 0 },
@@ -17,7 +22,6 @@ class Position extends React.Component {
     translate: true,
   };
 
-  lastKeyframe = { x: 0, y: 0, angle: 0 };
   animations = [];
 
   // componentDidMount() {
@@ -55,37 +59,40 @@ class Position extends React.Component {
       translate,
     } = this.props;
     const now = Date.now() - 200;
-    const resolution = 200;
+    const end = events.reduce(findLastEventEndingTime, { end: now, now: now })
+      .end;
 
-    this.animations.forEach(animation => animation.cancel());
-
-    let changeFromLastKeyframe = null;
-    let time = now;
-    let keyframes = [];
-
-    while (changeFromLastKeyframe === null || changeFromLastKeyframe > 0) {
-      if (changeFromLastKeyframe !== null) {
-        time += resolution;
-      }
-
-      const keyframe = positionAtTime(time, state, events);
-      keyframes.push(keyframe);
-
-      changeFromLastKeyframe = Math.abs(
-        Math.max(
-          Math.abs(keyframe.x - this.lastKeyframe.x),
-          Math.abs(keyframe.y - this.lastKeyframe.y),
-          Math.abs(keyframe.angle - this.lastKeyframe.angle)
-        )
-      );
-      this.lastKeyframe = keyframe;
+    if (now >= end) {
+      return;
     }
 
-    const createdKeyframes = keyframes.map(this.createKeyframe);
+    const resolution = 50;
+    const amountOfIntermediateStates = Math.round((end - now) / resolution) + 1;
+
+    const states = [
+      positionAtTime(now, state, events),
+      ...[...Array(amountOfIntermediateStates)].map(
+        (nada, index) =>
+          positionAtTime(now + index * resolution, state, events),
+        state,
+        events
+      ),
+      positionAtTime(end, state, events),
+    ];
+
+    // let states = [];
+    // for (let time = now; time < end; time + 100) {
+    // states.push(positionAtTime(time, state, events));
+    // }
+    // states.push();
+    //
+    const keyframes = states.map(this.createKeyframe);
 
     if (keyframes.length > 1) {
-      const animation = this.element.animate(createdKeyframes, {
-        duration: time - now,
+      this.animations.forEach(animation => animation.cancel());
+
+      const animation = this.element.animate(keyframes, {
+        duration: end - now,
         easing: "linear",
         fill: "both",
       });

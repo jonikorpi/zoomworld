@@ -6,7 +6,7 @@ const positionAtTime = (now, state, events) =>
       type === "impulse"
         ? mergeImpulse(finalState, now, type, time, duration, data)
         : finalState,
-    { x: state.x, y: state.y, velocityX: 0, velocityY: 0, angle: 0 }
+    { x: state.x, y: state.y, angle: 0 }
   );
 
 const stateAtTime = (now, state, events) =>
@@ -20,7 +20,7 @@ const stateAtTime = (now, state, events) =>
           return finalState;
       }
     },
-    { ...state, velocityX: 0, velocityY: 0, angle: 0 }
+    { ...state, angle: 0 }
   );
 
 const mergeImpulse = (finalState, now, type, time, duration, data) => {
@@ -28,22 +28,11 @@ const mergeImpulse = (finalState, now, type, time, duration, data) => {
   const elapsed = now - time;
   const endsAt = time + duration;
   const completion = endsAt < now ? 1 : elapsed / duration;
-  const completed = completion === 1;
-
-  const velocityX = finalState.velocityX + (completed ? 0 : speed * x);
-  const velocityY = finalState.velocityY + (completed ? 0 : speed * y);
 
   return {
     x: finalState.x + easing(completion) * speed * x,
     y: finalState.y + easing(completion) * speed * y,
-    velocityX: velocityX,
-    velocityY: velocityY,
-    // angle: angleLerp(
-    //   Math.atan2(finalState.velocityX, finalState.velocityY),
-    //   Math.atan2(velocityY, velocityX),
-    //   0.146
-    // ),
-    angle: Math.atan2(velocityY, velocityX),
+    angle: Math.atan2(y, x),
   };
 };
 
