@@ -10,7 +10,7 @@ import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile } from "../utilities/graphics.js";
 
-const unit = 10;
+const unit = 20;
 const xUnitType = "vw";
 const yUnitType = "vmin";
 
