@@ -7,6 +7,25 @@ import Layer from "../components/Layer";
 import TestEntity from "../components/TestEntity";
 import Tile from "../components/Tile";
 
+const unit = 10;
+const xUnitType = "vw";
+const yUnitType = "vmin";
+
+const computeUnit = type => {
+  switch (type) {
+    case "vw":
+      return window.innerWidth / 100;
+    case "vh":
+      return window.innerHeight / 100;
+    case "vmax":
+      return Math.max(window.innerWidth / 100, window.innerHeight / 100);
+    default:
+    case "vmin":
+      return Math.min(window.innerWidth / 100, window.innerHeight / 100);
+  }
+};
+const randomPosition = () => Math.random() * unit * 2 - unit;
+
 class Camera extends React.Component {
   static defaultProps = {
     userID: null,
@@ -18,7 +37,11 @@ class Camera extends React.Component {
     scale: 1,
     width: window.innerWidth,
     height: window.innerHeight,
-    unit: 1,
+    unit: unit,
+    xUnitType: xUnitType,
+    yUnitType: yUnitType,
+    xPixelUnit: unit,
+    yPixelUnit: unit,
   };
 
   componentDidMount() {
@@ -33,10 +56,8 @@ class Camera extends React.Component {
   updateViewport = () => {
     this.camera.width = window.innerWidth;
     this.camera.height = window.innerHeight;
-    this.camera.unit = Math.max(
-      window.innerWidth / 100,
-      window.innerHeight / 100
-    );
+    this.camera.xPixelUnit = computeUnit(xUnitType) * unit;
+    this.camera.yPixelUnit = computeUnit(yUnitType) * unit;
   };
 
   updateCamera = (x, y) => {
@@ -52,7 +73,13 @@ class Camera extends React.Component {
     return (
       <Loop>
         {loop => (
-          <React.Fragment>
+          <div
+            className="camera"
+            style={{
+              "--xUnit": `${unit}${xUnitType}`,
+              "--yUnit": `${unit}${yUnitType}`,
+            }}
+          >
             <Zoomer onChange={this.updateScale} loop={loop} />
 
             <div
@@ -62,8 +89,8 @@ class Camera extends React.Component {
               }}
             >
               {[...new Array(50)].map((nada, index) => {
-                const x = Math.random() * 50 - 25;
-                const y = Math.random() * 50 - 25;
+                const x = randomPosition();
+                const y = randomPosition();
 
                 return (
                   <TestEntity key={index} x={x} y={y} moveAround={false}>
@@ -88,8 +115,8 @@ class Camera extends React.Component {
               {[...new Array(100)].map((nada, index) => (
                 <TestEntity
                   key={index}
-                  x={(Math.random() * 500 - 250) / 10}
-                  y={(Math.random() * 500 - 250) / 10}
+                  x={randomPosition()}
+                  y={randomPosition()}
                 >
                   {({ state, events }) => (
                     <Positioner
@@ -128,7 +155,7 @@ class Camera extends React.Component {
                 )}
               </TestEntity>
             </div>
-          </React.Fragment>
+          </div>
         )}
       </Loop>
     );

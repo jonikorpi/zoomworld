@@ -14,6 +14,10 @@ class Positioner extends React.Component {
       width: window.innerWidth,
       height: window.innerHeight,
       unit: 1,
+      xUnitType: "vmin",
+      yUnitType: "vmin",
+      xPixelUnit: 1,
+      yPixelUnit: 1,
     },
     distanceCulling: true,
     centered: true,
@@ -61,10 +65,10 @@ class Positioner extends React.Component {
     // Distance culling
     const outsideX =
       distanceCulling &&
-      (Math.abs(newX) - 2) * camera.unit > camera.width / 2 / newScale;
+      (Math.abs(newX) - 2) * camera.xPixelUnit > camera.width / 2 / newScale;
     const outsideY =
       distanceCulling &&
-      (Math.abs(newY) - 2) * camera.unit > camera.height / 2 / newScale;
+      (Math.abs(newY) - 2) * camera.yPixelUnit > camera.height / 2 / newScale;
 
     // Transform string
     const transform =
@@ -73,7 +77,13 @@ class Positioner extends React.Component {
         : `
             ${centered ? "translate3d(-50%, -50%, 0)" : ""}
             scale(${newScale})
-            ${translation ? `translate3d(${newX}vmax, ${newY}vmax, 0)` : ""}
+            ${
+              translation
+                ? `translate3d(${newX * camera.unit}${
+                    camera.xUnitType
+                  }, ${newY * camera.unit}${camera.yUnitType}, 0)`
+                : ""
+            }
             rotate(${newAngle}rad)
           `;
 
