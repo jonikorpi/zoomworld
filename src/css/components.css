@@ -29,6 +29,8 @@ body {
   left: 50vw;
   top: 50vh;
   perspective: none;
+  width: 0;
+  height: 0;
 }
 
 .layer {
@@ -38,9 +40,7 @@ body {
 }
 
 #playerEntity {
-  position: fixed;
-  left: 50vw;
-  top: 50vh;
+  position: absolute;
 }
 
 .svgContainer {
