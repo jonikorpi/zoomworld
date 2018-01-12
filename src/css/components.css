@@ -25,7 +25,7 @@ body {
 }
 
 .camera {
-  --unit: 10vmax;
+  --unit: 5vmax;
   position: fixed;
   left: 50vw;
   top: 50vh;

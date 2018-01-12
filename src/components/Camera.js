@@ -17,7 +17,7 @@ class Camera extends React.Component {
     scale: 1,
     width: window.innerWidth,
     height: window.innerHeight,
-    unit: Math.max(window.innerWidth / 100, window.innerHeight / 100) * 10,
+    unit: Math.max(window.innerWidth / 100, window.innerHeight / 100) * 5,
   };
 
   componentDidMount() {
