@@ -57,10 +57,12 @@ class Positioner extends React.Component {
 
     // New angle
     const nextAngle = actualState.angle;
-    const newAngle =
-      nextAngle !== 0
-        ? angleLerp(this.currentAngle, nextAngle, 0.146)
-        : this.currentAngle;
+    // const newAngle =
+    //   nextAngle !== 0
+    //     ? angleLerp(this.currentAngle, nextAngle, 0.146)
+    //     : this.currentAngle;
+    const newAngle = angleLerp(this.currentAngle, nextAngle, 0.091);
+    this.currentAngle = newAngle;
 
     // Distance culling
     const outsideX =
@@ -84,8 +86,11 @@ class Positioner extends React.Component {
                   }, ${newY * camera.unit}${camera.yUnitType}, 0)`
                 : ""
             }
+            translateY(calc(var(--z) * var(--yUnit) * -0.0382))
             rotate(${newAngle}rad)
           `;
+    // translateY(calc(var(--z) * (0.5vmin - 1vw)))
+    // translateY(calc(var(--z) * var(--yUnit) * -0.0382))
 
     // Update transforms
     const changed = transform !== this.currentTransform;

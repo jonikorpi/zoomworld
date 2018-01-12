@@ -50,12 +50,11 @@ body {
   width: calc(var(--tileCanvasMultiplier) * var(--width) * var(--xUnit));
   height: calc(var(--tileCanvasMultiplier) * var(--height) * var(--yUnit));
   z-index: var(--z);
+  /* outline: 1px solid; */
 }
 
 .svg {
   position: absolute;
-  left: 0;
-  top: calc(var(--z) * (0.5vmin - 1vw));
   width: 100%;
   height: 100%;
 }
