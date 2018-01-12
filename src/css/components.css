@@ -25,53 +25,30 @@ body {
 }
 
 .camera {
-  --unit: 5vmax;
   position: fixed;
   left: 50vw;
   top: 50vh;
   perspective: none;
 }
 
-.position {
-  --x: 0;
-  --y: 0;
-  --scale: 1;
-  --angle: 0;
-  position: absolute;
-}
-
-.positioner {
+.layer {
   will-change: transform;
   backface-visibility: hidden;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: scale(var(--scale))
-    translate3d(calc(var(--x) * var(--unit)), calc(var(--y) * var(--unit)), 0)
-    rotate(var(--angle));
-  /* calc(1073741823px + var(--y) * 1px) */
-}
-
-.centered .positioner {
-  transform: translate(-50%, -50%) scale(var(--scale))
-    translate3d(calc(var(--x) * var(--unit)), calc(var(--y) * var(--unit)), 0)
-    rotate(var(--angle));
-  /* calc(1073741823px + var(--y) * 1px) */
 }
 
 #playerEntity {
   position: fixed;
   left: 50vw;
   top: 50vh;
-  transform: translate(-50%, -50%) scale(var(--scale)) rotate(var(--angle));
 }
 
 .svgContainer {
   position: absolute;
   left: calc(var(--tileCanvasMultiplier) * 100% / -4);
   top: calc(var(--tileCanvasMultiplier) * 100% / -4);
-  width: calc(var(--tileCanvasMultiplier) * var(--unit) * var(--width));
-  height: calc(var(--tileCanvasMultiplier) * var(--unit) * var(--height));
+  width: calc(var(--tileCanvasMultiplier) * var(--width) * 1vmax);
+  height: calc(var(--tileCanvasMultiplier) * var(--height) * 1vmax);
   z-index: var(--z);
 }
 

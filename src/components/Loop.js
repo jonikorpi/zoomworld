@@ -38,7 +38,6 @@ export default class Loop extends React.Component {
   };
 
   subscribe = callback => this.subscribers.push(callback);
-
   unsubscribe = id => this.subscribers.splice(id - 1, 1);
 
   render() {

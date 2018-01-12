@@ -2,7 +2,8 @@ import React from "react";
 
 import Loop from "../components/Loop";
 import Zoomer from "../components/Zoomer";
-import Position from "../components/Position";
+import Positioner from "../components/Positioner";
+import Layer from "../components/Layer";
 import TestEntity from "../components/TestEntity";
 import Tile from "../components/Tile";
 
@@ -32,11 +33,13 @@ class Camera extends React.Component {
   updateViewport = () => {
     this.camera.width = window.innerWidth;
     this.camera.height = window.innerHeight;
-    this.camera.unit =
-      Math.max(window.innerWidth / 100, window.innerHeight / 100) * 5;
+    this.camera.unit = Math.max(
+      window.innerWidth / 100,
+      window.innerHeight / 100
+    );
   };
 
-  updateCamera = ({ x, y }) => {
+  updateCamera = (x, y) => {
     this.camera.x = x;
     this.camera.y = y;
   };
@@ -65,14 +68,18 @@ class Camera extends React.Component {
                 return (
                   <TestEntity key={index} x={x} y={y} moveAround={false}>
                     {({ state, events }) => (
-                      <Position
+                      <Positioner
                         state={state}
                         events={events}
                         camera={this.camera}
                         loop={loop}
                       >
-                        <Tile x={x} y={y} tile={{ type: "plains" }} />
-                      </Position>
+                        {positioner => (
+                          <Layer positioner={positioner}>
+                            <Tile x={x} y={y} tile={{ type: "plains" }} />
+                          </Layer>
+                        )}
+                      </Positioner>
                     )}
                   </TestEntity>
                 );
@@ -85,30 +92,39 @@ class Camera extends React.Component {
                   y={(Math.random() * 500 - 250) / 10}
                 >
                   {({ state, events }) => (
-                    <Position
+                    <Positioner
                       state={state}
                       events={events}
                       camera={this.camera}
                       loop={loop}
                     >
-                      <div className="positioner">{index}</div>
-                    </Position>
+                      {positioner => (
+                        <Layer positioner={positioner}>
+                          <div className="positioner">{index}</div>
+                        </Layer>
+                      )}
+                    </Positioner>
                   )}
                 </TestEntity>
               ))}
 
               <TestEntity>
                 {({ state, events }) => (
-                  <Position
+                  <Positioner
                     state={state}
                     events={events}
                     camera={this.camera}
                     onChange={this.updateCamera}
                     distanceCulling={false}
+                    translation={false}
                     loop={loop}
                   >
-                    <div id="playerEntity">Player</div>
-                  </Position>
+                    {positioner => (
+                      <div id="playerEntity">
+                        <Layer positioner={positioner}>Player</Layer>
+                      </div>
+                    )}
+                  </Positioner>
                 )}
               </TestEntity>
             </div>

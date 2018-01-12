@@ -23,7 +23,7 @@ export default class TestEntity extends React.Component {
           data: {
             x: Math.random() * 2 - 1,
             y: Math.random() * 2 - 1,
-            speed: 1 + Math.random() * 1,
+            speed: 10 + Math.random() * 10,
           },
         },
       ],

@@ -7,25 +7,23 @@ const viewBox = `-${tileWidth / 2} -${tileWidth / 2} ${tileWidth} ${tileWidth}`;
 
 const SVG = ({ children, z }) => {
   return (
-    <div className="positioner">
-      <div
-        className="svgContainer"
-        style={{
-          "--z": z || config.waterLevel,
-          "--tileCanvasMultiplier": config.tileCanvasMultiplier,
-          "--width": 1,
-          "--height": 1,
-        }}
+    <div
+      className="svgContainer"
+      style={{
+        "--z": z || config.waterLevel,
+        "--tileCanvasMultiplier": config.tileCanvasMultiplier,
+        "--width": 1,
+        "--height": 1,
+      }}
+    >
+      <svg
+        className="svg"
+        shapeRendering="optimizeSpeed"
+        preserveAspectRatio="none"
+        viewBox={viewBox}
       >
-        <svg
-          className="svg"
-          shapeRendering="optimizeSpeed"
-          preserveAspectRatio="none"
-          viewBox={viewBox}
-        >
-          {children}
-        </svg>
-      </div>
+        {children}
+      </svg>
     </div>
   );
 };
