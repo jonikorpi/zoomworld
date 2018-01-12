@@ -5,10 +5,14 @@ import Position from "../components/Position";
 import TestEntity from "../components/TestEntity";
 import Tile from "../components/Tile";
 
+import { random } from "../utilities/graphics.js";
+
 class Camera extends React.Component {
   static defaultProps = {
     userID: null,
   };
+
+  counter = 123;
 
   camera = {
     x: 0,
@@ -37,8 +41,8 @@ class Camera extends React.Component {
           }}
         >
           {[...new Array(25)].map((nada, index) => {
-            const x = Math.random() * 500 - 250;
-            const y = Math.random() * 500 - 250;
+            const x = random(1, this.counter++) * 500 - 250;
+            const y = random(1, this.counter++) * 500 - 250;
 
             return (
               <TestEntity
@@ -66,8 +70,8 @@ class Camera extends React.Component {
             <TestEntity
               key={index}
               index={index + 123}
-              x={(Math.random() * 500 - 250) / 10}
-              y={(Math.random() * 500 - 250) / 10}
+              x={(random(1, this.counter++) * 500 - 250) / 10}
+              y={(random(1, this.counter++) * 500 - 250) / 10}
             >
               {({ state, events }) => (
                 <Position state={state} events={events} camera={this.camera}>
