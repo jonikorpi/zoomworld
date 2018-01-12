@@ -91,9 +91,12 @@ class Camera extends React.Component {
                 this.world = element;
               }}
             >
-              {[...new Array(100)].map((nada, index) => {
+              {[...new Array(75)].map((nada, index) => {
                 const x = randomPosition();
                 const y = randomPosition();
+                const tile = baseTile(getSeed(x, y))
+                  .join(" ")
+                  .toString();
 
                 return (
                   <TestEntity key={index} x={x} y={y}>
@@ -105,10 +108,6 @@ class Camera extends React.Component {
                         loop={loop}
                       >
                         {positioner => {
-                          const tile = baseTile(getSeed(x, y))
-                            .join(" ")
-                            .toString();
-
                           return (
                             <React.Fragment>
                               <Layer positioner={positioner}>
