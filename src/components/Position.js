@@ -24,14 +24,6 @@ class Position extends React.Component {
 
   animations = [];
 
-  // componentDidMount() {
-  //   this.props.loop.subscribe(this.update);
-  // }
-  //
-  // componentWillUnmount() {
-  //   this.props.loop.unsubscribe(this.update);
-  // }
-
   createKeyframe = keyframe => {
     const { centered, translate } = this.props;
 
@@ -101,41 +93,6 @@ class Position extends React.Component {
 
       this.animations.push(animation);
     }
-
-    // // Reduce events
-    // const actualState = positionAtTime(now, state, events);
-    //
-    // // New values
-    // const newX = actualState.x - camera.x;
-    // const newY = actualState.y - camera.y;
-    // const newScale = camera.scale;
-    //
-    // // Distance culling
-    // if (distanceCulling) {
-    //   const outsideX =
-    //     (Math.abs(newX) - 2) * camera.unit > camera.width / 2 / newScale;
-    //   const outsideY =
-    //     (Math.abs(newY) - 2) * camera.unit > camera.height / 2 / newScale;
-    //
-    //   if (outsideX || outsideY) {
-    //     if (this.currentScale !== 0) {
-    //       this.currentScale = 0;
-    //       this.element.style.setProperty("--scale", 0);
-    //     }
-    //
-    //     return;
-    //   }
-    // }
-    //
-    // // Calculate angle
-    // const nextAngle = Math.atan2(actualState.velocityY, actualState.velocityX);
-    // // const newAngle = nextAngle;
-    // const newAngle = angleLerp(this.currentAngle, nextAngle, 0.146);
-    //
-    // // Callback
-    // if (onChange !== undefined && changed) {
-    //   onChange({ x: actualState.x, y: actualState.y });
-    // }
   }
 
   render() {
