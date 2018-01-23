@@ -66,7 +66,7 @@ class Camera extends React.Component {
             );
           })}
 
-          {[...new Array(25)].map((nada, index) => (
+          {[...new Array(200)].map((nada, index) => (
             <TestEntity
               key={index}
               index={index + 123}

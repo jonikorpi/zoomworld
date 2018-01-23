@@ -66,7 +66,7 @@ class Position extends React.Component {
       return;
     }
 
-    const resolution = 50;
+    const resolution = 100;
     const amountOfIntermediateStates = Math.round((end - now) / resolution) + 1;
 
     const states = [
@@ -96,6 +96,8 @@ class Position extends React.Component {
         easing: "linear",
         fill: "both",
       });
+
+      animation.startTime = now - performance.timing.navigationStart;
 
       this.animations.push(animation);
     }
@@ -139,7 +141,8 @@ class Position extends React.Component {
   render() {
     const { state, events } = this.props;
     const now = Date.now() - 200;
-    const transform = this.createKeyframe(positionAtTime(now, state, events));
+    const transform = this.createKeyframe(positionAtTime(now, state, events))
+      .transform;
 
     return (
       <div
