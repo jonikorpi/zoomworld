@@ -8,53 +8,46 @@ const findLastEventEndingTime = ({ now, end }, { time, duration }) => ({
   end: time + duration > end ? time + duration : end,
 });
 
+const createKeyframe = (keyframe, centered = true, translate = true) => {
+  return {
+    transform: `
+      ${centered ? "translate3d(-50%, -50%, 0)" : ""}
+      ${translate ? `translate3d(${keyframe.x}vmin, ${keyframe.y}vmin, 0)` : ""}
+      rotate(${keyframe.angle}rad)
+    `,
+  };
+};
+
 class Position extends React.Component {
   static defaultProps = {
     state: { x: 0, y: 0 },
     events: [],
-    distanceCulling: true,
     centered: true,
     translate: true,
   };
 
   animations = [];
 
-  createKeyframe = keyframe => {
-    const { centered, translate } = this.props;
-
-    return {
-      transform: `
-        ${centered ? "translate3d(-50%, -50%, 0)" : ""}
-        ${
-          translate
-            ? `translate3d(${keyframe.x}vmin, ${keyframe.y}vmin, 0)`
-            : ""
-        }
-        rotate(${keyframe.angle}rad)
-      `,
-    };
-  };
-
   componentDidUpdate() {
-    const {
-      state,
-      events,
-      onChange,
-      distanceCulling,
-      centered,
-      translate,
-    } = this.props;
+    const { state, events, centered, translate } = this.props;
+
+    // Game logic happens slightly in the past to hide lag
     const now = Date.now() - 200;
+
+    // Find when the animation should end
     const end = events.reduce(findLastEventEndingTime, { end: now, now: now })
       .end;
 
+    // If there are no current or future events to animate, stop
     if (now >= end) {
       return;
     }
 
+    // Determine how many keyframes are needed
     const resolution = 100;
     const amountOfIntermediateStates = Math.round((end - now) / resolution) + 1;
 
+    // Calculate entity position at each keyframe
     const states = [
       positionAtTime(now, state, events),
       ...[...Array(amountOfIntermediateStates)].map(
@@ -66,15 +59,10 @@ class Position extends React.Component {
       positionAtTime(end, state, events),
     ];
 
-    // let states = [];
-    // for (let time = now; time < end; time + 100) {
-    // states.push(positionAtTime(time, state, events));
-    // }
-    // states.push();
-    //
-    const keyframes = states.map(this.createKeyframe);
+    const keyframes = states.map(createKeyframe, centered, translate);
 
     if (keyframes.length > 1) {
+      // Cancel all current animations since we're starting anew
       this.animations.forEach(animation => animation.cancel());
 
       const animation = this.element.animate(keyframes, {
@@ -83,17 +71,25 @@ class Position extends React.Component {
         fill: "both",
       });
 
+      // Important: set a starting time for the animation
+      // otherwise it'll go out of sync with game logic
       animation.startTime = now - performance.timing.navigationStart;
 
+      // Save animation so it can be cancelled later
       this.animations.push(animation);
     }
   }
 
   render() {
-    const { state, events } = this.props;
+    const { state, events, centered, translate } = this.props;
+
+    // Create initial position
     const now = Date.now() - 200;
-    const transform = this.createKeyframe(positionAtTime(now, state, events))
-      .transform;
+    const transform = createKeyframe(
+      positionAtTime(now, state, events),
+      centered,
+      translate
+    ).transform;
 
     return (
       <div
