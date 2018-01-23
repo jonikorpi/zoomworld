@@ -34,7 +34,15 @@ class Position extends React.Component {
     };
   };
 
+  componentDidMount() {
+    this.addAnimations();
+  }
+
   componentDidUpdate() {
+    this.addAnimations();
+  }
+
+  addAnimations = () => {
     const { state, events } = this.props;
 
     // Game logic happens slightly in the past to hide lag
@@ -44,24 +52,22 @@ class Position extends React.Component {
     const end = events.reduce(findLastEventEndingTime, { end: now, now: now })
       .end;
 
-    // If there are no current or future events to animate, stop
-    if (now >= end) {
-      return;
-    }
-
     // Determine how many keyframes are needed
-    const resolution = 100;
+    const resolution = 200;
     const amountOfIntermediateStates = Math.ceil((end - now) / resolution);
 
     // Calculate entity position at each keyframe
+    let intermediateStates = [];
+
+    for (let index = 0; index < amountOfIntermediateStates; index++) {
+      intermediateStates.push(
+        positionAtTime(now + index * resolution, state, events)
+      );
+    }
+
     const states = [
       positionAtTime(now, state, events),
-      ...[...Array(amountOfIntermediateStates)].map(
-        (nada, index) =>
-          positionAtTime(now + index * resolution, state, events),
-        state,
-        events
-      ),
+      ...intermediateStates,
       positionAtTime(end, state, events),
     ];
 
@@ -82,22 +88,12 @@ class Position extends React.Component {
 
     // Save animation so it can be cancelled later
     this.animations.push(animation);
-  }
+  };
 
   render() {
-    const { state, events } = this.props;
-
-    // Create initial position
-    const now = Date.now() - 200;
-    const transform = this.createKeyframe(positionAtTime(now, state, events))
-      .transform;
-
     return (
       <div
         className="position"
-        style={{
-          transform: transform,
-        }}
         ref={element => {
           this.element = element;
         }}

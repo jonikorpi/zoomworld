@@ -23,8 +23,8 @@ class Camera extends React.Component {
           }}
         >
           {[...new Array(25)].map((nada, index) => {
-            const x = random(1, this.counter++) * 500 - 250;
-            const y = random(1, this.counter++) * 500 - 250;
+            const x = random(1, this.counter++) * 100 - 50;
+            const y = random(1, this.counter++) * 100 - 50;
 
             return (
               <TestEntity
@@ -47,8 +47,8 @@ class Camera extends React.Component {
             <TestEntity
               key={index}
               index={index + 123}
-              x={(random(1, this.counter++) * 500 - 250) / 10}
-              y={(random(1, this.counter++) * 500 - 250) / 10}
+              x={random(1, this.counter++) * 100 - 50}
+              y={random(1, this.counter++) * 100 - 50}
             >
               {({ state, events }) => (
                 <Position state={state} events={events}>

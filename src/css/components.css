@@ -3,6 +3,8 @@ body {
 }
 
 #root {
+  width: 500vw;
+  height: 500vh;
 }
 
 #log {
