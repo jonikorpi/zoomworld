@@ -8,16 +8,6 @@ const findLastEventEndingTime = ({ now, end }, { time, duration }) => ({
   end: time + duration > end ? time + duration : end,
 });
 
-const createKeyframe = (keyframe, centered = true, translate = true) => {
-  return {
-    transform: `
-      ${centered ? "translate3d(-50%, -50%, 0)" : ""}
-      ${translate ? `translate3d(${keyframe.x}vmin, ${keyframe.y}vmin, 0)` : ""}
-      rotate(${keyframe.angle}rad)
-    `,
-  };
-};
-
 class Position extends React.Component {
   static defaultProps = {
     state: { x: 0, y: 0 },
@@ -28,8 +18,24 @@ class Position extends React.Component {
 
   animations = [];
 
+  createKeyframe = keyframe => {
+    const { centered, translate } = this.props;
+
+    return {
+      transform: `
+        ${centered ? "translate3d(-50%, -50%, 0)" : ""}
+        ${
+          translate
+            ? `translate3d(${keyframe.x}vmin, ${keyframe.y}vmin, 0)`
+            : ""
+        }
+        rotate(${keyframe.angle}rad)
+      `,
+    };
+  };
+
   componentDidUpdate() {
-    const { state, events, centered, translate } = this.props;
+    const { state, events } = this.props;
 
     // Game logic happens slightly in the past to hide lag
     const now = Date.now() - 200;
@@ -59,7 +65,7 @@ class Position extends React.Component {
       positionAtTime(end, state, events),
     ];
 
-    const keyframes = states.map(createKeyframe, centered, translate);
+    const keyframes = states.map(this.createKeyframe);
 
     if (keyframes.length > 1) {
       // Cancel all current animations since we're starting anew
@@ -81,15 +87,12 @@ class Position extends React.Component {
   }
 
   render() {
-    const { state, events, centered, translate } = this.props;
+    const { state, events } = this.props;
 
     // Create initial position
     const now = Date.now() - 200;
-    const transform = createKeyframe(
-      positionAtTime(now, state, events),
-      centered,
-      translate
-    ).transform;
+    const transform = this.createKeyframe(positionAtTime(now, state, events))
+      .transform;
 
     return (
       <div
