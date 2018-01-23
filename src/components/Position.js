@@ -12,11 +12,6 @@ class Position extends React.Component {
   static defaultProps = {
     state: { x: 0, y: 0 },
     events: [],
-    camera: {
-      x: 0,
-      y: 0,
-      scale: 1,
-    },
     distanceCulling: true,
     centered: true,
     translate: true,
@@ -44,7 +39,6 @@ class Position extends React.Component {
     const {
       state,
       events,
-      camera,
       onChange,
       distanceCulling,
       centered,
