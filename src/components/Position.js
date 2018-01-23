@@ -51,7 +51,7 @@ class Position extends React.Component {
 
     // Determine how many keyframes are needed
     const resolution = 100;
-    const amountOfIntermediateStates = Math.round((end - now) / resolution) + 1;
+    const amountOfIntermediateStates = Math.ceil((end - now) / resolution);
 
     // Calculate entity position at each keyframe
     const states = [
@@ -67,23 +67,21 @@ class Position extends React.Component {
 
     const keyframes = states.map(this.createKeyframe);
 
-    if (keyframes.length > 1) {
-      // Cancel all current animations since we're starting anew
-      this.animations.forEach(animation => animation.cancel());
+    // Cancel all current animations since we're starting anew
+    this.animations.forEach(animation => animation.cancel());
 
-      const animation = this.element.animate(keyframes, {
-        duration: end - now,
-        easing: "linear",
-        fill: "both",
-      });
+    const animation = this.element.animate(keyframes, {
+      duration: end - now,
+      easing: "linear",
+      fill: "both",
+    });
 
-      // Important: set a starting time for the animation
-      // otherwise it'll go out of sync with game logic
-      animation.startTime = now - performance.timing.navigationStart;
+    // Important: set a starting time for the animation.
+    // Otherwise it'll go out of sync with game logic.
+    animation.startTime = now - performance.timing.navigationStart;
 
-      // Save animation so it can be cancelled later
-      this.animations.push(animation);
-    }
+    // Save animation so it can be cancelled later
+    this.animations.push(animation);
   }
 
   render() {
