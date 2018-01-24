@@ -22,11 +22,10 @@ class Camera extends React.Component {
               inverse={true}
               rotate={false}
               transform3d={true}
-              distanceCulling={false}
             >
               <World {...this.props} />
 
-              <Position state={state} events={events} distanceCulling={false}>
+              <Position state={state} events={events}>
                 <div id="playerEntity">Player</div>
               </Position>
             </Position>
