@@ -1,6 +1,6 @@
 import React from "react";
 
-import { positionAtTime, findLastEventEndingTime } from "../utilities/state.js";
+import { positionAtTime } from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
 export default class TestEntity extends React.Component {
@@ -34,16 +34,7 @@ export default class TestEntity extends React.Component {
       event => event.time + event.duration > now
     );
 
-    const lastFinishedEventEndedAt = finishedEvents.reduce(
-      findLastEventEndingTime,
-      0
-    );
-
-    const flattenedState = positionAtTime(
-      lastFinishedEventEndedAt,
-      state,
-      events
-    );
+    const flattenedState = positionAtTime(now, state, finishedEvents);
 
     this.setState({
       state: {
