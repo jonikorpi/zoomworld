@@ -6,8 +6,10 @@ import Tile from "../components/Tile";
 
 import { random } from "../utilities/graphics.js";
 
-const testTileRadius = 300;
+const testTileRadius = 500;
 const testEntityRadius = 100;
+const testTileCount = 100;
+const testEntityCount = 200;
 
 export default class World extends React.PureComponent {
   static defaultProps = {
@@ -19,7 +21,7 @@ export default class World extends React.PureComponent {
   render() {
     return (
       <React.Fragment>
-        {[...new Array(25)].map((nada, index) => {
+        {[...new Array(testTileCount)].map((nada, index) => {
           const x =
             random(1, this.counter++) * testTileRadius - testTileRadius / 2;
           const y =
@@ -42,7 +44,7 @@ export default class World extends React.PureComponent {
           );
         })}
 
-        {[...new Array(100)].map((nada, index) => (
+        {[...new Array(testEntityCount)].map((nada, index) => (
           <TestEntity
             key={index}
             index={index + 123}
@@ -57,7 +59,7 @@ export default class World extends React.PureComponent {
           >
             {({ state, events }) => (
               <Position state={state} events={events}>
-                Entity&nbsp;#{index}
+                #{index}
               </Position>
             )}
           </TestEntity>

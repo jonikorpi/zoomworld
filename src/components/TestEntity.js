@@ -23,7 +23,7 @@ export default class TestEntity extends React.Component {
           ".key": "event-" + Date.now(),
           type: "impulse",
           time: Date.now() - 200,
-          duration: 5000,
+          duration: 10000,
           data: {
             x: random(1, this.counter++) * 2 - 1,
             y: random(1, this.counter++) * 2 - 1,
@@ -39,7 +39,7 @@ export default class TestEntity extends React.Component {
       this.counter = this.props.index || 123;
       this.timer = setInterval(
         this.addEvent,
-        1000 + random(1, this.counter++) * 5000
+        2000 + random(1, this.counter++) * 10000
       );
     }
   }
