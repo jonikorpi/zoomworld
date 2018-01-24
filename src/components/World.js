@@ -6,8 +6,8 @@ import Tile from "../components/Tile";
 
 import { random } from "../utilities/graphics.js";
 
-const testTileRadius = 100000000;
-const testEntityRadius = 300;
+const testTileRadius = 300;
+const testEntityRadius = 100;
 
 export default class World extends React.PureComponent {
   static defaultProps = {
@@ -57,7 +57,7 @@ export default class World extends React.PureComponent {
           >
             {({ state, events }) => (
               <Position state={state} events={events}>
-                {index}
+                Entity&nbsp;#{index}
               </Position>
             )}
           </TestEntity>

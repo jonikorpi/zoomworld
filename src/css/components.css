@@ -34,9 +34,11 @@ body {
 .position {
   position: absolute;
   will-change: transform;
+  font-size: 0.5rem;
 }
 
 #playerEntity {
+  font-weight: bold;
 }
 
 .svgContainer {
