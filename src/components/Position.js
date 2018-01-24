@@ -1,16 +1,11 @@
 import React from "react";
 
 import { angleLerp } from "../utilities/graphics.js";
-import { positionAtTime } from "../utilities/state.js";
-
-const findLastEventEndingTime = ({ now, end }, { time, duration }) => ({
-  now: now,
-  end: time + duration > end ? time + duration : end,
-});
+import { positionAtTime, findLastEventEndingTime } from "../utilities/state.js";
 
 class Position extends React.Component {
   static defaultProps = {
-    state: { x: 0, y: 0 },
+    state: { x: 0, y: 0, angle: 0 },
     events: [],
     centered: true,
     translate: true,
@@ -53,8 +48,7 @@ class Position extends React.Component {
     const now = Date.now() - 200;
 
     // Find when the animation should end
-    const end = events.reduce(findLastEventEndingTime, { end: now, now: now })
-      .end;
+    const end = events.reduce(findLastEventEndingTime, now);
 
     // Determine how many keyframes are needed
     const resolution = 200;

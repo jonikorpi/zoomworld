@@ -1,28 +1,60 @@
 import React from "react";
 
+import { positionAtTime, findLastEventEndingTime } from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
 export default class TestEntity extends React.Component {
   static defaultProps = {
     x: 0,
     y: 0,
+    angle: 0,
     moveAround: true,
   };
-  state = {
-    state: { ...this.props },
-    events: [],
-  };
+
+  constructor(props) {
+    super(props);
+    const { x, y, angle } = this.props;
+
+    this.state = {
+      state: { x: x, y: y, angle: angle },
+      events: [],
+    };
+  }
 
   counter = 123;
 
   addEvent = () => {
+    const { state, events } = this.state;
+    const now = Date.now() - 200;
+
+    const finishedEvents = [...events].filter(
+      event => event.time + event.duration <= now
+    );
+    const unfinishedEvents = [...events].filter(
+      event => event.time + event.duration > now
+    );
+
+    const lastFinishedEventEndedAt = finishedEvents.reduce(
+      findLastEventEndingTime,
+      0
+    );
+
+    const flattenedState = positionAtTime(
+      lastFinishedEventEndedAt,
+      state,
+      events
+    );
+
     this.setState({
+      state: {
+        ...flattenedState,
+      },
       events: [
-        ...this.state.events,
+        ...unfinishedEvents,
         {
-          ".key": "event-" + Date.now(),
+          ".key": "event-" + now,
           type: "impulse",
-          time: Date.now() - 200,
+          time: now,
           duration: 10000,
           data: {
             x: random(1, this.counter++) * 2 - 1,
