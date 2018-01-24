@@ -73,6 +73,7 @@ class Position extends React.Component {
 
     // Cancel all current animations since we're starting anew
     this.animations.forEach(animation => animation.cancel());
+    this.animations = [];
 
     const animation = this.element.animate(keyframes, {
       duration: end - now,
