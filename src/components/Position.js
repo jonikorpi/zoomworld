@@ -14,23 +14,27 @@ class Position extends React.Component {
     events: [],
     centered: true,
     translate: true,
+    rotate: true,
+    inverse: false,
+    transform3d: true,
   };
 
   animations = [];
 
   createKeyframe = keyframe => {
-    const { centered, translate } = this.props;
+    const { centered, translate, rotate, transform3d, inverse } = this.props;
+    const x = inverse ? `${-keyframe.x}vmin` : `${keyframe.x}vmin`;
+    const y = inverse ? `${-keyframe.y}vmin` : `${keyframe.y}vmin`;
+    const angle = inverse ? `${-keyframe.angle}rad` : `${keyframe.angle}rad`;
+
+    const centering = centered ? "translate(-50%, -50%)" : "";
+    const transform = translate
+      ? transform3d ? `translate3d(${x}, ${y}, 0)` : `translate(${x}, ${y})`
+      : "";
+    const rotation = rotate ? `rotate(${angle})` : "";
 
     return {
-      transform: `
-        ${centered ? "translate3d(-50%, -50%, 0)" : ""}
-        ${
-          translate
-            ? `translate3d(${keyframe.x}vmin, ${keyframe.y}vmin, 0)`
-            : ""
-        }
-        rotate(${keyframe.angle}rad)
-      `,
+      transform: `${centering}${transform}${rotation}`,
     };
   };
 
