@@ -30,14 +30,12 @@ body {
   top: 50vh;
   width: 0;
   height: 0;
-  will-change: transform;
-  transform: translateZ(0);
 }
 
 .layer {
   will-change: transform;
   backface-visibility: hidden;
-  /* transform-style: preserve-3d; */
+  transform-style: preserve-3d;
   position: absolute;
 }
 

@@ -1,6 +1,7 @@
 import React from "react";
 
 import Loop from "../components/Loop";
+import Zoomer from "../components/Zoomer";
 import Positioner from "../components/Positioner";
 import Layer from "../components/Layer";
 import TestEntity from "../components/TestEntity";
@@ -54,26 +55,18 @@ class Camera extends React.Component {
 
   componentDidMount() {
     this.updateViewport();
-    window.addEventListener("resize", this.triggerUpdateViewport);
-    window.addEventListener("scroll", this.triggerUpdateScale);
+    window.addEventListener("resize", this.updateViewport);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.triggerUpdateViewport);
-    window.removeEventListener("scroll", this.triggerUpdateScale);
+    window.removeEventListener("resize", this.updateViewport);
   }
-
-  viewportUpdater = null;
-  triggerUpdateViewport = () =>
-    (this.viewportUpdater =
-      this.viewportUpdater || requestAnimationFrame(this.updateViewport));
 
   updateViewport = () => {
     this.camera.width = window.innerWidth;
     this.camera.height = window.innerHeight;
     this.camera.xPixelUnit = computeUnit(xUnitType) * unit;
     this.camera.yPixelUnit = computeUnit(yUnitType) * unit;
-    this.viewportUpdater = null;
   };
 
   updateCamera = (x, y) => {
@@ -81,22 +74,8 @@ class Camera extends React.Component {
     this.camera.y = y;
   };
 
-  scaleUpdater = null;
-  triggerUpdateScale = () =>
-    (this.scaleUpdater =
-      this.scaleUpdater || requestAnimationFrame(this.updateScale));
-
-  updateScale = () => {
-    const currentScale = this.camera.scale;
-    const height = document.documentElement.clientHeight;
-    const scrolled = window.pageYOffset;
-    const newScale = 1 - scrolled / height + (1 - 0.414) * (scrolled / height);
-
-    if (currentScale !== newScale) {
-      this.camera.scale = newScale;
-    }
-
-    this.scaleUpdater = null;
+  updateScale = scale => {
+    this.camera.scale = scale;
   };
 
   render() {
@@ -110,6 +89,7 @@ class Camera extends React.Component {
               "--yUnit": `${unit}${yUnitType}`,
             }}
           >
+            <Zoomer onChange={this.updateScale} loop={loop} />
             {[...new Array(testTileCount)].map((nada, index) => {
               const x =
                 random(1, this.counter++) * testTileRadius - testTileRadius / 2;
