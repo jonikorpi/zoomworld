@@ -73,10 +73,11 @@ export default class Positioner extends React.Component {
     // Distance culling
     const outsideX =
       distanceCulling &&
-      (Math.abs(newX) - 2) * camera.xPixelUnit > camera.width / 2 / newScale;
+      (Math.abs(newX) - 1.75) * camera.xPixelUnit > camera.width / 2 / newScale;
     const outsideY =
       distanceCulling &&
-      (Math.abs(newY) - 2) * camera.yPixelUnit > camera.height / 2 / newScale;
+      (Math.abs(newY) - 1.75) * camera.yPixelUnit >
+        camera.height / 2 / newScale;
 
     const x = inverse
       ? `${-newX * camera.unit}${camera.xUnitType}`
@@ -102,7 +103,7 @@ export default class Positioner extends React.Component {
     // Transform string
     const newTransform =
       distanceCulling && (outsideX || outsideY)
-        ? "scale(0)"
+        ? `${centering}scale3d(0,0,0)${transform}${rotation}`
         : `${centering}${scaling}${transform}${rotation}`;
 
     // Update transforms

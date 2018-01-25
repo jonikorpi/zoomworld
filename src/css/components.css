@@ -26,29 +26,16 @@ body {
 
 .camera {
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-.origo {
-  position: absolute;
   left: 50vw;
   top: 50vh;
   width: 0;
   height: 0;
-  /* transform: translateZ(0); */
-  /* backface-visibility: hidden; */
-  /* will-change: transform; */
-  /* transform-style: preserve-3d; */
 }
 
 .layer {
   will-change: transform;
   backface-visibility: hidden;
-  transform-style: preserve-3d;
+  /* transform-style: preserve-3d; */
   position: absolute;
   left: 0;
   top: 0;

@@ -12,7 +12,7 @@ import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 
 const testTileRadius = 62;
 const testEntityRadius = 10;
-const testTileCount = 100;
+const testTileCount = 75;
 const testEntityCount = 200;
 
 const unit = 38.2;
@@ -27,9 +27,10 @@ const computeUnit = type => {
       return window.innerHeight / 100;
     case "vmax":
       return Math.max(window.innerWidth / 100, window.innerHeight / 100);
-    default:
     case "vmin":
       return Math.min(window.innerWidth / 100, window.innerHeight / 100);
+    default:
+      return 1;
   }
 };
 
@@ -89,99 +90,95 @@ class Camera extends React.Component {
               "--yUnit": `${unit}${yUnitType}`,
             }}
           >
-            <div className="origo">
-              <Zoomer onChange={this.updateScale} loop={loop} />
-              {[...new Array(testTileCount)].map((nada, index) => {
-                const x =
-                  random(1, this.counter++) * testTileRadius -
-                  testTileRadius / 2;
-                const y =
-                  random(1, this.counter++) * testTileRadius -
-                  testTileRadius / 2;
+            <Zoomer onChange={this.updateScale} loop={loop} />
+            {[...new Array(testTileCount)].map((nada, index) => {
+              const x =
+                random(1, this.counter++) * testTileRadius - testTileRadius / 2;
+              const y =
+                random(1, this.counter++) * testTileRadius - testTileRadius / 2;
 
-                return (
-                  <TestEntity
-                    index={index + 134}
-                    key={index}
-                    x={x}
-                    y={y}
-                    moveAround={false}
-                  >
-                    {({ state, events }) => (
-                      <Positioner
-                        state={state}
-                        events={events}
-                        camera={this.camera}
-                        centered={false}
-                        loop={loop}
-                      >
-                        {positioner => (
-                          <Layer positioner={positioner} z={3}>
-                            <SVG z={config.groundLevel}>
-                              <Graphic
-                                type="ground"
-                                fill="var(--ground)"
-                                points={baseTile(getSeed(x, y))
-                                  .join(" ")
-                                  .toString()}
-                              />
-                            </SVG>
-                          </Layer>
-                        )}
-                      </Positioner>
-                    )}
-                  </TestEntity>
-                );
-              })}
-
-              {[...new Array(testEntityCount)].map((nada, index) => (
+              return (
                 <TestEntity
+                  index={index + 134}
                   key={index}
-                  index={index + 123}
-                  x={
-                    random(1, this.counter++) * testEntityRadius -
-                    testEntityRadius / 2
-                  }
-                  y={
-                    random(1, this.counter++) * testEntityRadius -
-                    testEntityRadius / 2
-                  }
+                  x={x}
+                  y={y}
+                  moveAround={false}
                 >
                   {({ state, events }) => (
                     <Positioner
                       state={state}
                       events={events}
                       camera={this.camera}
+                      centered={false}
                       loop={loop}
                     >
                       {positioner => (
-                        <Layer positioner={positioner}>#{index}</Layer>
+                        <Layer positioner={positioner} z={3}>
+                          <SVG z={config.groundLevel}>
+                            <Graphic
+                              type="ground"
+                              fill="var(--ground)"
+                              points={baseTile(getSeed(x, y))
+                                .join(" ")
+                                .toString()}
+                            />
+                          </SVG>
+                        </Layer>
                       )}
                     </Positioner>
                   )}
                 </TestEntity>
-              ))}
+              );
+            })}
 
-              <TestEntity>
+            {[...new Array(testEntityCount)].map((nada, index) => (
+              <TestEntity
+                key={index}
+                index={index + 123}
+                x={
+                  random(1, this.counter++) * testEntityRadius -
+                  testEntityRadius / 2
+                }
+                y={
+                  random(1, this.counter++) * testEntityRadius -
+                  testEntityRadius / 2
+                }
+              >
                 {({ state, events }) => (
                   <Positioner
                     state={state}
                     events={events}
                     camera={this.camera}
-                    onChange={this.updateCamera}
-                    distanceCulling={false}
-                    translate={false}
                     loop={loop}
                   >
                     {positioner => (
-                      <div id="playerEntity">
-                        <Layer positioner={positioner}>Player</Layer>
-                      </div>
+                      <Layer positioner={positioner}>#{index}</Layer>
                     )}
                   </Positioner>
                 )}
               </TestEntity>
-            </div>
+            ))}
+
+            <TestEntity>
+              {({ state, events }) => (
+                <Positioner
+                  state={state}
+                  events={events}
+                  camera={this.camera}
+                  onChange={this.updateCamera}
+                  distanceCulling={false}
+                  translate={false}
+                  loop={loop}
+                >
+                  {positioner => (
+                    <div id="playerEntity">
+                      <Layer positioner={positioner}>Player</Layer>
+                    </div>
+                  )}
+                </Positioner>
+              )}
+            </TestEntity>
           </div>
         )}
       </Loop>
