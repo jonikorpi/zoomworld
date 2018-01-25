@@ -36,6 +36,7 @@ body {
 .position {
   position: absolute;
   will-change: transform;
+  backface-visibility: hidden;
   font-size: 0.5rem;
 }
 
