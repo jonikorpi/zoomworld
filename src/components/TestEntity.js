@@ -8,7 +8,7 @@ export default class TestEntity extends React.Component {
     x: 0,
     y: 0,
     angle: 0,
-    moveAround: false,
+    moveAround: true,
   };
 
   constructor(props) {
