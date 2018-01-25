@@ -27,6 +27,15 @@ body {
 .camera {
   --unit: 10vmax;
   position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.origo {
+  position: absolute;
   left: 50vw;
   top: 50vh;
   width: 0;
@@ -35,7 +44,7 @@ body {
 
 .position {
   position: absolute;
-  will-change: transform;
+  /* will-change: transform; */
   backface-visibility: hidden;
   font-size: 0.5rem;
 }
