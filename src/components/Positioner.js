@@ -3,10 +3,8 @@ import React from "react";
 import { angleLerp } from "../utilities/graphics.js";
 import { positionAtTime } from "../utilities/state.js";
 
-class Positioner extends React.Component {
+export default class Positioner extends React.Component {
   static defaultProps = {
-    state: { x: 0, y: 0 },
-    events: [],
     camera: {
       x: 0,
       y: 0,
@@ -20,8 +18,13 @@ class Positioner extends React.Component {
       yPixelUnit: 1,
     },
     distanceCulling: true,
+    state: { x: 0, y: 0, angle: 0 },
+    events: [],
     centered: true,
-    translation: true,
+    translate: true,
+    rotate: true,
+    inverse: false,
+    use3D: true,
   };
 
   currentAngle = 0;
@@ -44,7 +47,10 @@ class Positioner extends React.Component {
       onChange,
       distanceCulling,
       centered,
-      translation,
+      translate,
+      rotate,
+      use3D,
+      inverse,
     } = this.props;
 
     // Reduce events
@@ -72,32 +78,39 @@ class Positioner extends React.Component {
       distanceCulling &&
       (Math.abs(newY) - 2) * camera.yPixelUnit > camera.height / 2 / newScale;
 
+    const x = inverse
+      ? `${-newX * camera.unit}${camera.xUnitType}`
+      : `${newX * camera.unit}${camera.xUnitType}`;
+    const y = inverse
+      ? `${-newY * camera.unit}${camera.yUnitType}`
+      : `${newY * camera.unit}${camera.yUnitType}`;
+    const angle = inverse ? `${-newAngle}rad` : `${newAngle}rad`;
+
+    const centering = centered
+      ? use3D ? "translate3d(-50%, -50%, 0)" : "translate(-50%, -50%)"
+      : "";
+    const scaling = use3D
+      ? `scale3d(${newScale}, ${newScale}, ${newScale})`
+      : `scale(${newScale})`;
+    const transform = translate
+      ? use3D ? `translate3d(${x}, ${y}, 0)` : `translate(${x}, ${y})`
+      : "";
+    const rotation = rotate
+      ? use3D ? `rotateZ(${angle})` : `rotate(${angle})`
+      : "";
+
     // Transform string
-    const transform =
+    const newTransform =
       distanceCulling && (outsideX || outsideY)
         ? "scale(0)"
-        : `
-            ${centered ? "translate3d(-50%, -50%, 0)" : ""}
-            scale(${newScale})
-            ${
-              translation
-                ? `translate3d(${newX * camera.unit}${
-                    camera.xUnitType
-                  }, ${newY * camera.unit}${camera.yUnitType}, 0)`
-                : ""
-            }
-            translateY(calc(var(--z) * var(--yUnit) * -0.0382))
-            rotate(${newAngle}rad)
-          `;
-    // translateY(calc(var(--z) * (0.5vmin - 1vw)))
-    // translateY(calc(var(--z) * var(--yUnit) * -0.0382))
+        : `${centering}${scaling}${transform}${rotation}`;
 
     // Update transforms
-    const changed = transform !== this.currentTransform;
+    const changed = newTransform !== this.currentTransform;
 
     if (changed && this.subscribers.length > 0) {
-      this.updateTransforms(transform);
-      this.currentTransform = transform;
+      this.updateTransforms(newTransform);
+      this.currentTransform = newTransform;
     }
 
     // Callback
@@ -119,5 +132,3 @@ class Positioner extends React.Component {
     return this.props.children(this);
   }
 }
-
-export default Positioner;

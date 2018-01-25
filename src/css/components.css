@@ -1,10 +1,10 @@
 html,
 body {
+  width: 100vw;
+  height: 300vh;
 }
 
 #root {
-  overflow: hidden;
-  height: 300vh;
 }
 
 #log {
@@ -28,19 +28,22 @@ body {
   position: fixed;
   left: 50vw;
   top: 50vh;
-  perspective: none;
   width: 0;
   height: 0;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .layer {
   will-change: transform;
   backface-visibility: hidden;
+  /* transform-style: preserve-3d; */
   position: absolute;
 }
 
 #playerEntity {
   position: absolute;
+  font-weight: bold;
 }
 
 .svgContainer {

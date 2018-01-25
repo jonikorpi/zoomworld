@@ -1,4 +1,4 @@
-import { easing } from "../utilities/graphics.js";
+import { easing, angleLerp } from "../utilities/graphics.js";
 
 const positionAtTime = (now, state, events) =>
   events.reduce(
@@ -23,6 +23,9 @@ const stateAtTime = (now, state, events) =>
     { ...state, angle: 0 }
   );
 
+const findLastEventEndingTime = (end, { time, duration }) =>
+  time + duration > end ? time + duration : end;
+
 const mergeImpulse = (finalState, now, type, time, duration, data) => {
   const { x, y, speed } = data;
   const elapsed = now - time;
@@ -36,4 +39,4 @@ const mergeImpulse = (finalState, now, type, time, duration, data) => {
   };
 };
 
-export { positionAtTime, stateAtTime };
+export { positionAtTime, stateAtTime, findLastEventEndingTime };
