@@ -9,7 +9,7 @@ import { random } from "../utilities/graphics.js";
 const testTileRadius = 500;
 const testEntityRadius = 100;
 const testTileCount = 100;
-const testEntityCount = 200;
+const testEntityCount = 150;
 
 export default class World extends React.PureComponent {
   static defaultProps = {

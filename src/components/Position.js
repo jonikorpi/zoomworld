@@ -79,18 +79,24 @@ class Position extends React.Component {
     this.animations.forEach(animation => animation.cancel());
     this.animations = [];
 
-    const animation = this.element.animate(keyframes, {
-      duration: end - now,
-      easing: "linear",
-      fill: "both",
-    });
+    if (end === now) {
+      // Set an inline style for things that aren't moving
+      this.element.style.setProperty("transform", keyframes[0].transform);
+    } else {
+      // And animate things that are
+      const animation = this.element.animate(keyframes, {
+        duration: end - now,
+        easing: "linear",
+        fill: "both",
+      });
 
-    // Important: set a starting time for the animation.
-    // Otherwise it'll go out of sync with game logic.
-    animation.startTime = now - performance.timing.navigationStart;
+      // Important: set a starting time for the animation.
+      // Otherwise it'll go out of sync with game logic.
+      animation.startTime = now - performance.timing.navigationStart;
 
-    // Save animation so it can be cancelled later
-    this.animations.push(animation);
+      // Save animation so it can be cancelled later
+      this.animations.push(animation);
+    }
   };
 
   render() {

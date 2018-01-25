@@ -42,10 +42,15 @@ body {
   height: 0;
 }
 
+.origo,
+.position {
+  /* will-change: transform; */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
 .position {
   position: absolute;
-  /* will-change: transform; */
-  backface-visibility: hidden;
   font-size: 0.5rem;
 }
 

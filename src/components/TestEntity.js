@@ -8,7 +8,7 @@ export default class TestEntity extends React.Component {
     x: 0,
     y: 0,
     angle: 0,
-    moveAround: true,
+    moveAround: false,
   };
 
   constructor(props) {
@@ -60,9 +60,9 @@ export default class TestEntity extends React.Component {
   componentDidMount() {
     if (this.props.moveAround) {
       this.counter = this.props.index || 123;
-      this.timer = setInterval(
+      this.timer = window.setInterval(
         this.addEvent,
-        1000 + random(1, this.counter++) * 5000
+        2000 + random(1, this.counter++) * 10000
       );
     }
   }
