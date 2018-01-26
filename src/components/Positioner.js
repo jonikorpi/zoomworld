@@ -103,7 +103,7 @@ export default class Positioner extends React.Component {
     // Transform string
     const newTransform =
       distanceCulling && (outsideX || outsideY)
-        ? `${centering}scale3d(0,0,0)${transform}${rotation}`
+        ? `scale3d(0,0,0)`
         : `${centering}${scaling}${transform}${rotation}`;
 
     // Update transforms
