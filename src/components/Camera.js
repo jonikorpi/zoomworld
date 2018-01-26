@@ -10,10 +10,10 @@ import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 
-const testTileRadius = 62;
+const testTileRadius = 100;
 const testEntityRadius = 10;
 const testTileCount = 75;
-const testEntityCount = 200;
+const testEntityCount = 300;
 
 const unit = 38.2;
 const xUnitType = "vmin";
