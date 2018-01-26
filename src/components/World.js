@@ -9,7 +9,7 @@ import { random } from "../utilities/graphics.js";
 const testTileRadius = 1000;
 const testEntityRadius = 200;
 const testTileCount = 75;
-const testEntityCount = 300;
+const testEntityCount = 400;
 
 export default class World extends React.PureComponent {
   static defaultProps = {
@@ -31,8 +31,8 @@ export default class World extends React.PureComponent {
             <TestEntity
               index={index + 134}
               key={index}
-              x={x}
-              y={y}
+              x={x + 0.25}
+              y={y + 0.25}
               moveAround={false}
             >
               {({ state, events }) => (

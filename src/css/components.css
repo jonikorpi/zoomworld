@@ -1,7 +1,7 @@
 html,
 body {
-  width: 100vw;
-  height: 300vh;
+  width: 500vw;
+  height: 500vh;
 }
 
 #root {
@@ -25,33 +25,19 @@ body {
 }
 
 .camera {
-  --unit: 38.2vmax;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.origo {
   position: absolute;
-  left: 50vw;
-  top: 50vh;
-  width: 0;
-  height: 0;
-}
-
-.origo,
-.position {
-  /* will-change: transform; */
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
+  left: 250vw;
+  top: 250vh;
+  --unit: 38.2vmin;
 }
 
 .position {
   position: absolute;
   font-size: 0.5rem;
+  visibility: visible;
+  contain: content;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 #playerEntity {
@@ -60,17 +46,22 @@ body {
 
 .svgContainer {
   position: absolute;
-  left: calc(var(--tileCanvasMultiplier) * 100% / -4);
-  top: calc(var(--tileCanvasMultiplier) * 100% / -4);
-  width: calc(var(--tileCanvasMultiplier) * var(--unit) * var(--width));
-  height: calc(var(--tileCanvasMultiplier) * var(--unit) * var(--height));
-  z-index: var(--z);
+  left: 0;
+  top: 0;
+  width: calc(var(--tileCanvasMultiplier) * var(--width) * var(--unit));
+  height: calc(var(--tileCanvasMultiplier) * var(--height) * var(--unit));
+  /* z-index: var(--z); */
+  /* outline: 1px solid; */
+}
+
+.svgContainer:first-child {
+  position: static;
 }
 
 .svg {
   position: absolute;
   left: 0;
-  top: calc(var(--z) * var(--unit) / -20);
+  top: calc(var(--z) * var(--unit) / -1);
   width: 100%;
   height: 100%;
 }
