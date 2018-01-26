@@ -101,8 +101,8 @@ class Camera extends React.Component {
                 <TestEntity
                   index={index + 134}
                   key={index}
-                  x={x}
-                  y={y}
+                  x={x + 0.25}
+                  y={y + 0.25}
                   moveAround={false}
                 >
                   {({ state, events }) => (
@@ -110,7 +110,6 @@ class Camera extends React.Component {
                       state={state}
                       events={events}
                       camera={this.camera}
-                      centered={false}
                       loop={loop}
                     >
                       {positioner => (

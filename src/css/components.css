@@ -30,26 +30,24 @@ body {
   top: 50vh;
   width: 0;
   height: 0;
+  /* transform-style: preserve-3d; */
+  visibility: hidden;
 }
 
 .layer {
+  contain: content;
+  visibility: visible;
   will-change: transform;
   backface-visibility: hidden;
   /* transform-style: preserve-3d; */
   position: absolute;
-  left: 0;
-  top: 0;
 }
 
 #playerEntity {
-  position: absolute;
   font-weight: bold;
 }
 
 .svgContainer {
-  position: absolute;
-  left: calc(var(--tileCanvasMultiplier) * 100% / -4);
-  top: calc(var(--tileCanvasMultiplier) * 100% / -4);
   width: calc(var(--tileCanvasMultiplier) * var(--width) * var(--xUnit));
   height: calc(var(--tileCanvasMultiplier) * var(--height) * var(--yUnit));
   /* z-index: var(--z); */

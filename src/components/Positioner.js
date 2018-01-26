@@ -20,11 +20,10 @@ export default class Positioner extends React.Component {
     distanceCulling: true,
     state: { x: 0, y: 0, angle: 0 },
     events: [],
-    centered: true,
     translate: true,
     rotate: true,
     inverse: false,
-    use3D: true,
+    use3D: false,
   };
 
   currentAngle = 0;
@@ -46,7 +45,6 @@ export default class Positioner extends React.Component {
       camera,
       onChange,
       distanceCulling,
-      centered,
       translate,
       rotate,
       use3D,
@@ -87,9 +85,9 @@ export default class Positioner extends React.Component {
       : `${newY * camera.unit}${camera.yUnitType}`;
     const angle = inverse ? `${-newAngle}rad` : `${newAngle}rad`;
 
-    const centering = centered
-      ? use3D ? "translate3d(-50%, -50%, 0)" : "translate(-50%, -50%)"
-      : "";
+    const centering = use3D
+      ? "translate3d(-50%, -50%, 0)"
+      : "translate(-50%, -50%)";
     const scaling = use3D
       ? `scale3d(${newScale}, ${newScale}, ${newScale})`
       : `scale(${newScale})`;
