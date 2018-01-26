@@ -6,8 +6,8 @@ import Tile from "../components/Tile";
 
 import { random } from "../utilities/graphics.js";
 
-const testTileRadius = 100;
-const testEntityRadius = 10;
+const testTileRadius = 1000;
+const testEntityRadius = 200;
 const testTileCount = 75;
 const testEntityCount = 300;
 
