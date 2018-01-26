@@ -52,7 +52,7 @@ body {
   top: calc(var(--tileCanvasMultiplier) * 100% / -4);
   width: calc(var(--tileCanvasMultiplier) * var(--width) * var(--xUnit));
   height: calc(var(--tileCanvasMultiplier) * var(--height) * var(--yUnit));
-  z-index: var(--z);
+  /* z-index: var(--z); */
   /* outline: 1px solid; */
 }
 
