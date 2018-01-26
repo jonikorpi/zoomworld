@@ -10,7 +10,7 @@ import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 
-const testTileRadius = 100;
+const testTileRadius = 50;
 const testEntityRadius = 10;
 const testTileCount = 75;
 const testEntityCount = 300;
