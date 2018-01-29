@@ -22,8 +22,9 @@ export default class Positioner extends React.Component {
     events: [],
     translate: true,
     rotate: true,
+    scale: false,
     inverse: false,
-    use3D: false,
+    use3D: true,
   };
 
   currentAngle = 0;
@@ -47,6 +48,7 @@ export default class Positioner extends React.Component {
       distanceCulling,
       translate,
       rotate,
+      scale,
       use3D,
       inverse,
     } = this.props;
@@ -78,19 +80,21 @@ export default class Positioner extends React.Component {
         camera.height / 2 / newScale;
 
     const x = inverse
-      ? `${-newX * camera.unit}${camera.xUnitType}`
-      : `${newX * camera.unit}${camera.xUnitType}`;
+      ? `${-actualState.x * camera.unit}${camera.xUnitType}`
+      : `${actualState.x * camera.unit}${camera.xUnitType}`;
     const y = inverse
-      ? `${-newY * camera.unit}${camera.yUnitType}`
-      : `${newY * camera.unit}${camera.yUnitType}`;
+      ? `${-actualState.y * camera.unit}${camera.yUnitType}`
+      : `${actualState.y * camera.unit}${camera.yUnitType}`;
     const angle = inverse ? `${-newAngle}rad` : `${newAngle}rad`;
 
     const centering = use3D
       ? "translate3d(-50%, -50%, 0)"
       : "translate(-50%, -50%)";
-    const scaling = use3D
-      ? `scale3d(${newScale}, ${newScale}, ${newScale})`
-      : `scale(${newScale})`;
+    const scaling = scale
+      ? use3D
+        ? `scale3d(${newScale}, ${newScale}, ${newScale})`
+        : `scale(${newScale})`
+      : "";
     const transform = translate
       ? use3D
         ? `translate3d(${x}, calc(${y} - var(--z) * ${camera.unit / 200}${

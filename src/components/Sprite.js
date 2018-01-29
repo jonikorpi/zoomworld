@@ -1,10 +1,7 @@
 import React from "react";
+import { createPortal } from "react-dom";
 
-export default class Layer extends React.Component {
-  static defaultProps = {
-    z: 0,
-  };
-
+export default class Sprite extends React.Component {
   componentDidMount() {
     this.props.positioner.subscribe(this.updateTransform);
   }
@@ -17,21 +14,16 @@ export default class Layer extends React.Component {
     this.element.style.setProperty("transform", transform);
 
   render() {
-    return (
+    return createPortal(
       <div
-        className="layerContainer"
+        className="sprite"
         ref={element => {
           this.element = element;
         }}
       >
-        <div
-          id={`layer-${this.props.z}`}
-          className="layer"
-          style={{ "--z": this.props.z }}
-        >
-          {this.props.children}
-        </div>
-      </div>
+        {this.props.children}
+      </div>,
+      document.getElementById("layer-" + this.props.layer || 0)
     );
   }
 }

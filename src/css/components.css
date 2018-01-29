@@ -25,36 +25,31 @@ body {
 }
 
 .camera {
+}
+
+.layerContainer {
   position: fixed;
   left: 50vw;
   top: 50vh;
   width: 0;
   height: 0;
-  /* transform-style: preserve-3d; */
-  visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 .layer {
+  position: absolute;
+  top: calc(var(--z) * var(--yUnit) * -0.01);
+  transform-style: preserve-3d;
+}
+
+.sprite {
   contain: content;
-  visibility: visible;
   will-change: transform;
   backface-visibility: hidden;
-  /* transform-style: preserve-3d; */
+  transform-style: preserve-3d;
   position: absolute;
   z-index: var(--z);
   color: var(--black);
-}
-
-.layer + .layer {
-  color: var(--danger);
-}
-
-.layer + .layer + .layer {
-  color: var(--white);
-}
-
-#playerEntity {
-  font-weight: bold;
 }
 
 .svgContainer {

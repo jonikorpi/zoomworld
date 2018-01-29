@@ -20,7 +20,7 @@ class Zoomer extends React.Component {
 
     const currentScale = camera.scale;
     const height = document.documentElement.clientHeight;
-    const scrolled = window.pageYOffset;
+    const scrolled = Math.floor(window.pageYOffset);
     const newScale =
       1 - scrolled / height + (1 - minimum) * (scrolled / height);
 
