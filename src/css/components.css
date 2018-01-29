@@ -41,6 +41,16 @@ body {
   backface-visibility: hidden;
   /* transform-style: preserve-3d; */
   position: absolute;
+  z-index: var(--z);
+  color: var(--black);
+}
+
+.layer + .layer {
+  color: var(--danger);
+}
+
+.layer + .layer + .layer {
+  color: var(--white);
 }
 
 #playerEntity {

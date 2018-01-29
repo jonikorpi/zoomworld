@@ -92,8 +92,16 @@ export default class Positioner extends React.Component {
       ? `scale3d(${newScale}, ${newScale}, ${newScale})`
       : `scale(${newScale})`;
     const transform = translate
-      ? use3D ? `translate3d(${x}, ${y}, 0)` : `translate(${x}, ${y})`
-      : "";
+      ? use3D
+        ? `translate3d(${x}, calc(${y} - var(--z) * ${camera.unit / 200}${
+            camera.xUnitType
+          }), 0)`
+        : `translate(${x}, calc(${y} - var(--z) * ${camera.unit / 200}${
+            camera.xUnitType
+          }))`
+      : `translate3d(0, calc(var(--z) * -${camera.unit / 200}${
+          camera.xUnitType
+        }), 0)`;
     const rotation = rotate
       ? use3D ? `rotateZ(${angle})` : `rotate(${angle})`
       : "";

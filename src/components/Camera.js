@@ -113,17 +113,29 @@ class Camera extends React.Component {
                       loop={loop}
                     >
                       {positioner => (
-                        <Layer positioner={positioner} z={3}>
-                          <SVG z={config.groundLevel}>
-                            <Graphic
-                              type="ground"
-                              fill="var(--ground)"
-                              points={baseTile(getSeed(x, y))
-                                .join(" ")
-                                .toString()}
-                            />
-                          </SVG>
-                        </Layer>
+                        <React.Fragment>
+                          <Layer positioner={positioner}>
+                            <SVG>
+                              <Graphic
+                                type="waterLine"
+                                points={baseTile(getSeed(x, y))
+                                  .join(" ")
+                                  .toString()}
+                              />
+                            </SVG>
+                          </Layer>
+                          <Layer positioner={positioner} z={3}>
+                            <SVG>
+                              <Graphic
+                                type="ground"
+                                fill="var(--ground)"
+                                points={baseTile(getSeed(x, y))
+                                  .join(" ")
+                                  .toString()}
+                              />
+                            </SVG>
+                          </Layer>
+                        </React.Fragment>
                       )}
                     </Positioner>
                   )}
@@ -152,7 +164,15 @@ class Camera extends React.Component {
                     loop={loop}
                   >
                     {positioner => (
-                      <Layer positioner={positioner}>#{index}</Layer>
+                      <div>
+                        <Layer positioner={positioner}>#{index}</Layer>
+                        <Layer positioner={positioner} z={2}>
+                          #{index}
+                        </Layer>
+                        <Layer positioner={positioner} z={3}>
+                          #{index}
+                        </Layer>
+                      </div>
                     )}
                   </Positioner>
                 )}
@@ -173,6 +193,12 @@ class Camera extends React.Component {
                   {positioner => (
                     <div id="playerEntity">
                       <Layer positioner={positioner}>Player</Layer>
+                      <Layer positioner={positioner} z={2}>
+                        Player
+                      </Layer>
+                      <Layer positioner={positioner} z={3}>
+                        Player
+                      </Layer>
                     </div>
                   )}
                 </Positioner>

@@ -5,12 +5,11 @@ import { config } from "../utilities/graphics.js";
 const tileWidth = config.tileSize * config.tileCanvasMultiplier;
 const viewBox = `-${tileWidth / 2} -${tileWidth / 2} ${tileWidth} ${tileWidth}`;
 
-const SVG = ({ children, z }) => {
+const SVG = ({ children }) => {
   return (
     <div
       className="svgContainer"
       style={{
-        zIndex: z || config.waterLevel,
         "--tileCanvasMultiplier": config.tileCanvasMultiplier,
         "--width": 1,
         "--height": 1,
