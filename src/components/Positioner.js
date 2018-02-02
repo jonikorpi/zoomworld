@@ -8,7 +8,7 @@ export default class Positioner extends React.Component {
     camera: {
       x: 0,
       y: 0,
-      scale: 1,
+      angle: 0,
       width: window.innerWidth,
       height: window.innerHeight,
       unit: 1,
@@ -55,9 +55,17 @@ export default class Positioner extends React.Component {
     const actualState = positionAtTime(now, state, events);
 
     // New position
-    const newX = actualState.x - camera.x;
-    const newY = actualState.y - camera.y;
-    const newScale = camera.scale;
+    // const newX = actualState.x - camera.x;
+    // const newY = actualState.y - camera.y;
+
+    const newX =
+      Math.cos(camera.angle) * (actualState.x - camera.x) -
+      Math.sin(camera.angle) * (actualState.y - camera.y);
+
+    // Math.cos(angle) * (point.x - center.x) - Math.sin(angle) * (point.y-center.y) + center.x;
+    const newY =
+      Math.sin(camera.angle) * (actualState.x - camera.x) +
+      Math.cos(camera.angle) * (actualState.y - camera.y);
 
     // New angle
     const nextAngle = actualState.angle;
@@ -67,15 +75,16 @@ export default class Positioner extends React.Component {
     //     : this.currentAngle;
     const newAngle = angleLerp(this.currentAngle, nextAngle, 0.091);
     this.currentAngle = newAngle;
+    const actualAngle = newAngle + camera.angle;
 
     // Distance culling
-    const outsideX =
-      distanceCulling &&
-      (Math.abs(newX) - 1.75) * camera.xPixelUnit > camera.width / 2 / newScale;
-    const outsideY =
-      distanceCulling &&
-      (Math.abs(newY) - 1.75) * camera.yPixelUnit >
-        camera.height / 2 / newScale;
+    // const outsideX =
+    //   distanceCulling &&
+    //   (Math.abs(newX) - 1.75) * camera.xPixelUnit > camera.width / 2 / newScale;
+    // const outsideY =
+    //   distanceCulling &&
+    //   (Math.abs(newY) - 1.75) * camera.yPixelUnit >
+    //     camera.height / 2 / newScale;
 
     const x = inverse
       ? `${-newX * camera.unit}${camera.xUnitType}`
@@ -83,14 +92,15 @@ export default class Positioner extends React.Component {
     const y = inverse
       ? `${-newY * camera.unit}${camera.yUnitType}`
       : `${newY * camera.unit}${camera.yUnitType}`;
-    const angle = inverse ? `${-newAngle}rad` : `${newAngle}rad`;
+    const angle = inverse ? `${-actualAngle}rad` : `${actualAngle}rad`;
 
     const centering = use3D
       ? "translate3d(-50%, -50%, 0)"
       : "translate(-50%, -50%)";
-    const scaling = use3D
-      ? `scale3d(${newScale}, ${newScale}, ${newScale})`
-      : `scale(${newScale})`;
+    const scaling = "";
+    // const scaling = use3D
+    //   ? `scale3d(${newScale}, ${newScale}, ${newScale})`
+    //   : `scale(${newScale})`;
     const transform = translate
       ? use3D
         ? `translate3d(${x}, calc(${y} - var(--z) * ${camera.unit / 200}${
@@ -108,9 +118,9 @@ export default class Positioner extends React.Component {
 
     // Transform string
     const newTransform =
-      distanceCulling && (outsideX || outsideY)
-        ? `scale3d(0,0,0)`
-        : `${centering}${scaling}${transform}${rotation}`;
+      // distanceCulling && (outsideX || outsideY)
+      //   ? `scale3d(0,0,0)` :
+      `${centering}${scaling}${transform}${rotation}`;
 
     // Update transforms
     const changed = newTransform !== this.currentTransform;

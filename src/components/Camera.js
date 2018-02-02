@@ -1,7 +1,7 @@
 import React from "react";
 
 import Loop from "../components/Loop";
-import Zoomer from "../components/Zoomer";
+import Scroller from "../components/Scroller";
 import Positioner from "../components/Positioner";
 import Layer from "../components/Layer";
 import TestEntity from "../components/TestEntity";
@@ -42,7 +42,7 @@ class Camera extends React.Component {
   camera = {
     x: 0,
     y: 0,
-    scale: 1,
+    angle: 0,
     width: window.innerWidth,
     height: window.innerHeight,
     unit: unit,
@@ -70,14 +70,12 @@ class Camera extends React.Component {
     this.camera.yPixelUnit = computeUnit(yUnitType) * unit;
   };
 
-  updateCamera = (x, y) => {
+  updateCameraPosition = (x, y) => {
     this.camera.x = x;
     this.camera.y = y;
   };
 
-  updateScale = scale => {
-    this.camera.scale = scale;
-  };
+  updateCameraAngle = angle => (this.camera.angle = angle);
 
   render() {
     return (
@@ -90,7 +88,8 @@ class Camera extends React.Component {
               "--yUnit": `${unit}${yUnitType}`,
             }}
           >
-            <Zoomer onChange={this.updateScale} loop={loop} />
+            <Scroller onChange={this.updateCameraAngle} loop={loop} />
+
             {[...new Array(testTileCount)].map((nada, index) => {
               const x =
                 random(1, this.counter++) * testTileRadius - testTileRadius / 2;
@@ -185,7 +184,7 @@ class Camera extends React.Component {
                   state={state}
                   events={events}
                   camera={this.camera}
-                  onChange={this.updateCamera}
+                  onChange={this.updateCameraPosition}
                   distanceCulling={false}
                   translate={false}
                   loop={loop}
