@@ -56,10 +56,12 @@ class Scroller extends React.Component {
 
     const { x, y } = positionAtTime(now, state, events);
 
-    window.scroll(
-      1000 / 2 * this.vmax + x * this.vmax * 9 - this.xOffset,
-      1000 / 2 * this.vmax + y * this.vmax * 9 - this.yOffset
-    );
+    const scrollLeft = 1000 / 2 * this.vmax + x * this.vmax * 9 - this.xOffset;
+    const scrollTop = 1000 / 2 * this.vmax + y * this.vmax * 9 - this.yOffset;
+
+    if (window.scrollX !== scrollLeft || window.scrollY !== scrollTop) {
+      window.scroll(scrollLeft, scrollTop);
+    }
 
     this.loopID = window.requestAnimationFrame(this.loop);
   };

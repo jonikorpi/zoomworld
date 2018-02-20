@@ -14,7 +14,7 @@ class Position extends React.Component {
 
   animations = [];
 
-  createKeyframe = keyframe => {
+  createTransform = keyframe => {
     const { centered, translate, rotate } = this.props;
     const x = `${keyframe.x * 9}vmax`;
     const y = `${keyframe.y * 9}vmax`;
@@ -43,7 +43,7 @@ class Position extends React.Component {
     // Calculate entity position at each keyframe
     let intermediateStates = [];
 
-    for (let index = 0; index < amountOfIntermediateStates; index++) {
+    for (let index = 1; index < amountOfIntermediateStates; index++) {
       intermediateStates.push(
         positionAtTime(now + index * resolution, state, events)
       );
@@ -55,7 +55,7 @@ class Position extends React.Component {
       positionAtTime(end, state, events),
     ];
 
-    const transforms = states.map(this.createKeyframe);
+    const transforms = states.map(this.createTransform);
 
     // Cancel all current animations since we're starting anew
     this.animations.forEach(animation => animation.cancel());
