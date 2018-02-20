@@ -35,7 +35,7 @@ class Scroller extends React.Component {
 
   start = () => {
     if (!this.loopID) {
-      this.loop();
+      this.loop(performance.now());
     }
   };
 
@@ -50,16 +50,17 @@ class Scroller extends React.Component {
     const { state, events } = this.props;
 
     // Game logic happens slightly in the past to hide lag
-    const now = timestamp
-      ? performance.timing.navigationStart + timestamp - 200
-      : Date.now() - 200;
+    const now = performance.timing.navigationStart + timestamp - 200;
 
     const { x, y } = positionAtTime(now, state, events);
 
     const scrollLeft = 1000 / 2 * this.vmax + x * this.vmax * 9 - this.xOffset;
     const scrollTop = 1000 / 2 * this.vmax + y * this.vmax * 9 - this.yOffset;
 
-    if (window.scrollX !== scrollLeft || window.scrollY !== scrollTop) {
+    if (
+      window.scrollX !== Math.floor(scrollLeft) ||
+      window.scrollY !== Math.floor(scrollTop)
+    ) {
       window.scroll(scrollLeft, scrollTop);
     }
 
