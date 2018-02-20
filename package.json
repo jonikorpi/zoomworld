@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "firebase": "^4.8.0",
+    "firebase": "^4.10.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-firebase": "^2.2.8",
     "react-loadable": "^5.3.1",
-    "react-scripts": "1.0.17",
-    "serve": "^6.4.8",
+    "react-scripts": "1.1.1",
+    "serve": "^6.4.11",
     "source-map-explorer": "^1.5.0",
     "uuid": "^3.1.0"
   },

@@ -1,9 +1,8 @@
 import React from "react";
 
-import Loop from "../components/Loop";
-import Zoomer from "../components/Zoomer";
-import Positioner from "../components/Positioner";
-import Layer from "../components/Layer";
+import World from "../components/World";
+import Position from "../components/Position";
+import Scroller from "../components/Scroller";
 import TestEntity from "../components/TestEntity";
 import SVG from "../components/SVG";
 import Graphic from "../components/Graphic";
@@ -54,159 +53,24 @@ class Camera extends React.Component {
 
   counter = 123;
 
-  componentDidMount() {
-    this.updateViewport();
-    window.addEventListener("resize", this.updateViewport);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateViewport);
-  }
-
-  updateViewport = () => {
-    this.camera.width = window.innerWidth;
-    this.camera.height = window.innerHeight;
-    this.camera.xPixelUnit = computeUnit(xUnitType) * unit;
-    this.camera.yPixelUnit = computeUnit(yUnitType) * unit;
-  };
-
-  updateCamera = (x, y) => {
-    this.camera.x = x;
-    this.camera.y = y;
-  };
-
-  updateScale = scale => {
-    this.camera.scale = scale;
-  };
-
   render() {
     return (
-      <Loop>
-        {loop => (
-          <div
-            className="camera"
-            style={{
-              "--xUnit": `${unit}${xUnitType}`,
-              "--yUnit": `${unit}${yUnitType}`,
-            }}
-          >
-            <Zoomer onChange={this.updateScale} loop={loop} />
-            {[...new Array(testTileCount)].map((nada, index) => {
-              const x =
-                random(1, this.counter++) * testTileRadius - testTileRadius / 2;
-              const y =
-                random(1, this.counter++) * testTileRadius - testTileRadius / 2;
+      <div className="camera">
+        <World {...this.props} />
 
-              return (
-                <TestEntity
-                  index={index + 134}
-                  key={index}
-                  x={x + 0.25}
-                  y={y + 0.25}
-                  moveAround={false}
-                >
-                  {({ state, events }) => (
-                    <Positioner
-                      state={state}
-                      events={events}
-                      camera={this.camera}
-                      loop={loop}
-                    >
-                      {positioner => (
-                        <React.Fragment>
-                          <Layer positioner={positioner}>
-                            <SVG>
-                              <Graphic
-                                type="waterLine"
-                                points={baseTile(getSeed(x, y))
-                                  .join(" ")
-                                  .toString()}
-                              />
-                            </SVG>
-                          </Layer>
-                          <Layer positioner={positioner} z={3}>
-                            <SVG>
-                              <Graphic
-                                type="ground"
-                                fill="var(--ground)"
-                                points={baseTile(getSeed(x, y))
-                                  .join(" ")
-                                  .toString()}
-                              />
-                            </SVG>
-                          </Layer>
-                        </React.Fragment>
-                      )}
-                    </Positioner>
-                  )}
-                </TestEntity>
-              );
-            })}
-
-            {[...new Array(testEntityCount)].map((nada, index) => (
-              <TestEntity
-                key={index}
-                index={index + 123}
-                x={
-                  random(1, this.counter++) * testEntityRadius -
-                  testEntityRadius / 2
-                }
-                y={
-                  random(1, this.counter++) * testEntityRadius -
-                  testEntityRadius / 2
-                }
-              >
-                {({ state, events }) => (
-                  <Positioner
-                    state={state}
-                    events={events}
-                    camera={this.camera}
-                    loop={loop}
-                  >
-                    {positioner => (
-                      <div>
-                        <Layer positioner={positioner}>#{index}</Layer>
-                        <Layer positioner={positioner} z={2}>
-                          #{index}
-                        </Layer>
-                        <Layer positioner={positioner} z={3}>
-                          #{index}
-                        </Layer>
-                      </div>
-                    )}
-                  </Positioner>
-                )}
-              </TestEntity>
-            ))}
-
-            <TestEntity>
-              {({ state, events }) => (
-                <Positioner
-                  state={state}
-                  events={events}
-                  camera={this.camera}
-                  onChange={this.updateCamera}
-                  distanceCulling={false}
-                  translate={false}
-                  loop={loop}
-                >
-                  {positioner => (
-                    <div id="playerEntity">
-                      <Layer positioner={positioner}>Player</Layer>
-                      <Layer positioner={positioner} z={2}>
-                        Player
-                      </Layer>
-                      <Layer positioner={positioner} z={3}>
-                        Player
-                      </Layer>
-                    </div>
-                  )}
-                </Positioner>
-              )}
-            </TestEntity>
-          </div>
-        )}
-      </Loop>
+        <TestEntity moveAround={true}>
+          {({ state, events }) => (
+            <React.Fragment>
+              <div id="playerEntity">
+                <Position state={state} events={events} translate={false}>
+                  Player
+                </Position>
+              </div>
+              <Scroller state={state} events={events} />
+            </React.Fragment>
+          )}
+        </TestEntity>
+      </div>
     );
   }
 }
