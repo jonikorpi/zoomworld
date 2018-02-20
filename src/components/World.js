@@ -6,10 +6,10 @@ import Tile from "../components/Tile";
 
 import { random } from "../utilities/graphics.js";
 
-const testTileRadius = 1000;
-const testEntityRadius = 200;
+const testTileRadius = 30;
+const testEntityRadius = 30;
 const testTileCount = 75;
-const testEntityCount = 400;
+const testEntityCount = 200;
 
 export default class World extends React.PureComponent {
   static defaultProps = {

@@ -2,6 +2,7 @@ import React from "react";
 
 import World from "../components/World";
 import Position from "../components/Position";
+import Scroller from "../components/Scroller";
 import TestEntity from "../components/TestEntity";
 
 class Camera extends React.Component {
@@ -18,9 +19,14 @@ class Camera extends React.Component {
 
         <TestEntity moveAround={true}>
           {({ state, events }) => (
-            <Position state={state} events={events}>
-              <div id="playerEntity">Player</div>
-            </Position>
+            <React.Fragment>
+              <div id="playerEntity">
+                <Position state={state} events={events} translate={false}>
+                  Player
+                </Position>
+              </div>
+              <Scroller state={state} events={events} />
+            </React.Fragment>
           )}
         </TestEntity>
       </div>

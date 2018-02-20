@@ -50,7 +50,7 @@ export default class TestEntity extends React.Component {
           data: {
             x: random(1, this.counter++) * 2 - 1,
             y: random(1, this.counter++) * 2 - 1,
-            speed: 100,
+            speed: 3,
           },
         },
       ],

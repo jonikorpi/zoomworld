@@ -1,7 +1,7 @@
 html,
 body {
-  width: 500vw;
-  height: 500vh;
+  width: 1000vmax;
+  height: 1000vmax;
 }
 
 #root {
@@ -26,9 +26,9 @@ body {
 
 .camera {
   position: absolute;
-  left: 250vw;
-  top: 250vh;
-  --unit: 38.2vmin;
+  left: 500vmax;
+  top: 500vmax;
+  --unit: 9vmax;
 }
 
 .position {
@@ -42,6 +42,9 @@ body {
 
 #playerEntity {
   font-weight: bold;
+  position: fixed;
+  left: 50vw;
+  top: 50vh;
 }
 
 .svgContainer {

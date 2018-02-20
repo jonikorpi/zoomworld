@@ -10,40 +10,22 @@ class Position extends React.Component {
     centered: true,
     translate: true,
     rotate: true,
-    inverse: false,
-    use3D: true,
   };
 
   animations = [];
 
   createKeyframe = keyframe => {
-    const { centered, translate, rotate, use3D, inverse } = this.props;
-    const x = inverse ? `${-keyframe.x}vmin` : `${keyframe.x}vmin`;
-    const y = inverse ? `${-keyframe.y}vmin` : `${keyframe.y}vmin`;
-    const angle = inverse ? `${-keyframe.angle}rad` : `${keyframe.angle}rad`;
+    const { centered, translate, rotate } = this.props;
+    const x = `${keyframe.x * 9}vmax`;
+    const y = `${keyframe.y * 9}vmax`;
+    const angle = `${keyframe.angle}rad`;
 
-    const centering = centered
-      ? use3D ? "translate3d(-50%, -50%, 0)" : "translate(-50%, -50%)"
-      : "";
-    const transform = translate
-      ? use3D ? `translate3d(${x}, ${y}, 0)` : `translate(${x}, ${y})`
-      : "";
-    const rotation = rotate
-      ? use3D ? `rotateZ(${angle})` : `rotate(${angle})`
-      : "";
+    const centering = centered ? "translate(-50%, -50%)" : "";
+    const transform = translate ? `translate3d(${x}, ${y}, 0)` : "";
+    const rotation = rotate ? `rotate(${angle})` : "";
 
-    return {
-      transform: `${centering}${transform}${rotation}`,
-    };
+    return `${centering}${transform}${rotation}`;
   };
-
-  componentDidMount() {
-    this.addAnimations();
-  }
-
-  componentDidUpdate() {
-    this.addAnimations();
-  }
 
   addAnimations = () => {
     const { state, events } = this.props;
@@ -73,7 +55,7 @@ class Position extends React.Component {
       positionAtTime(end, state, events),
     ];
 
-    const keyframes = states.map(this.createKeyframe);
+    const transforms = states.map(this.createKeyframe);
 
     // Cancel all current animations since we're starting anew
     this.animations.forEach(animation => animation.cancel());
@@ -81,14 +63,19 @@ class Position extends React.Component {
 
     if (end === now) {
       // Set an inline style for things that aren't moving
-      this.element.style.setProperty("transform", keyframes[0].transform);
+      this.element.style.setProperty("transform", transforms[0]);
     } else {
       // And animate things that are
-      const animation = this.element.animate(keyframes, {
-        duration: end - now,
-        easing: "linear",
-        fill: "both",
-      });
+      const animation = this.element.animate(
+        {
+          transform: transforms,
+        },
+        {
+          duration: end - now,
+          easing: "linear",
+          fill: "both",
+        }
+      );
 
       // Important: set a starting time for the animation.
       // Otherwise it'll go out of sync with game logic.
@@ -98,6 +85,14 @@ class Position extends React.Component {
       this.animations.push(animation);
     }
   };
+
+  componentDidMount() {
+    this.addAnimations();
+  }
+
+  componentDidUpdate() {
+    this.addAnimations();
+  }
 
   render() {
     return (
