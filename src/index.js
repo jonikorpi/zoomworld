@@ -2,6 +2,7 @@ import React from "react";
 import { hydrate, render } from "react-dom";
 // import registerServiceWorker from './registerServiceWorker';
 import firebase from "firebase/app";
+import "web-animations-js";
 
 import "./css/reset.css";
 import "./css/globals.css";
