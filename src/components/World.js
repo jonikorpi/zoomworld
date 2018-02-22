@@ -31,12 +31,12 @@ export default class World extends React.PureComponent {
             <TestEntity
               index={index + 134}
               key={index}
-              x={x + 0.25}
-              y={y + 0.25}
+              x={Math.floor(x)}
+              y={Math.floor(y)}
               moveAround={false}
             >
               {({ state, events }) => (
-                <Position state={state} events={events} centered={false}>
+                <Position state={state} events={events}>
                   <Tile x={x} y={y} tile={{ type: "plains" }} />
                 </Position>
               )}
