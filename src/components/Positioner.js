@@ -23,7 +23,7 @@ export default class Positioner extends React.Component {
     translate: true,
     rotate: true,
     inverse: false,
-    use3D: false,
+    use3D: true,
   };
 
   currentAngle = 0;
