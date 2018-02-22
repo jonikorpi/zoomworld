@@ -8,7 +8,7 @@ import { random } from "../utilities/graphics.js";
 
 const testTileRadius = 30;
 const testEntityRadius = 30;
-const testTileCount = 75;
+const testTileCount = 100;
 const testEntityCount = 200;
 
 export default class World extends React.PureComponent {

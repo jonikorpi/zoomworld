@@ -15,17 +15,29 @@ class Camera extends React.Component {
   render() {
     return (
       <div className="camera">
-        <World {...this.props} />
-
         <TestEntity moveAround={true}>
           {({ state, events }) => (
             <React.Fragment>
-              <div id="playerEntity">
+              <Position
+                state={state}
+                events={events}
+                rotate={false}
+                inverse={true}
+              >
+                <World {...this.props} />
+
+                <Position state={state} events={events}>
+                  <b>Player</b>
+                </Position>
+              </Position>
+
+              {/* <Scroller state={state} events={events} /> */}
+
+              {/* <div id="playerEntity">
                 <Position state={state} events={events} translate={false}>
                   Player
                 </Position>
-              </div>
-              <Scroller state={state} events={events} />
+              </div> */}
             </React.Fragment>
           )}
         </TestEntity>
