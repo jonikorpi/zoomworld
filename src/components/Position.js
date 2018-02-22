@@ -1,6 +1,6 @@
 import React from "react";
 
-import { angleLerp } from "../utilities/graphics.js";
+import { angleLerp, config } from "../utilities/graphics.js";
 import { positionAtTime, findLastEventEndingTime } from "../utilities/state.js";
 
 class Position extends React.Component {
@@ -17,8 +17,12 @@ class Position extends React.Component {
 
   createTransform = keyframe => {
     const { centered, translate, rotate, inverse } = this.props;
-    const x = `${(inverse ? -1 : 1) * keyframe.x * 9}vmax`;
-    const y = `${(inverse ? -1 : 1) * keyframe.y * 9}vmax`;
+    const x = `${(inverse ? -1 : 1) * keyframe.x * config.unitSize}${
+      config.unitType
+    }`;
+    const y = `${(inverse ? -1 : 1) * keyframe.y * config.unitSize}${
+      config.unitType
+    }`;
     const angle = `${keyframe.angle}rad`;
 
     const centering = centered ? "translate(-50%, -50%)" : "";

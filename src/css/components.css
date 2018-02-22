@@ -31,7 +31,6 @@ body {
   position: absolute;
   left: 50vw;
   top: 50vh;
-  --unit: 9vmax;
 }
 
 .position {

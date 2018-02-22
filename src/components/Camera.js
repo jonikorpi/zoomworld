@@ -2,8 +2,10 @@ import React from "react";
 
 import World from "../components/World";
 import Position from "../components/Position";
-import Scroller from "../components/Scroller";
+// import Scroller from "../components/Scroller";
 import TestEntity from "../components/TestEntity";
+
+import { config } from "../utilities/graphics.js";
 
 class Camera extends React.Component {
   static defaultProps = {
@@ -14,7 +16,12 @@ class Camera extends React.Component {
 
   render() {
     return (
-      <div className="camera">
+      <div
+        className="camera"
+        style={{
+          "--unit": `${config.unitSize}${config.unitType}`,
+        }}
+      >
         <TestEntity moveAround={true}>
           {({ state, events }) => (
             <React.Fragment>

@@ -5,6 +5,8 @@ const config = {
   groundLevel: 2,
   shroudLevel: 20,
   shroudThickness: 1,
+  unitSize: 9,
+  unitType: "vmin",
 };
 
 const random = (number = 1, seed = 1) => {
