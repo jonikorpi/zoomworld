@@ -5,7 +5,7 @@ const config = {
   groundLevel: 2,
   shroudLevel: 20,
   shroudThickness: 1,
-  unitSize: 9,
+  unitSize: 14.6,
   unitType: "vmin",
 };
 
