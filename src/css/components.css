@@ -40,12 +40,10 @@ body {
   /* contain: content; */
   will-change: transform;
   backface-visibility: hidden;
+  margin-top: calc(var(--z) * var(--unit) / -50);
 }
 
 .svgContainer {
-  position: absolute;
-  left: 0;
-  top: 0;
   width: calc(var(--tileCanvasMultiplier) * var(--width) * var(--unit));
   height: calc(var(--tileCanvasMultiplier) * var(--height) * var(--unit));
   /* z-index: var(--z); */
@@ -57,9 +55,6 @@ body {
 }
 
 .svg {
-  position: absolute;
-  left: 0;
-  top: calc(var(--z) * var(--unit) / -1);
   width: 100%;
   height: 100%;
 }

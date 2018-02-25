@@ -15,6 +15,9 @@ class Camera extends React.Component {
   counter = 123;
 
   render() {
+    const offsetX = 50000;
+    const offsetY = 50000;
+
     return (
       <div
         className="camera"
@@ -22,7 +25,7 @@ class Camera extends React.Component {
           "--unit": `${config.unitSize}${config.unitType}`,
         }}
       >
-        <TestEntity moveAround={true}>
+        <TestEntity moveAround={true} x={offsetX} y={offsetY}>
           {({ state, events }) => (
             <React.Fragment>
               <Position
@@ -31,9 +34,21 @@ class Camera extends React.Component {
                 rotate={false}
                 inverse={true}
               >
-                <World {...this.props} />
+                <World {...this.props} offsetX={offsetX} offsetY={offsetY} />
 
                 <Position state={state} events={events}>
+                  <b>Player</b>
+                </Position>
+                <Position state={state} events={events} z={1}>
+                  <b>Player</b>
+                </Position>
+                <Position state={state} events={events} z={2}>
+                  <b>Player</b>
+                </Position>
+                <Position state={state} events={events} z={3}>
+                  <b>Player</b>
+                </Position>
+                <Position state={state} events={events} z={4}>
                   <b>Player</b>
                 </Position>
               </Position>

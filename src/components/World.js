@@ -2,23 +2,28 @@ import React from "react";
 
 import Position from "../components/Position";
 import TestEntity from "../components/TestEntity";
-import Tile from "../components/Tile";
+import SVG from "../components/SVG";
+import Graphic from "../components/Graphic";
 
-import { random } from "../utilities/graphics.js";
+import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 
-const testTileRadius = 30;
-const testEntityRadius = 30;
-const testTileCount = 100;
-const testEntityCount = 200;
+const testTileRadius = 5;
+const testEntityRadius = 5;
+const testTileCount = testTileRadius * testTileRadius;
+const testEntityCount = testEntityRadius * testEntityRadius;
 
 export default class World extends React.PureComponent {
   static defaultProps = {
     userID: null,
+    offsetX: 0,
+    offsetY: 0,
   };
 
   counter = 123;
 
   render() {
+    const { offsetX, offsetY } = this.props;
+
     return (
       <React.Fragment>
         {[...new Array(testTileCount)].map((nada, index) => {
@@ -31,15 +36,52 @@ export default class World extends React.PureComponent {
             <TestEntity
               index={index + 134}
               key={index}
-              x={Math.floor(x)}
-              y={Math.floor(y)}
+              x={offsetX + Math.floor(x)}
+              y={offsetY + Math.floor(y)}
               moveAround={false}
             >
-              {({ state, events }) => (
-                <Position state={state} events={events}>
-                  <Tile x={x} y={y} tile={{ type: "plains" }} />
-                </Position>
-              )}
+              {({ state, events }) => {
+                const tile = baseTile(getSeed(x, y))
+                  .join(" ")
+                  .toString();
+
+                return (
+                  <React.Fragment>
+                    <Position state={state} events={events} mergeZ={true}>
+                      <SVG>
+                        <Graphic type="waterLine" points={tile} />
+                      </SVG>
+                    </Position>
+                    <Position state={state} events={events} z={1} mergeZ={true}>
+                      <SVG>
+                        <Graphic
+                          type="ground"
+                          fill="var(--ground3)"
+                          points={tile}
+                        />
+                      </SVG>
+                    </Position>
+                    <Position state={state} events={events} z={2} mergeZ={true}>
+                      <SVG>
+                        <Graphic
+                          type="ground"
+                          fill="var(--ground2)"
+                          points={tile}
+                        />
+                      </SVG>
+                    </Position>
+                    <Position state={state} events={events} z={3} mergeZ={true}>
+                      <SVG>
+                        <Graphic
+                          type="ground"
+                          fill="var(--ground)"
+                          points={baseTile}
+                        />
+                      </SVG>
+                    </Position>
+                  </React.Fragment>
+                );
+              }}
             </TestEntity>
           );
         })}
@@ -49,18 +91,34 @@ export default class World extends React.PureComponent {
             key={index}
             index={index + 123}
             x={
+              offsetX +
               random(1, this.counter++) * testEntityRadius -
               testEntityRadius / 2
             }
             y={
+              offsetY +
               random(1, this.counter++) * testEntityRadius -
               testEntityRadius / 2
             }
           >
             {({ state, events }) => (
-              <Position state={state} events={events}>
-                #{index}
-              </Position>
+              <React.Fragment>
+                <Position state={state} events={events}>
+                  #{index}
+                </Position>
+                <Position state={state} events={events} z={1}>
+                  #{index}
+                </Position>
+                <Position state={state} events={events} z={2}>
+                  #{index}
+                </Position>
+                <Position state={state} events={events} z={3}>
+                  #{index}
+                </Position>
+                <Position state={state} events={events} z={4}>
+                  #{index}
+                </Position>
+              </React.Fragment>
             )}
           </TestEntity>
         ))}

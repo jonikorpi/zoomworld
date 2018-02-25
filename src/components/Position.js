@@ -11,6 +11,8 @@ class Position extends React.Component {
     translate: true,
     rotate: true,
     inverse: false,
+    z: 0,
+    mergeZ: false,
   };
 
   animations = [];
@@ -100,11 +102,17 @@ class Position extends React.Component {
   }
 
   render() {
+    const { z, mergeZ } = this.props;
+
     return (
       <div
         className="position"
         ref={element => {
           this.element = element;
+        }}
+        style={{
+          "--z": z,
+          zIndex: mergeZ ? z : 1000,
         }}
       >
         {this.props.children}
