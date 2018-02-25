@@ -1,4 +1,4 @@
-import { easing, angleLerp } from "../utilities/graphics.js";
+import { easeInOut } from "../utilities/graphics.js";
 
 const positionAtTime = (now, state, events) =>
   events.reduce(
@@ -6,7 +6,7 @@ const positionAtTime = (now, state, events) =>
       type === "impulse"
         ? mergeImpulse(finalState, now, type, time, duration, data)
         : finalState,
-    { x: state.x, y: state.y, angle: 0 }
+    { x: state.x, y: state.y }
   );
 
 const stateAtTime = (now, state, events) =>
@@ -20,7 +20,7 @@ const stateAtTime = (now, state, events) =>
           return finalState;
       }
     },
-    { ...state, angle: 0 }
+    { ...state }
   );
 
 const findLastEventEndingTime = (end, { time, duration }) =>
@@ -33,9 +33,8 @@ const mergeImpulse = (finalState, now, type, time, duration, data) => {
   const completion = endsAt < now ? 1 : elapsed / duration;
 
   return {
-    x: finalState.x + easing(completion) * speed * x,
-    y: finalState.y + easing(completion) * speed * y,
-    angle: Math.atan2(y, x),
+    x: finalState.x + easeInOut(2)(completion) * speed * x,
+    y: finalState.y + easeInOut(2)(completion) * speed * y,
   };
 };
 

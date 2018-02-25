@@ -50,7 +50,7 @@ export default class TestEntity extends React.Component {
           data: {
             x: random(1, this.counter++) * 2 - 1,
             y: random(1, this.counter++) * 2 - 1,
-            speed: 3,
+            speed: 2,
           },
         },
       ],
@@ -62,7 +62,7 @@ export default class TestEntity extends React.Component {
       this.counter = this.props.index || 123;
       this.timer = window.setInterval(
         this.addEvent,
-        2000 + random(1, this.counter++) * 5000
+        2000 + random(1, this.counter++) * 3000
       );
     }
   }

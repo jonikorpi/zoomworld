@@ -17,6 +17,13 @@ class Position extends React.Component {
 
   animations = [];
 
+  constructor(props) {
+    super(props);
+    this.lastX = props.state.x;
+    this.lastY = props.state.y;
+    this.lastAngle = 0;
+  }
+
   createTransform = keyframe => {
     const { centered, translate, rotate, inverse } = this.props;
     const x = `${(inverse ? -1 : 1) * keyframe.x * config.unitSize}${
@@ -25,7 +32,16 @@ class Position extends React.Component {
     const y = `${(inverse ? -1 : 1) * keyframe.y * config.unitSize}${
       config.unitType
     }`;
-    const angle = `${keyframe.angle}rad`;
+
+    const newAngle = angleLerp(
+      this.lastAngle,
+      Math.atan2(keyframe.y - this.lastY, keyframe.x - this.lastX),
+      1
+    );
+    const angle = `${newAngle}rad`;
+    this.lastX = keyframe.x;
+    this.lastY = keyframe.y;
+    this.lastAngle = newAngle;
 
     const centering = centered ? "translate(-50%, -50%)" : "";
     const transform = translate ? `translate3d(${x}, ${y}, 0)` : "";
@@ -45,7 +61,7 @@ class Position extends React.Component {
 
     // Determine how many keyframes are needed
     const resolution = 200;
-    const amountOfIntermediateStates = Math.ceil((end - now) / resolution);
+    const amountOfIntermediateStates = Math.floor((end - now) / resolution);
 
     // Calculate entity position at each keyframe
     let intermediateStates = [];
