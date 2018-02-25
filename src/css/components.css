@@ -30,7 +30,7 @@ body {
   font-size: 0.5rem;
   visibility: visible;
   /* contain: content; */
-  will-change: transform;
+  /* will-change: transform; */
   backface-visibility: hidden;
   margin-top: calc(var(--z) * var(--unit) / -50);
 }
