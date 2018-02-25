@@ -7,7 +7,7 @@ import TestEntity from "../components/TestEntity";
 
 import { config } from "../utilities/graphics.js";
 
-class Camera extends React.Component {
+class WorldUI extends React.Component {
   static defaultProps = {
     userID: null,
   };
@@ -68,4 +68,4 @@ class Camera extends React.Component {
   }
 }
 
-export default Camera;
+export default WorldUI;
