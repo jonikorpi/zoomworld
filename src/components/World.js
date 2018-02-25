@@ -75,7 +75,7 @@ export default class World extends React.PureComponent {
                         <Graphic
                           type="ground"
                           fill="var(--ground)"
-                          points={baseTile}
+                          points={tile}
                         />
                       </SVG>
                     </Position>
