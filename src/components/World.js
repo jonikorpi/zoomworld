@@ -8,8 +8,8 @@ import TestEntity from "../components/TestEntity";
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 import { positionAtTime } from "../utilities/state.js";
 
-const testTileRadius = 5;
-const testEntityRadius = 5;
+const testTileRadius = 10;
+const testEntityRadius = 10;
 const testTileCount = testTileRadius * testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
