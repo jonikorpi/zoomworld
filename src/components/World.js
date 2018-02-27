@@ -6,6 +6,7 @@ import SVG from "../components/SVG";
 import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
+import { positionAtTime } from "../utilities/state.js";
 
 const testTileRadius = 5;
 const testEntityRadius = 5;
@@ -15,37 +16,221 @@ const testEntityCount = testEntityRadius * testEntityRadius;
 export default class World extends React.PureComponent {
   static defaultProps = {
     userID: null,
-    offsetX: 0,
-    offsetY: 0,
+    renderer: null,
   };
 
-  counter = 123;
+  state = {
+    tiles: [...new Array(testTileCount)].map((nada, index) => {
+      const x = Math.random() * testTileRadius - testTileRadius / 2;
+      const y = Math.random() * testTileRadius - testTileRadius / 2;
+      return {
+        x,
+        y,
+        tile: baseTile(getSeed(x, y))
+          .join(" ")
+          .toString(),
+        state: {},
+        events: [],
+      };
+    }),
+    entities: [...new Array(testEntityCount)].map((nada, index) => {
+      return {
+        x: Math.random() * testEntityRadius - testEntityRadius / 2,
+        y: Math.random() * testEntityRadius - testEntityRadius / 2,
+        state: {},
+        events: [],
+      };
+    }),
+  };
+
+  componentDidMount() {
+    const { subscribe, regl } = this.props.renderer;
+    subscribe(this.update);
+
+    this.drawPlayers = regl({
+      frag: `
+        precision mediump float;
+
+        void main() {
+          gl_FragColor = vec4(1, 1, 1, 1);
+        }`,
+
+      vert: `
+        precision mediump float;
+        attribute vec2 position;
+        uniform float viewportWidth;
+        uniform float viewportHeight;
+        uniform float unit;
+        uniform vec2 camera;
+
+        void main() {
+          vec2 positionAfterCamera = position - camera;
+          vec2 scaledPosition = vec2(
+            (positionAfterCamera[0] * unit) / viewportWidth, 
+            (positionAfterCamera[1] * unit) / viewportHeight
+          );
+          gl_Position = vec4(scaledPosition, 0, 1);
+        }`,
+
+      attributes: {
+        // position: [[0, 0], [0, 1], [1, 1]],
+        position: (context, { players, time, camera }) => [
+          [
+            [0 + camera.x, 0.125 + camera.y],
+            [0.125 + camera.x, -0.125 + camera.y],
+            [-0.125 + camera.x, -0.125 + camera.y],
+
+            [0 + camera.x, 0.125 + camera.y - 0.0625],
+            [0.125 + camera.x, -0.125 + camera.y - 0.0625],
+            [-0.125 + camera.x, -0.125 + camera.y - 0.0625],
+
+            [0 + camera.x, 0.125 + camera.y - 0.0625 * 2],
+            [0.125 + camera.x, -0.125 + camera.y - 0.0625 * 2],
+            [-0.125 + camera.x, -0.125 + camera.y - 0.0625 * 2],
+
+            [0 + camera.x, 0.125 + camera.y - 0.0625 * 3],
+            [0.125 + camera.x, -0.125 + camera.y - 0.0625 * 3],
+            [-0.125 + camera.x, -0.125 + camera.y - 0.0625 * 3],
+          ],
+          ...players.map(({ state, events }) => {
+            const { x, y } = positionAtTime(time, state, events);
+            return [
+              [0 + x, 0.125 + y],
+              [0.125 + x, -0.125 + y],
+              [-0.125 + x, -0.125 + y],
+
+              [0 + x, 0.125 + y - 0.0625],
+              [0.125 + x, -0.125 + y - 0.0625],
+              [-0.125 + x, -0.125 + y - 0.0625],
+
+              [0 + x, 0.125 + y - 0.0625 * 2],
+              [0.125 + x, -0.125 + y - 0.0625 * 2],
+              [-0.125 + x, -0.125 + y - 0.0625 * 2],
+
+              [0 + x, 0.125 + y - 0.0625 * 3],
+              [0.125 + x, -0.125 + y - 0.0625 * 3],
+              [-0.125 + x, -0.125 + y - 0.0625 * 3],
+            ];
+          }),
+        ],
+      },
+      uniforms: {
+        viewportWidth: ({ viewportWidth }) => viewportWidth,
+        viewportHeight: ({ viewportHeight }) => viewportHeight,
+        unit: ({ viewportWidth, viewportHeight }, { scale }) =>
+          Math.min(viewportWidth, viewportHeight) *
+          config.unitSize /
+          50 *
+          scale,
+        camera: (context, { camera }) => [camera.x, camera.y],
+      },
+
+      count: (context, { players }) => (players.length + 1) * 12,
+
+      depth: {
+        enable: false,
+      },
+    });
+
+    this.drawTiles = regl({
+      frag: `
+        precision mediump float;
+
+        void main() {
+          gl_FragColor = vec4(0, 0, 0, 1);
+        }`,
+
+      vert: `
+        precision mediump float;
+        attribute vec2 position;
+        uniform float viewportWidth;
+        uniform float viewportHeight;
+        uniform float unit;
+        uniform vec2 camera;
+
+        void main() {
+          vec2 positionAfterCamera = position - camera;
+          vec2 scaledPosition = vec2(
+            (positionAfterCamera[0] * unit) / viewportWidth, 
+            (positionAfterCamera[1] * unit) / viewportHeight
+          );
+          gl_Position = vec4(scaledPosition, 0, 1);
+        }`,
+
+      attributes: {
+        // position: [[0, 0], [0, 1], [1, 1]],
+        position: (context, { tiles, time, camera }) =>
+          tiles.map(({ state, events }) => {
+            const { x, y } = positionAtTime(time, state, events);
+            return [
+              [-0.5 + x, -0.5 + y],
+              [-0.5 + x, 0.5 + y],
+              [0.5 + x, -0.5 + y],
+
+              [-0.5 + x, 0.5 + y],
+              [0.5 + x, 0.5 + y],
+              [0.5 + x, -0.5 + y],
+
+              [-0.5 + x + 0.0625, -0.5 + y - 0.0625],
+              [-0.5 + x + 0.0625, 0.5 + y - 0.0625],
+              [0.5 + x + 0.0625, -0.5 + y - 0.0625],
+
+              [-0.5 + x + 0.0625, 0.5 + y - 0.0625],
+              [0.5 + x + 0.0625, 0.5 + y - 0.0625],
+              [0.5 + x + 0.0625, -0.5 + y - 0.0625],
+            ];
+          }),
+      },
+      uniforms: {
+        viewportWidth: ({ viewportWidth }) => viewportWidth,
+        viewportHeight: ({ viewportHeight }) => viewportHeight,
+        unit: ({ viewportWidth, viewportHeight }, { scale }) =>
+          Math.min(viewportWidth, viewportHeight) *
+          config.unitSize /
+          50 *
+          scale,
+        camera: (context, { camera }) => [camera.x, camera.y],
+      },
+
+      count: (context, { tiles }) => tiles.length * 12,
+
+      depth: {
+        enable: false,
+      },
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.renderer.unsubscribe(this.update);
+  }
+
+  update = (time, camera, scale) => {
+    // console.log(time, context, camera, scale);
+    this.drawTiles({ time, camera, scale, tiles: this.state.tiles });
+    this.drawPlayers({ time, camera, scale, players: this.state.entities });
+  };
 
   render() {
-    const { offsetX, offsetY } = this.props;
+    const { tiles, entities } = this.state;
 
     return (
       <React.Fragment>
-        {[...new Array(testTileCount)].map((nada, index) => {
-          const x =
-            random(1, this.counter++) * testTileRadius - testTileRadius / 2;
-          const y =
-            random(1, this.counter++) * testTileRadius - testTileRadius / 2;
-
+        {tiles.map(({ x, y, tile }, index) => {
           return (
             <TestEntity
               index={index + 134}
               key={index}
-              x={offsetX + Math.floor(x)}
-              y={offsetY + Math.floor(y)}
+              x={Math.floor(x)}
+              y={Math.floor(y)}
               moveAround={false}
             >
               {({ state, events }) => {
-                const tile = baseTile(getSeed(x, y))
-                  .join(" ")
-                  .toString();
+                this.state.tiles[index].state = state;
+                this.state.tiles[index].events = events;
+                return null;
 
-                return (
+                {
+                  /* return (
                   <React.Fragment>
                     <Position state={state} events={events} mergeZ={true}>
                       <SVG>
@@ -80,46 +265,42 @@ export default class World extends React.PureComponent {
                       </SVG>
                     </Position>
                   </React.Fragment>
-                );
+                ); */
+                }
               }}
             </TestEntity>
           );
         })}
 
-        {[...new Array(testEntityCount)].map((nada, index) => (
-          <TestEntity
-            key={index}
-            index={index + 123}
-            x={
-              offsetX +
-              random(1, this.counter++) * testEntityRadius -
-              testEntityRadius / 2
-            }
-            y={
-              offsetY +
-              random(1, this.counter++) * testEntityRadius -
-              testEntityRadius / 2
-            }
-          >
-            {({ state, events }) => (
-              <React.Fragment>
-                <Position state={state} events={events}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={1}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={2}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={3}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={4}>
-                  #{index}
-                </Position>
-              </React.Fragment>
-            )}
+        {entities.map(({ x, y }, index) => (
+          <TestEntity key={index} index={index + 123} x={x} y={y}>
+            {({ state, events }) => {
+              this.state.entities[index].state = state;
+              this.state.entities[index].events = events;
+              return null;
+
+              {
+                /* return (
+                <React.Fragment>
+                  <Position state={state} events={events}>
+                    #{index}
+                  </Position>
+                  <Position state={state} events={events} z={1}>
+                    #{index}
+                  </Position>
+                  <Position state={state} events={events} z={2}>
+                    #{index}
+                  </Position>
+                  <Position state={state} events={events} z={3}>
+                    #{index}
+                  </Position>
+                  <Position state={state} events={events} z={4}>
+                    #{index}
+                  </Position>
+                </React.Fragment>
+              ); */
+              }
+            }}
           </TestEntity>
         ))}
       </React.Fragment>

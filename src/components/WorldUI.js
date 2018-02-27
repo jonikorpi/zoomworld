@@ -1,5 +1,6 @@
 import React from "react";
 
+import Renderer from "./Renderer";
 import World from "../components/World";
 import Position from "../components/Position";
 // import Scroller from "../components/Scroller";
@@ -15,55 +16,47 @@ class WorldUI extends React.Component {
   counter = 123;
 
   render() {
-    const offsetX = 50000;
-    const offsetY = 50000;
-
     return (
-      <div
-        className="camera"
-        style={{
-          "--unit": `${config.unitSize}${config.unitType}`,
-        }}
-      >
-        <TestEntity moveAround={true} x={offsetX} y={offsetY}>
-          {({ state, events }) => (
-            <React.Fragment>
-              <Position
-                state={state}
-                events={events}
-                rotate={false}
-                inverse={true}
+      <TestEntity moveAround={true}>
+        {({ state, events }) => (
+          <Renderer state={state} events={events}>
+            {renderer => <World {...this.props} renderer={renderer} />}
+            {/* {renderer => (
+              <div
+                className="camera"
+                style={{
+                  "--unit": `${config.unitSize}${config.unitType}`,
+                }}
               >
-                <World {...this.props} offsetX={offsetX} offsetY={offsetY} />
+                <Position
+                  state={state}
+                  events={events}
+                  rotate={false}
+                  inverse={true}
+                >
+                  <World {...this.props} renderer={renderer} />
 
-                <Position state={state} events={events}>
-                  <b>Player</b>
+                  <Position state={state} events={events}>
+                    <b>Player</b>
+                  </Position>
+                  <Position state={state} events={events} z={1}>
+                    <b>Player</b>
+                  </Position>
+                  <Position state={state} events={events} z={2}>
+                    <b>Player</b>
+                  </Position>
+                  <Position state={state} events={events} z={3}>
+                    <b>Player</b>
+                  </Position>
+                  <Position state={state} events={events} z={4}>
+                    <b>Player</b>
+                  </Position>
                 </Position>
-                <Position state={state} events={events} z={1}>
-                  <b>Player</b>
-                </Position>
-                <Position state={state} events={events} z={2}>
-                  <b>Player</b>
-                </Position>
-                <Position state={state} events={events} z={3}>
-                  <b>Player</b>
-                </Position>
-                <Position state={state} events={events} z={4}>
-                  <b>Player</b>
-                </Position>
-              </Position>
-
-              {/* <Scroller state={state} events={events} /> */}
-
-              {/* <div id="playerEntity">
-                <Position state={state} events={events} translate={false}>
-                  Player
-                </Position>
-              </div> */}
-            </React.Fragment>
-          )}
-        </TestEntity>
-      </div>
+              </div>
+            )} */}
+          </Renderer>
+        )}
+      </TestEntity>
     );
   }
 }

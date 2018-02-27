@@ -29,7 +29,7 @@ class Position extends React.Component {
     const x = `${(inverse ? -1 : 1) * keyframe.x * config.unitSize}${
       config.unitType
     }`;
-    const y = `${(inverse ? -1 : 1) * keyframe.y * config.unitSize}${
+    const y = `${(inverse ? -1 : 1) * -keyframe.y * config.unitSize}${
       config.unitType
     }`;
 

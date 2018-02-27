@@ -3,7 +3,6 @@ import Loadable from "react-loadable";
 
 import Loader from "./Loader";
 import LogMessage from "./LogMessage";
-
 import FirebaseUser from "./FirebaseUser";
 import Firebase from "./Firebase";
 
@@ -31,16 +30,19 @@ export default class Game extends React.Component {
         {({ userID }) => (
           <Firebase
             query={{
-              units: {
-                path: "units",
-                orderByChild: "playerID",
-                equalTo: userID,
-              },
+              // units: {
+              //   path: "units",
+              //   orderByChild: "playerID",
+              //   equalTo: userID,
+              // },
               online: ".info/connected",
             }}
           >
             {({ units, online }) => {
-              const loading = units === undefined;
+              {
+                /* const loading = units === undefined; */
+              }
+              const loading = false;
               // const unitList =
               //   units &&
               //   Object.keys(units).map(unitID => ({
