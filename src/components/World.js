@@ -1,9 +1,9 @@
 import React from "react";
 
-import Position from "../components/Position";
+// import Position from "../components/Position";
 import TestEntity from "../components/TestEntity";
-import SVG from "../components/SVG";
-import Graphic from "../components/Graphic";
+// import SVG from "../components/SVG";
+// import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 import { positionAtTime } from "../utilities/state.js";

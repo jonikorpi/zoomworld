@@ -2,11 +2,11 @@ import React from "react";
 
 import Renderer from "./Renderer";
 import World from "../components/World";
-import Position from "../components/Position";
+// import Position from "../components/Position";
 // import Scroller from "../components/Scroller";
 import TestEntity from "../components/TestEntity";
 
-import { config } from "../utilities/graphics.js";
+// import { config } from "../utilities/graphics.js";
 
 class WorldUI extends React.Component {
   static defaultProps = {
