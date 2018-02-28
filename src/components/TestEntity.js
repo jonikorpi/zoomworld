@@ -28,10 +28,10 @@ export default class TestEntity extends React.Component {
     const now = Date.now() - 200;
 
     const finishedEvents = [...events].filter(
-      event => event.time + event.duration <= now
+      event => event.time + (event.data.duration || 0) <= now
     );
     const unfinishedEvents = [...events].filter(
-      event => event.time + event.duration > now
+      event => event.time + (event.data.duration || 0) > now
     );
 
     const flattenedState = positionAtTime(now, state, finishedEvents);
@@ -46,11 +46,11 @@ export default class TestEntity extends React.Component {
           ".key": "event-" + now,
           type: "impulse",
           time: now,
-          duration: 10000,
           data: {
             x: random(1, this.counter++) * 2 - 1,
             y: random(1, this.counter++) * 2 - 1,
             speed: 2,
+            duration: 10000,
           },
         },
       ],
