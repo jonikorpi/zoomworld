@@ -6,7 +6,7 @@ import TestEntity from "../components/TestEntity";
 // import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
-import { positionAtTime, calculateAngle } from "../utilities/state.js";
+import { positionAtTime } from "../utilities/state.js";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
@@ -106,7 +106,7 @@ export default class World extends React.PureComponent {
           vec2 translatedPosition = rotatedPosition + offset - camera;
           vec2 shiftedPosition = 
             translatedPosition +
-            vec2(offset[0] / perspective * layer, offset[1] / perspective * layer);
+            vec2(translatedPosition[0] / perspective * layer, translatedPosition[1] / perspective * layer);
           vec2 scaledPosition = vec2(
             (shiftedPosition[0] * unit) / viewportWidth, 
             (shiftedPosition[1] * unit) / viewportHeight
@@ -117,36 +117,24 @@ export default class World extends React.PureComponent {
         }`,
 
       attributes: {
-        position: (context, { players, time, camera }) =>
+        position: (context, { players }) =>
           players.map(() => layers.map(layer => triangle)),
-        offset: (context, { players, time, camera }) =>
-          players.map(({ state, events }) =>
-            layers.map(layer => {
-              const { x, y } = positionAtTime(time, state, events);
-              const position = [x, y];
-              return triangle.map(triangle => position);
-            })
+        offset: (context, { players }) =>
+          players.map(({ x, y }) =>
+            layers.map(layer => triangle.map(triangle => [x, y]))
           ),
-        angle: (context, { players, time, camera }) =>
-          players.map(({ state, events }) =>
-            layers.map(layer => {
-              const { velocityX, velocityY } = positionAtTime(
-                time,
-                state,
-                events
-              );
-              const angle = Math.atan2(velocityY, velocityX);
-              return triangle.map(triangle => angle);
-            })
+        angle: (context, { players }) =>
+          players.map(({ angle }) =>
+            layers.map(layer => triangle.map(triangle => angle))
           ),
-        layer: (context, { players, time, camera }) =>
-          players.map(({ state, events }) =>
+        layer: (context, { players }) =>
+          players.map(() =>
             layers.map(layer => triangle.map(triangle => layer))
           ),
       },
 
       uniforms: uniforms,
-      count: (context, { players, time, camera }) =>
+      count: (context, { players }) =>
         layers.length * triangle.length * players.length,
       depth: depth,
     });
@@ -190,14 +178,10 @@ export default class World extends React.PureComponent {
 
       attributes: {
         position: (context, { tiles, time, camera }) =>
-          layers.map(layer => tiles.map(({ state, events }) => square)),
+          layers.map(layer => tiles.map(() => square)),
         offset: (context, { tiles, time, camera }) =>
           layers.map(layer =>
-            tiles.map(({ state, events }) => {
-              const { x, y } = positionAtTime(time, state, events);
-              const position = [x, y];
-              return square.map(() => position);
-            })
+            tiles.map(({ x, y }) => square.map(() => [x, y]))
           ),
         layer: (context, { tiles, time, camera }) =>
           layers.map(layer => tiles.map(() => square.map(() => layer))),
@@ -215,9 +199,15 @@ export default class World extends React.PureComponent {
   }
 
   update = (time, camera, scale) => {
-    // console.log(time, context, camera, scale);
-    this.drawTiles({ time, camera, scale, tiles: this.state.tiles });
-    this.drawPlayers({ time, camera, scale, players: this.state.entities });
+    const tiles = this.state.tiles.map(({ state, events }) =>
+      positionAtTime(time, state, events)
+    );
+    this.drawTiles({ time, camera, scale, tiles });
+
+    const players = this.state.entities.map(({ state, events }) =>
+      positionAtTime(time, state, events)
+    );
+    this.drawPlayers({ time, camera, scale, players });
   };
 
   render() {

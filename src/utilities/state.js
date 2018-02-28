@@ -1,13 +1,20 @@
 import { easeInOut } from "../utilities/graphics.js";
 
-const positionAtTime = (now, state, events) =>
-  events.reduce(
+const positionAtTime = (now, state, events) => {
+  const result = events.reduce(
     (finalState, { type, time, data }) =>
       type === "impulse"
         ? mergeImpulse(finalState, now, type, time, data)
         : finalState,
     { ...state, velocityX: 0, velocityY: 0 }
   );
+
+  return {
+    x: result.x,
+    y: result.y,
+    angle: Math.atan2(result.velocityY, result.velocityX),
+  };
+};
 
 const stateAtTime = (now, state, events) =>
   events.reduce(
@@ -47,8 +54,4 @@ const mergeImpulse = (
   return finalState;
 };
 
-const calculateAngle = ({ velocityX, velocityY }) => {
-  return Math.atan(velocityY, velocityX);
-};
-
-export { positionAtTime, stateAtTime, findLastEventEndingTime, calculateAngle };
+export { positionAtTime, stateAtTime, findLastEventEndingTime };
