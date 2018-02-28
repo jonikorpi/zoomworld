@@ -19,9 +19,10 @@ export default class Renderer extends React.Component {
     this.regl = startRegl(document.getElementById("canvas"));
     this.loop = this.regl.frame(context => {
       try {
-        const height = document.documentElement.clientHeight;
+        const height =
+          document.documentElement.offsetHeight - window.innerHeight;
         const scrolled = window.pageYOffset;
-        const scale = 1 - scrolled / (height - window.innerHeight / 2);
+        const scale = 1 - scrolled / height + 0.146 * (scrolled / height);
         const time =
           performance.timing.navigationStart + performance.now() - 200;
         const camera = positionAtTime(
