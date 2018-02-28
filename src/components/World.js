@@ -178,7 +178,7 @@ export default class World extends React.PureComponent {
           vec2 translatedPosition = position + offset - camera;
           vec2 shiftedPosition = 
             translatedPosition +
-            vec2(offset[0] / perspective * layer, offset[1] / perspective * layer);
+            vec2(translatedPosition[0] / perspective * layer, translatedPosition[1] / perspective * layer);
           vec2 scaledPosition = vec2(
             (shiftedPosition[0] * unit) / viewportWidth, 
             (shiftedPosition[1] * unit) / viewportHeight
