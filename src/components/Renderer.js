@@ -14,24 +14,28 @@ export default class Renderer extends React.Component {
   };
 
   subscribers = [];
-  regl = startRegl(document.getElementById("canvas"));
-  loop = this.regl.frame(context => {
-    const height = document.documentElement.clientHeight;
-    const scrolled = window.pageYOffset;
-    const scale = 1 - scrolled / height;
-    const time = performance.timing.navigationStart + performance.now();
-    const camera = positionAtTime(time, this.props.state, this.props.events);
 
-    this.regl.clear(clearConfiguration);
+  componentWillMount() {
+    this.regl = startRegl(document.getElementById("canvas"));
+    this.loop = this.regl.frame(context => {
+      const height = document.documentElement.clientHeight;
+      const scrolled = window.pageYOffset;
+      const scale = 1 - scrolled / height;
+      const time = performance.timing.navigationStart + performance.now();
+      const camera = positionAtTime(time, this.props.state, this.props.events);
 
-    this.subscribers.forEach(callback => {
-      callback.call(callback, time, camera, scale);
+      this.regl.clear(clearConfiguration);
+
+      this.subscribers.forEach(callback => {
+        callback.call(callback, time, camera, scale);
+      });
     });
-  });
+  }
 
   componentWillUnmount() {
     this.loop.cancel();
     this.regl.destroy();
+    this.subscribers = [];
   }
 
   subscribe = callback => this.subscribers.push(callback);
