@@ -60,7 +60,7 @@ export default class World extends React.PureComponent {
         attribute vec2 position;
         uniform float viewportWidth;
         uniform float viewportHeight;
-        uniform float unidt;
+        uniform float unit;
         uniform vec2 camera;
 
         void main() {
