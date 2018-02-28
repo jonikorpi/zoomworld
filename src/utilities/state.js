@@ -32,10 +32,10 @@ const mergeImpulse = (finalState, now, type, time, duration, data) => {
   const endsAt = time + duration;
   const completion = endsAt < now ? 1 : elapsed / duration;
 
-  return {
-    x: finalState.x + easeInOut(2)(completion) * speed * x,
-    y: finalState.y + easeInOut(2)(completion) * speed * y,
-  };
+  finalState.x += easeInOut(2)(completion) * speed * x;
+  finalState.y += easeInOut(2)(completion) * speed * y;
+
+  return finalState;
 };
 
 export { positionAtTime, stateAtTime, findLastEventEndingTime };
