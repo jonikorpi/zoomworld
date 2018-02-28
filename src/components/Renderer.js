@@ -29,6 +29,8 @@ export default class Renderer extends React.Component {
           this.props.events
         );
 
+        // console.log(camera);
+
         this.regl.clear(clearConfiguration);
 
         this.subscribers.forEach(callback => {

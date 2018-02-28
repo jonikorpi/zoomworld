@@ -16,7 +16,11 @@ export default class TestEntity extends React.Component {
     const { x, y, angle } = this.props;
 
     this.state = {
-      state: { x: x, y: y, angle: angle },
+      state: {
+        x: x,
+        y: y,
+        angle: angle,
+      },
       events: [],
     };
   }

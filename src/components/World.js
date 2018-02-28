@@ -6,7 +6,7 @@ import TestEntity from "../components/TestEntity";
 // import Graphic from "../components/Graphic";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
-import { positionAtTime } from "../utilities/state.js";
+import { positionAtTime, calculateAngle } from "../utilities/state.js";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
@@ -24,20 +24,24 @@ export default class World extends React.PureComponent {
       const x = Math.random() * testTileRadius - testTileRadius / 2;
       const y = Math.random() * testTileRadius - testTileRadius / 2;
       return {
-        x,
-        y,
         tile: baseTile(getSeed(x, y))
           .join(" ")
           .toString(),
-        state: {},
+        state: {
+          x,
+          y,
+        },
         events: [],
       };
     }),
     entities: [...new Array(testEntityCount)].map((nada, index) => {
       return {
-        x: Math.random() * testEntityRadius - testEntityRadius / 2,
-        y: Math.random() * testEntityRadius - testEntityRadius / 2,
-        state: {},
+        state: {
+          x: Math.random() * testEntityRadius - testEntityRadius / 2,
+          y: Math.random() * testEntityRadius - testEntityRadius / 2,
+          velocityX: 0,
+          velocityY: 0,
+        },
         events: [],
       };
     }),
@@ -46,6 +50,8 @@ export default class World extends React.PureComponent {
   componentDidMount() {
     const { subscribe, regl } = this.props.renderer;
     subscribe(this.update);
+
+    const triangle = [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]];
 
     this.drawPlayers = regl({
       frag: `
@@ -58,61 +64,48 @@ export default class World extends React.PureComponent {
       vert: `
         precision mediump float;
         attribute vec2 position;
+        attribute vec3 offset;
         uniform float viewportWidth;
         uniform float viewportHeight;
         uniform float unit;
         uniform vec2 camera;
 
         void main() {
-          vec2 positionAfterCamera = position - camera;
+          vec2 rotatedPosition = vec2(
+            position[0] * cos(offset[2]) - position[1] * sin(offset[2]),
+            position[1] * cos(offset[2]) + position[0] * sin(offset[2])
+          );
+          vec2 translatedPosition = rotatedPosition + vec2(offset[0], offset[1]) - camera;
           vec2 scaledPosition = vec2(
-            (positionAfterCamera[0] * unit) / viewportWidth, 
-            (positionAfterCamera[1] * unit) / viewportHeight
+            (translatedPosition[0] * unit) / viewportWidth, 
+            (translatedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
         }`,
 
       attributes: {
-        // position: [[0, 0], [0, 1], [1, 1]],
-        position: (context, { players, time, camera }) => [
-          [
-            [0 + camera.x, 0.125 + camera.y],
-            [0.125 + camera.x, -0.125 + camera.y],
-            [-0.125 + camera.x, -0.125 + camera.y],
-
-            [0 + camera.x, 0.125 + camera.y - 0.0625],
-            [0.125 + camera.x, -0.125 + camera.y - 0.0625],
-            [-0.125 + camera.x, -0.125 + camera.y - 0.0625],
-
-            [0 + camera.x, 0.125 + camera.y - 0.0625 * 2],
-            [0.125 + camera.x, -0.125 + camera.y - 0.0625 * 2],
-            [-0.125 + camera.x, -0.125 + camera.y - 0.0625 * 2],
-
-            [0 + camera.x, 0.125 + camera.y - 0.0625 * 3],
-            [0.125 + camera.x, -0.125 + camera.y - 0.0625 * 3],
-            [-0.125 + camera.x, -0.125 + camera.y - 0.0625 * 3],
-          ],
-          ...players.map(({ state, events }) => {
-            const { x, y } = positionAtTime(time, state, events);
-            return [
-              [0 + x, 0.125 + y],
-              [0.125 + x, -0.125 + y],
-              [-0.125 + x, -0.125 + y],
-
-              [0 + x, 0.125 + y - 0.0625],
-              [0.125 + x, -0.125 + y - 0.0625],
-              [-0.125 + x, -0.125 + y - 0.0625],
-
-              [0 + x, 0.125 + y - 0.0625 * 2],
-              [0.125 + x, -0.125 + y - 0.0625 * 2],
-              [-0.125 + x, -0.125 + y - 0.0625 * 2],
-
-              [0 + x, 0.125 + y - 0.0625 * 3],
-              [0.125 + x, -0.125 + y - 0.0625 * 3],
-              [-0.125 + x, -0.125 + y - 0.0625 * 3],
-            ];
-          }),
-        ],
+        position: (context, { players, time, camera }) => {
+          return [triangle, ...players.map(() => triangle)];
+        },
+        offset: (context, { players, time, camera }) => {
+          const cameraPosition = [
+            camera.x,
+            camera.y,
+            Math.atan2(camera.velocityY, camera.velocityX),
+          ];
+          return [
+            [cameraPosition, cameraPosition, cameraPosition],
+            ...players.map(({ state, events }) => {
+              const { x, y, velocityX, velocityY } = positionAtTime(
+                time,
+                state,
+                events
+              );
+              const position = [x, y, Math.atan2(velocityY, velocityX)];
+              return [position, position, position];
+            }),
+          ];
+        },
       },
       uniforms: {
         viewportWidth: ({ viewportWidth }) => viewportWidth,
@@ -125,7 +118,8 @@ export default class World extends React.PureComponent {
         camera: (context, { camera }) => [camera.x, camera.y],
       },
 
-      count: (context, { players }) => (players.length + 1) * 12,
+      count: (context, { players, time, camera }) =>
+        triangle.length * (players.length + 1),
 
       depth: {
         enable: false,
@@ -170,14 +164,6 @@ export default class World extends React.PureComponent {
               [-0.5 + x, 0.5 + y],
               [0.5 + x, 0.5 + y],
               [0.5 + x, -0.5 + y],
-
-              [-0.5 + x + 0.0625, -0.5 + y - 0.0625],
-              [-0.5 + x + 0.0625, 0.5 + y - 0.0625],
-              [0.5 + x + 0.0625, -0.5 + y - 0.0625],
-
-              [-0.5 + x + 0.0625, 0.5 + y - 0.0625],
-              [0.5 + x + 0.0625, 0.5 + y - 0.0625],
-              [0.5 + x + 0.0625, -0.5 + y - 0.0625],
             ];
           }),
       },
@@ -192,7 +178,7 @@ export default class World extends React.PureComponent {
         camera: (context, { camera }) => [camera.x, camera.y],
       },
 
-      count: (context, { tiles }) => tiles.length * 12,
+      count: (context, { tiles }) => tiles.length * 6,
 
       depth: {
         enable: false,
@@ -215,7 +201,7 @@ export default class World extends React.PureComponent {
 
     return (
       <React.Fragment>
-        {tiles.map(({ x, y, tile }, index) => {
+        {tiles.map(({ state: { x, y }, tile }, index) => {
           return (
             <TestEntity
               index={index + 134}
@@ -272,7 +258,7 @@ export default class World extends React.PureComponent {
           );
         })}
 
-        {entities.map(({ x, y }, index) => (
+        {entities.map(({ state: { x, y } }, index) => (
           <TestEntity key={index} index={index + 123} x={x} y={y}>
             {({ state, events }) => {
               this.state.entities[index].state = state;
