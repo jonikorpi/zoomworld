@@ -54,85 +54,101 @@ export default class World extends React.PureComponent {
     const layers = [0, 1, 2, 3];
     const triangle = [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]];
     const square = [
-      [-0.5, -0.5],
-      [-0.5, 0.5],
-      [0.5, -0.5],
-      [-0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, -0.5],
+      [-0.625, -0.625],
+      [-0.625, 0.625],
+      [0.625, -0.625],
+      [-0.625, 0.625],
+      [0.625, 0.625],
+      [0.625, -0.625],
     ];
+    const uniforms = {
+      viewportWidth: ({ viewportWidth }) => viewportWidth,
+      viewportHeight: ({ viewportHeight }) => viewportHeight,
+      unit: ({ viewportWidth, viewportHeight }, { scale }) =>
+        Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale,
+      camera: (context, { camera }) => [camera.x, camera.y],
+      perspective: 150,
+    };
+    const depth = {
+      enable: false,
+    };
 
     this.drawPlayers = regl({
       frag: `
         precision mediump float;
 
+        varying vec4 color;
+
         void main() {
-          gl_FragColor = vec4(1, 1, 1, 1);
+          gl_FragColor = color;
         }`,
 
       vert: `
         precision mediump float;
-        attribute vec2 position;
-        attribute vec3 offset;
         uniform float viewportWidth;
         uniform float viewportHeight;
         uniform float unit;
+        uniform float perspective;
         uniform vec2 camera;
+
+        attribute vec2 position;
+        attribute vec2 offset;
+        attribute float angle;
+        attribute float layer;
+
+        varying vec4 color;
 
         void main() {
           vec2 rotatedPosition = vec2(
-            position[0] * cos(offset[2]) - position[1] * sin(offset[2]),
-            position[1] * cos(offset[2]) + position[0] * sin(offset[2])
+            position[0] * cos(angle) - position[1] * sin(angle),
+            position[1] * cos(angle) + position[0] * sin(angle)
           );
-          vec2 translatedPosition = rotatedPosition + vec2(offset[0], offset[1]) - camera;
+          vec2 translatedPosition = rotatedPosition + offset - camera;
+          vec2 shiftedPosition = 
+            translatedPosition +
+            vec2(offset[0] / perspective * layer, offset[1] / perspective * layer);
           vec2 scaledPosition = vec2(
-            (translatedPosition[0] * unit) / viewportWidth, 
-            (translatedPosition[1] * unit) / viewportHeight
+            (shiftedPosition[0] * unit) / viewportWidth, 
+            (shiftedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
+          float shade = 0.0 + layer / 3.0;
+          color = vec4(shade, shade, shade, 1.0);
         }`,
 
       attributes: {
-        position: (context, { players, time, camera }) => {
-          return [triangle, ...players.map(() => triangle)];
-        },
-        offset: (context, { players, time, camera }) => {
-          const cameraPosition = [
-            camera.x,
-            camera.y,
-            Math.atan2(camera.velocityY, camera.velocityX),
-          ];
-          return [
-            [cameraPosition, cameraPosition, cameraPosition],
-            ...players.map(({ state, events }) => {
-              const { x, y, velocityX, velocityY } = positionAtTime(
+        position: (context, { players, time, camera }) =>
+          players.map(() => layers.map(layer => triangle)),
+        offset: (context, { players, time, camera }) =>
+          players.map(({ state, events }) =>
+            layers.map(layer => {
+              const { x, y } = positionAtTime(time, state, events);
+              const position = [x, y];
+              return triangle.map(triangle => position);
+            })
+          ),
+        angle: (context, { players, time, camera }) =>
+          players.map(({ state, events }) =>
+            layers.map(layer => {
+              const { velocityX, velocityY } = positionAtTime(
                 time,
                 state,
                 events
               );
-              const position = [x, y, Math.atan2(velocityY, velocityX)];
-              return [position, position, position];
-            }),
-          ];
-        },
-      },
-      uniforms: {
-        viewportWidth: ({ viewportWidth }) => viewportWidth,
-        viewportHeight: ({ viewportHeight }) => viewportHeight,
-        unit: ({ viewportWidth, viewportHeight }, { scale }) =>
-          Math.min(viewportWidth, viewportHeight) *
-          config.unitSize /
-          50 *
-          scale,
-        camera: (context, { camera }) => [camera.x, camera.y],
+              const angle = Math.atan2(velocityY, velocityX);
+              return triangle.map(triangle => angle);
+            })
+          ),
+        layer: (context, { players, time, camera }) =>
+          players.map(({ state, events }) =>
+            layers.map(layer => triangle.map(triangle => layer))
+          ),
       },
 
+      uniforms: uniforms,
       count: (context, { players, time, camera }) =>
-        triangle.length * (players.length + 1),
-
-      depth: {
-        enable: false,
-      },
+        layers.length * triangle.length * players.length,
+      depth: depth,
     });
 
     this.drawTiles = regl({
@@ -149,6 +165,7 @@ export default class World extends React.PureComponent {
         uniform float viewportWidth;
         uniform float viewportHeight;
         uniform float unit;
+        uniform float perspective;
         uniform vec2 camera;
 
         attribute vec2 position;
@@ -158,13 +175,16 @@ export default class World extends React.PureComponent {
         varying vec4 color;
 
         void main() {
-          vec2 translatedPosition = position + vec2(offset[0], offset[1] + layer * 0.1) - camera;
+          vec2 translatedPosition = position + offset - camera;
+          vec2 shiftedPosition = 
+            translatedPosition +
+            vec2(offset[0] / perspective * layer, offset[1] / perspective * layer);
           vec2 scaledPosition = vec2(
-            (translatedPosition[0] * unit) / viewportWidth, 
-            (translatedPosition[1] * unit) / viewportHeight
+            (shiftedPosition[0] * unit) / viewportWidth, 
+            (shiftedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
-          float shade = 0.0 + layer / 10.0;
+          float shade = 0.0 + layer / 8.0;
           color = vec4(shade, shade, shade, 1.0);
         }`,
 
@@ -182,23 +202,11 @@ export default class World extends React.PureComponent {
         layer: (context, { tiles, time, camera }) =>
           layers.map(layer => tiles.map(() => square.map(() => layer))),
       },
-      uniforms: {
-        viewportWidth: ({ viewportWidth }) => viewportWidth,
-        viewportHeight: ({ viewportHeight }) => viewportHeight,
-        unit: ({ viewportWidth, viewportHeight }, { scale }) =>
-          Math.min(viewportWidth, viewportHeight) *
-          config.unitSize /
-          50 *
-          scale,
-        camera: (context, { camera }) => [camera.x, camera.y],
-      },
 
+      uniforms: uniforms,
       count: (context, { tiles }) =>
         layers.length * tiles.length * square.length,
-
-      depth: {
-        enable: false,
-      },
+      depth: depth,
     });
   }
 
