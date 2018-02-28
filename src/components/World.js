@@ -126,6 +126,15 @@ export default class World extends React.PureComponent {
       },
     });
 
+    const square = [
+      [-0.5, -0.5],
+      [-0.5, 0.5],
+      [0.5, -0.5],
+      [-0.5, 0.5],
+      [0.5, 0.5],
+      [0.5, -0.5],
+    ];
+
     this.drawTiles = regl({
       frag: `
         precision mediump float;
@@ -137,34 +146,29 @@ export default class World extends React.PureComponent {
       vert: `
         precision mediump float;
         attribute vec2 position;
+        attribute vec2 offset;
         uniform float viewportWidth;
         uniform float viewportHeight;
         uniform float unit;
         uniform vec2 camera;
 
         void main() {
-          vec2 positionAfterCamera = position - camera;
+          vec2 translatedPosition = position - offset - camera;
           vec2 scaledPosition = vec2(
-            (positionAfterCamera[0] * unit) / viewportWidth, 
-            (positionAfterCamera[1] * unit) / viewportHeight
+            (translatedPosition[0] * unit) / viewportWidth, 
+            (translatedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
         }`,
 
       attributes: {
-        // position: [[0, 0], [0, 1], [1, 1]],
         position: (context, { tiles, time, camera }) =>
+          tiles.map(({ state, events }) => square),
+        offset: (context, { tiles, time, camera }) =>
           tiles.map(({ state, events }) => {
             const { x, y } = positionAtTime(time, state, events);
-            return [
-              [-0.5 + x, -0.5 + y],
-              [-0.5 + x, 0.5 + y],
-              [0.5 + x, -0.5 + y],
-
-              [-0.5 + x, 0.5 + y],
-              [0.5 + x, 0.5 + y],
-              [0.5 + x, -0.5 + y],
-            ];
+            const position = [x, y];
+            return [position, position, position, position, position, position];
           }),
       },
       uniforms: {
@@ -178,7 +182,7 @@ export default class World extends React.PureComponent {
         camera: (context, { camera }) => [camera.x, camera.y],
       },
 
-      count: (context, { tiles }) => tiles.length * 6,
+      count: (context, { tiles }) => tiles.length * square.length,
 
       depth: {
         enable: false,
