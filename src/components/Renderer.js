@@ -22,7 +22,8 @@ export default class Renderer extends React.Component {
         const height = document.documentElement.clientHeight;
         const scrolled = window.pageYOffset;
         const scale = 1 - scrolled / (height - window.innerHeight / 2);
-        const time = performance.timing.navigationStart + performance.now();
+        const time =
+          performance.timing.navigationStart + performance.now() - 200;
         const camera = positionAtTime(
           time,
           this.props.state,
