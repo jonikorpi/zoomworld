@@ -51,7 +51,16 @@ export default class World extends React.PureComponent {
     const { subscribe, regl } = this.props.renderer;
     subscribe(this.update);
 
+    const layers = [0, 1, 2, 3];
     const triangle = [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]];
+    const square = [
+      [-0.5, -0.5],
+      [-0.5, 0.5],
+      [0.5, -0.5],
+      [-0.5, 0.5],
+      [0.5, 0.5],
+      [0.5, -0.5],
+    ];
 
     this.drawPlayers = regl({
       frag: `
@@ -126,50 +135,52 @@ export default class World extends React.PureComponent {
       },
     });
 
-    const square = [
-      [-0.5, -0.5],
-      [-0.5, 0.5],
-      [0.5, -0.5],
-      [-0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, -0.5],
-    ];
-
     this.drawTiles = regl({
       frag: `
         precision mediump float;
+        varying vec4 color;
 
         void main() {
-          gl_FragColor = vec4(0, 0, 0, 1);
+          gl_FragColor = color;
         }`,
 
       vert: `
         precision mediump float;
-        attribute vec2 position;
-        attribute vec2 offset;
         uniform float viewportWidth;
         uniform float viewportHeight;
         uniform float unit;
         uniform vec2 camera;
 
+        attribute vec2 position;
+        attribute vec2 offset;
+        attribute float layer;
+
+        varying vec4 color;
+
         void main() {
-          vec2 translatedPosition = position - offset - camera;
+          vec2 translatedPosition = position + vec2(offset[0], offset[1] + layer * 0.1) - camera;
           vec2 scaledPosition = vec2(
             (translatedPosition[0] * unit) / viewportWidth, 
             (translatedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
+          float shade = 0.0 + layer / 10.0;
+          color = vec4(shade, shade, shade, 1.0);
         }`,
 
       attributes: {
         position: (context, { tiles, time, camera }) =>
-          tiles.map(({ state, events }) => square),
+          layers.map(layer => tiles.map(({ state, events }) => square)),
         offset: (context, { tiles, time, camera }) =>
-          tiles.map(({ state, events }) => {
-            const { x, y } = positionAtTime(time, state, events);
-            const position = [x, y];
-            return [position, position, position, position, position, position];
-          }),
+          layers.map(layer =>
+            tiles.map(({ state, events }) => {
+              const { x, y } = positionAtTime(time, state, events);
+              const position = [x, y];
+              return square.map(() => position);
+            })
+          ),
+        layer: (context, { tiles, time, camera }) =>
+          layers.map(layer => tiles.map(() => square.map(() => layer))),
       },
       uniforms: {
         viewportWidth: ({ viewportWidth }) => viewportWidth,
@@ -182,7 +193,8 @@ export default class World extends React.PureComponent {
         camera: (context, { camera }) => [camera.x, camera.y],
       },
 
-      count: (context, { tiles }) => tiles.length * square.length,
+      count: (context, { tiles }) =>
+        layers.length * tiles.length * square.length,
 
       depth: {
         enable: false,
