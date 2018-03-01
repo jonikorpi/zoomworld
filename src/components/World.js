@@ -85,40 +85,43 @@ export default class World extends React.PureComponent {
         uniform vec2 camera;
 
         attribute vec2 position;
-        attribute vec2 offset;
-        attribute float angle;
-        attribute float layer;
+        attribute vec4 offset;
 
         varying vec4 color;
 
         void main() {
+          vec2 translation = vec2(offset[0], offset[1]);
+          float angle = offset[3];
+
           vec2 rotatedPosition = vec2(
             position[0] * cos(angle) - position[1] * sin(angle),
             position[1] * cos(angle) + position[0] * sin(angle)
           );
-          vec2 translatedPosition = rotatedPosition + offset - camera;
+          vec2 translatedPosition = rotatedPosition + translation - camera;
           vec2 shiftedPosition = vec2(
             translatedPosition[0],
-            translatedPosition[1] + perspective * layer
+            translatedPosition[1] + perspective * offset[2]
           );
           vec2 scaledPosition = vec2(
             (shiftedPosition[0] * unit) / viewportWidth,
             (shiftedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
-          float shade = 0.0 + layer / 3.0;
+          float shade = 0.0 + offset[2] / 3.0;
           color = vec4(shade, shade, shade, 1.0);
         }`,
 
       attributes: {
         position: (context, { playerPositions }) => playerPositions,
-        offset: (context, { playerOffsets }) => playerOffsets,
-        layer: (context, { playerLayers }) => playerLayers,
-        angle: (context, { playerAngles }) => playerAngles,
+        offset: (context, { playerOffsets }) => ({
+          buffer: playerOffsets,
+          divisor: 1,
+        }),
       },
 
       uniforms: uniforms,
-      count: (context, { playerOffsets }) => playerOffsets.length,
+      count: (context, { playerPositions }) => playerPositions.length,
+      instances: (context, { playerCount }) => playerCount * layers.length,
       depth: depth,
     });
 
@@ -207,19 +210,13 @@ export default class World extends React.PureComponent {
     const players = this.state.entities.map(({ state, events }) =>
       positionAtTime(time, state, events)
     );
-    const playerPositions = [];
-    const playerOffsets = [];
-    const playerLayers = [];
-    const playerAngles = [];
+    const playerCount = players.length;
+    const playerPositions = triangle;
 
+    const playerOffsets = [];
     players.forEach(({ x, y, angle }) =>
       layers.forEach(layer => {
-        playerPositions.push(triangle);
-        triangle.forEach(vertex => {
-          playerOffsets.push([x, y]);
-          playerLayers.push(layer);
-          playerAngles.push(angle);
-        });
+        playerOffsets.push([x, y, layer, angle]);
       })
     );
 
@@ -229,8 +226,7 @@ export default class World extends React.PureComponent {
       scale,
       playerPositions,
       playerOffsets,
-      playerLayers,
-      playerAngles,
+      playerCount,
     });
   };
 
