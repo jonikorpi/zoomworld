@@ -98,11 +98,11 @@ export default class World extends React.PureComponent {
           );
           vec2 translatedPosition = rotatedPosition + offset - camera;
           vec2 shiftedPosition = vec2(
-            translatedPosition[0], 
+            translatedPosition[0],
             translatedPosition[1] + perspective * layer
           );
           vec2 scaledPosition = vec2(
-            (shiftedPosition[0] * unit) / viewportWidth, 
+            (shiftedPosition[0] * unit) / viewportWidth,
             (shiftedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
@@ -140,34 +140,37 @@ export default class World extends React.PureComponent {
         uniform vec2 camera;
 
         attribute vec2 position;
-        attribute vec2 offset;
-        attribute float layer;
+        attribute vec3 offset;
 
         varying vec4 color;
 
         void main() {
-          vec2 translatedPosition = position + offset - camera;
+          vec2 translation = vec2(offset[0], offset[1]);
+          vec2 translatedPosition = position + translation - camera;
           vec2 shiftedPosition = vec2(
             translatedPosition[0], 
-            translatedPosition[1] + perspective * layer
+            translatedPosition[1] + perspective * offset[2]
           );
           vec2 scaledPosition = vec2(
             (shiftedPosition[0] * unit) / viewportWidth, 
             (shiftedPosition[1] * unit) / viewportHeight
           );
           gl_Position = vec4(scaledPosition, 0, 1);
-          float shade = 0.0 + layer / 8.0;
+          float shade = 0.0 + offset[2] / 8.0;
           color = vec4(shade, shade, shade, 1.0);
         }`,
 
       attributes: {
         position: (context, { tilePositions }) => tilePositions,
-        offset: (context, { tileOffsets }) => tileOffsets,
-        layer: (context, { tileLayers }) => tileLayers,
+        offset: (context, { tilePositions, tileOffsets }) => ({
+          buffer: tileOffsets,
+          divisor: 1,
+        }),
       },
 
       uniforms: uniforms,
       count: (context, { tilePositions }) => tilePositions.length,
+      instances: (context, { tileCount }) => tileCount * layers.length,
       depth: depth,
     });
   }
@@ -181,17 +184,14 @@ export default class World extends React.PureComponent {
       offset: positionAtTime(time, state, events),
       tile: tile,
     }));
-    const tilePositions = [];
-    const tileOffsets = [];
-    const tileLayers = [];
 
+    const tileCount = tiles.length;
+    const tilePositions = tiles[0].tile;
+
+    const tileOffsets = [];
     layers.forEach(layer =>
       tiles.forEach(({ tile, offset: { x, y } }) => {
-        tilePositions.push(...tile);
-        tile.forEach(vertex => {
-          tileOffsets.push([x, y]);
-          tileLayers.push(layer);
-        });
+        tileOffsets.push([x, y, layer]);
       })
     );
 
@@ -201,7 +201,7 @@ export default class World extends React.PureComponent {
       scale,
       tilePositions,
       tileOffsets,
-      tileLayers,
+      tileCount,
     });
 
     const players = this.state.entities.map(({ state, events }) =>

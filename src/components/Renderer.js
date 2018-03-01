@@ -16,7 +16,11 @@ export default class Renderer extends React.Component {
   subscribers = [];
 
   componentWillMount() {
-    this.regl = startRegl(document.getElementById("canvas"));
+    this.regl = startRegl({
+      extensions: ["angle_instanced_arrays"],
+      container: document.getElementById("canvas"),
+    });
+
     this.loop = this.regl.frame(context => {
       try {
         const height =
