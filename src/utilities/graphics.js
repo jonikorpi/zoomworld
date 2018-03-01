@@ -20,29 +20,30 @@ const getSeed = (x, y) => {
 
 const baseTile = inputSeed => {
   let seed = inputSeed;
-  const radius = 0.091;
+  const radius = 0.0854;
 
   const cornerDirections = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
   const lineDirections = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 
-  const corners = cornerDirections.map(direction => [
-    // Spread into rectangle
-    direction[0],
-    direction[1],
-  ]);
-  // .map((corner, index) => [
-  //   // Push corners
-  //   corner[0] + radius * cornerDirections[index][0] * random(1, seed++),
-  //   corner[1] + radius * cornerDirections[index][1] * random(1, seed++),
-  // ]);
+  const corners = cornerDirections
+    .map(direction => [
+      // Spread into rectangle
+      direction[0] / 2 + 0.5,
+      direction[1] / 2 + 0.5,
+    ])
+    .map((corner, index) => [
+      // Push corners
+      corner[0] + radius * cornerDirections[index][0] * random(1, seed++),
+      corner[1] + radius * cornerDirections[index][1] * random(1, seed++),
+    ]);
 
   // Add randomly offset points along the edges
   const shape = corners.reduce((points, corner, cornerIndex) => {
     points.push(...corner);
-    const pointCount = 2 + Math.floor(random(5, seed++));
+    const pointCount = 2 + Math.floor(random(3, seed++));
 
     const pointsAlongLine = [...Array(pointCount)].map((nada, index) => {
-      const alongLine = 1 / pointCount * index + 1;
+      const alongLine = (1 / pointCount * index + 1) / 2;
       const away = random(radius, seed++);
       const x = lineDirections[cornerIndex][0]
         ? alongLine * lineDirections[cornerIndex][0]

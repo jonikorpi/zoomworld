@@ -11,7 +11,7 @@ import triangulate from "../utilities/triangulate.js";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
-const testTileCount = testTileRadius;
+const testTileCount = testTileRadius * testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
 const layers = [0, 1, 2, 3];
@@ -25,8 +25,8 @@ export default class World extends React.PureComponent {
 
   state = {
     tiles: [...new Array(testTileCount)].map((nada, index) => {
-      const x = Math.random() * testTileRadius - testTileRadius / 2;
-      const y = Math.random() * testTileRadius - testTileRadius / 2;
+      const x = Math.floor(Math.random() * testTileRadius - testTileRadius / 2);
+      const y = Math.floor(Math.random() * testTileRadius - testTileRadius / 2);
 
       return {
         tile: triangulate(baseTile(getSeed(x, y))),
@@ -60,7 +60,7 @@ export default class World extends React.PureComponent {
       unit: ({ viewportWidth, viewportHeight }, { scale }) =>
         Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale,
       camera: (context, { camera }) => [camera.x, camera.y],
-      perspective: 150,
+      perspective: 200,
     };
     const depth = {
       enable: false,
