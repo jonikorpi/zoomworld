@@ -60,7 +60,7 @@ export default class World extends React.PureComponent {
       unit: ({ viewportWidth, viewportHeight }, { scale }) =>
         Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale,
       camera: (context, { camera }) => [camera.x, camera.y],
-      perspective: 200,
+      perspective: 0.0382,
     };
     const depth = {
       enable: false,
@@ -97,9 +97,10 @@ export default class World extends React.PureComponent {
             position[1] * cos(angle) + position[0] * sin(angle)
           );
           vec2 translatedPosition = rotatedPosition + offset - camera;
-          vec2 shiftedPosition = 
-            translatedPosition +
-            vec2(translatedPosition[0] / perspective * layer, translatedPosition[1] / perspective * layer);
+          vec2 shiftedPosition = vec2(
+            translatedPosition[0], 
+            translatedPosition[1] + perspective * layer
+          );
           vec2 scaledPosition = vec2(
             (shiftedPosition[0] * unit) / viewportWidth, 
             (shiftedPosition[1] * unit) / viewportHeight
@@ -146,9 +147,10 @@ export default class World extends React.PureComponent {
 
         void main() {
           vec2 translatedPosition = position + offset - camera;
-          vec2 shiftedPosition = 
-            translatedPosition +
-            vec2(translatedPosition[0] / perspective * layer, translatedPosition[1] / perspective * layer);
+          vec2 shiftedPosition = vec2(
+            translatedPosition[0], 
+            translatedPosition[1] + perspective * layer
+          );
           vec2 scaledPosition = vec2(
             (shiftedPosition[0] * unit) / viewportWidth, 
             (shiftedPosition[1] * unit) / viewportHeight
