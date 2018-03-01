@@ -13,6 +13,17 @@ const testEntityRadius = 10;
 const testTileCount = testTileRadius * testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
+const layers = [0, 1, 2, 3];
+const triangle = [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]];
+const square = [
+  [-0.625, -0.625],
+  [-0.625, 0.625],
+  [0.625, -0.625],
+  [-0.625, 0.625],
+  [0.625, 0.625],
+  [0.625, -0.625],
+];
+
 export default class World extends React.PureComponent {
   static defaultProps = {
     userID: null,
@@ -51,16 +62,6 @@ export default class World extends React.PureComponent {
     const { subscribe, regl } = this.props.renderer;
     subscribe(this.update);
 
-    const layers = [0, 1, 2, 3];
-    const triangle = [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]];
-    const square = [
-      [-0.625, -0.625],
-      [-0.625, 0.625],
-      [0.625, -0.625],
-      [-0.625, 0.625],
-      [0.625, 0.625],
-      [0.625, -0.625],
-    ];
     const uniforms = {
       viewportWidth: ({ viewportWidth }) => viewportWidth,
       viewportHeight: ({ viewportHeight }) => viewportHeight,
@@ -117,25 +118,14 @@ export default class World extends React.PureComponent {
         }`,
 
       attributes: {
-        position: (context, { players }) =>
-          players.map(() => layers.map(layer => triangle)),
-        offset: (context, { players }) =>
-          players.map(({ x, y }) =>
-            layers.map(layer => triangle.map(triangle => [x, y]))
-          ),
-        angle: (context, { players }) =>
-          players.map(({ angle }) =>
-            layers.map(layer => triangle.map(triangle => angle))
-          ),
-        layer: (context, { players }) =>
-          players.map(() =>
-            layers.map(layer => triangle.map(triangle => layer))
-          ),
+        position: (context, { playerPositions }) => playerPositions,
+        offset: (context, { playerOffsets }) => playerOffsets,
+        layer: (context, { playerLayers }) => playerLayers,
+        angle: (context, { playerAngles }) => playerAngles,
       },
 
       uniforms: uniforms,
-      count: (context, { players }) =>
-        layers.length * triangle.length * players.length,
+      count: (context, { playerOffsets }) => playerOffsets.length,
       depth: depth,
     });
 
@@ -177,19 +167,13 @@ export default class World extends React.PureComponent {
         }`,
 
       attributes: {
-        position: (context, { tiles, time, camera }) =>
-          layers.map(layer => tiles.map(() => square)),
-        offset: (context, { tiles, time, camera }) =>
-          layers.map(layer =>
-            tiles.map(({ x, y }) => square.map(() => [x, y]))
-          ),
-        layer: (context, { tiles, time, camera }) =>
-          layers.map(layer => tiles.map(() => square.map(() => layer))),
+        position: (context, { tilePositions }) => tilePositions,
+        offset: (context, { tileOffsets }) => tileOffsets,
+        layer: (context, { tileLayers }) => tileLayers,
       },
 
       uniforms: uniforms,
-      count: (context, { tiles }) =>
-        layers.length * tiles.length * square.length,
+      count: (context, { tileOffsets }) => tileOffsets.length,
       depth: depth,
     });
   }
@@ -202,12 +186,57 @@ export default class World extends React.PureComponent {
     const tiles = this.state.tiles.map(({ state, events }) =>
       positionAtTime(time, state, events)
     );
-    this.drawTiles({ time, camera, scale, tiles });
+    const tilePositions = [];
+    const tileOffsets = [];
+    const tileLayers = [];
+
+    layers.forEach(layer =>
+      tiles.forEach(({ x, y }) => {
+        tilePositions.push(square);
+        square.forEach(vertex => {
+          tileOffsets.push([x, y]);
+          tileLayers.push(layer);
+        });
+      })
+    );
+
+    this.drawTiles({
+      time,
+      camera,
+      scale,
+      tilePositions,
+      tileOffsets,
+      tileLayers,
+    });
 
     const players = this.state.entities.map(({ state, events }) =>
       positionAtTime(time, state, events)
     );
-    this.drawPlayers({ time, camera, scale, players });
+    const playerPositions = [];
+    const playerOffsets = [];
+    const playerLayers = [];
+    const playerAngles = [];
+
+    players.forEach(({ x, y, angle }) =>
+      layers.forEach(layer => {
+        playerPositions.push(triangle);
+        triangle.forEach(vertex => {
+          playerOffsets.push([x, y]);
+          playerLayers.push(layer);
+          playerAngles.push(angle);
+        });
+      })
+    );
+
+    this.drawPlayers({
+      time,
+      camera,
+      scale,
+      playerPositions,
+      playerOffsets,
+      playerLayers,
+      playerAngles,
+    });
   };
 
   render() {
