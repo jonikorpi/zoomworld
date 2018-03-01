@@ -7,22 +7,15 @@ import TestEntity from "../components/TestEntity";
 
 import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 import { positionAtTime } from "../utilities/state.js";
+import triangulate from "../utilities/triangulate.js";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
-const testTileCount = testTileRadius * testTileRadius;
+const testTileCount = testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
 const layers = [0, 1, 2, 3];
 const triangle = [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]];
-const square = [
-  [-0.625, -0.625],
-  [-0.625, 0.625],
-  [0.625, -0.625],
-  [-0.625, 0.625],
-  [0.625, 0.625],
-  [0.625, -0.625],
-];
 
 export default class World extends React.PureComponent {
   static defaultProps = {
@@ -34,10 +27,9 @@ export default class World extends React.PureComponent {
     tiles: [...new Array(testTileCount)].map((nada, index) => {
       const x = Math.random() * testTileRadius - testTileRadius / 2;
       const y = Math.random() * testTileRadius - testTileRadius / 2;
+
       return {
-        tile: baseTile(getSeed(x, y))
-          .join(" ")
-          .toString(),
+        tile: triangulate(baseTile(getSeed(x, y))),
         state: {
           x,
           y,
@@ -173,7 +165,7 @@ export default class World extends React.PureComponent {
       },
 
       uniforms: uniforms,
-      count: (context, { tileOffsets }) => tileOffsets.length,
+      count: (context, { tilePositions }) => tilePositions.length,
       depth: depth,
     });
   }
@@ -183,17 +175,18 @@ export default class World extends React.PureComponent {
   }
 
   update = (time, camera, scale) => {
-    const tiles = this.state.tiles.map(({ state, events }) =>
-      positionAtTime(time, state, events)
-    );
+    const tiles = this.state.tiles.map(({ tile, state, events }) => ({
+      offset: positionAtTime(time, state, events),
+      tile: tile,
+    }));
     const tilePositions = [];
     const tileOffsets = [];
     const tileLayers = [];
 
     layers.forEach(layer =>
-      tiles.forEach(({ x, y }) => {
-        tilePositions.push(square);
-        square.forEach(vertex => {
+      tiles.forEach(({ tile, offset: { x, y } }) => {
+        tilePositions.push(...tile);
+        tile.forEach(vertex => {
           tileOffsets.push([x, y]);
           tileLayers.push(layer);
         });
