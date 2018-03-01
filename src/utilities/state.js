@@ -1,4 +1,4 @@
-import { easeInOut } from "../utilities/graphics.js";
+import { easeInOut, angleLerp } from "../utilities/graphics.js";
 
 const positionAtTime = (now, state, events) => {
   const result = events.reduce(
@@ -6,13 +6,18 @@ const positionAtTime = (now, state, events) => {
       type === "impulse"
         ? mergeImpulse(finalState, now, type, time, data)
         : finalState,
-    { ...state, velocityX: 0, velocityY: 0 }
+    { ...state, velocityX: 0, velocityY: 0, lastAngle: 0 }
   );
+
+  const velocity = Math.abs(result.velocityY) + Math.abs(result.velocityX);
 
   return {
     x: result.x,
     y: result.y,
-    angle: Math.atan2(result.velocityY, result.velocityX),
+    angle:
+      velocity > 0
+        ? Math.atan2(result.velocityY, result.velocityX)
+        : result.lastAngle,
   };
 };
 
@@ -42,14 +47,18 @@ const mergeImpulse = (
 ) => {
   const elapsed = now - time;
   const endsAt = time + duration;
-  const completion = endsAt < now ? 1 : elapsed / duration;
-  const easing = easeInOut(3)(completion);
+  const hasEnded = endsAt < now;
+  const completion = hasEnded ? 1 : elapsed / duration;
+  const easing = easeInOut(2)(completion);
   const thrust = -Math.abs(easing - 0.5) + 0.5;
+  const velocityX = finalState.velocityX + thrust * speed * x;
+  const velocityY = finalState.velocityY + thrust * speed * y;
 
   finalState.x += easing * speed * x;
   finalState.y += easing * speed * y;
-  finalState.velocityX += thrust * speed * x;
-  finalState.velocityY += thrust * speed * y;
+  finalState.velocityX = velocityX;
+  finalState.velocityY = velocityY;
+  finalState.lastAngle = Math.atan2(y, x);
 
   return finalState;
 };
