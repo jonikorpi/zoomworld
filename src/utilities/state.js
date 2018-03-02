@@ -11,14 +11,13 @@ const positionAtTime = (now, state, events) => {
 
   const velocity = Math.abs(result.velocityY) + Math.abs(result.velocityX);
 
-  return {
-    x: result.x,
-    y: result.y,
-    angle:
-      velocity > 0
-        ? Math.atan2(result.velocityY, result.velocityX)
-        : result.lastAngle,
-  };
+  return [
+    result.x,
+    result.y,
+    velocity > 0
+      ? Math.atan2(result.velocityY, result.velocityX)
+      : result.lastAngle,
+  ];
 };
 
 const stateAtTime = (now, state, events) =>
