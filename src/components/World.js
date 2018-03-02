@@ -50,23 +50,11 @@ export default class World extends React.PureComponent {
     }),
   };
 
-  componentDidMount() {
+  componentWillMount() {
     const { subscribe, regl } = this.props.renderer;
     subscribe(this.update);
 
-    const uniforms = {
-      viewportWidth: ({ viewportWidth }) => viewportWidth,
-      viewportHeight: ({ viewportHeight }) => viewportHeight,
-      unit: ({ viewportWidth, viewportHeight }, { scale }) =>
-        Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale,
-      camera: (context, { camera }) => [camera.x, camera.y],
-      perspective: 0.0382,
-    };
-    const depth = {
-      enable: false,
-    };
-
-    this.drawPlayers = regl({
+    this.draw = regl({
       frag: `
         precision mediump float;
 
@@ -112,69 +100,29 @@ export default class World extends React.PureComponent {
         }`,
 
       attributes: {
-        position: (context, { playerPositions }) => playerPositions,
-        offset: (context, { playerOffsets }) => ({
-          buffer: playerOffsets,
+        position: (context, { positions }) => positions,
+        offset: (context, { offsets }) => ({
+          buffer: offsets,
           divisor: 1,
         }),
       },
+      count: (context, { positions }) => positions.length,
+      instances: (context, { count }) => count * layers.length,
 
-      uniforms: uniforms,
-      count: (context, { playerPositions }) => playerPositions.length,
-      instances: (context, { playerCount }) => playerCount * layers.length,
-      depth: depth,
-    });
-
-    this.drawTiles = regl({
-      frag: `
-        precision mediump float;
-        varying vec4 color;
-
-        void main() {
-          gl_FragColor = color;
-        }`,
-
-      vert: `
-        precision mediump float;
-        uniform float viewportWidth;
-        uniform float viewportHeight;
-        uniform float unit;
-        uniform float perspective;
-        uniform vec2 camera;
-
-        attribute vec2 position;
-        attribute vec3 offset;
-
-        varying vec4 color;
-
-        void main() {
-          vec2 translation = vec2(offset[0], offset[1]);
-          vec2 translatedPosition = position + translation - camera;
-          vec2 shiftedPosition = vec2(
-            translatedPosition[0], 
-            translatedPosition[1] + perspective * offset[2]
-          );
-          vec2 scaledPosition = vec2(
-            (shiftedPosition[0] * unit) / viewportWidth, 
-            (shiftedPosition[1] * unit) / viewportHeight
-          );
-          gl_Position = vec4(scaledPosition, 0, 1);
-          float shade = 0.0 + offset[2] / 8.0;
-          color = vec4(shade, shade, shade, 1.0);
-        }`,
-
-      attributes: {
-        position: (context, { tilePositions }) => tilePositions,
-        offset: (context, { tilePositions, tileOffsets }) => ({
-          buffer: tileOffsets,
-          divisor: 1,
-        }),
+      uniforms: {
+        viewportWidth: ({ viewportWidth }) => viewportWidth,
+        viewportHeight: ({ viewportHeight }) => viewportHeight,
+        unit: ({ viewportWidth, viewportHeight }, { scale }) =>
+          Math.min(viewportWidth, viewportHeight) *
+          config.unitSize /
+          50 *
+          scale,
+        camera: (context, { camera }) => [camera.x, camera.y],
+        perspective: 0.0382,
       },
-
-      uniforms: uniforms,
-      count: (context, { tilePositions }) => tilePositions.length,
-      instances: (context, { tileCount }) => tileCount * layers.length,
-      depth: depth,
+      depth: {
+        enable: false,
+      },
     });
   }
 
@@ -187,32 +135,20 @@ export default class World extends React.PureComponent {
       offset: positionAtTime(time, state, events),
       tile: tile,
     }));
-
     const tileCount = tiles.length;
     const tilePositions = tiles[0].tile;
-
     const tileOffsets = [];
     layers.forEach(layer =>
       tiles.forEach(({ tile, offset: { x, y } }) => {
-        tileOffsets.push([x, y, layer]);
+        tileOffsets.push([x, y, layer, 0]);
       })
     );
-
-    this.drawTiles({
-      time,
-      camera,
-      scale,
-      tilePositions,
-      tileOffsets,
-      tileCount,
-    });
 
     const players = this.state.entities.map(({ state, events }) =>
       positionAtTime(time, state, events)
     );
     const playerCount = players.length;
     const playerPositions = triangle;
-
     const playerOffsets = [];
     players.forEach(({ x, y, angle }) =>
       layers.forEach(layer => {
@@ -220,14 +156,24 @@ export default class World extends React.PureComponent {
       })
     );
 
-    this.drawPlayers({
-      time,
-      camera,
-      scale,
-      playerPositions,
-      playerOffsets,
-      playerCount,
-    });
+    this.draw([
+      {
+        time,
+        camera,
+        scale,
+        positions: tilePositions,
+        offsets: tileOffsets,
+        count: tileCount,
+      },
+      {
+        time,
+        camera,
+        scale,
+        positions: playerPositions,
+        offsets: playerOffsets,
+        count: playerCount,
+      },
+    ]);
   };
 
   render() {
