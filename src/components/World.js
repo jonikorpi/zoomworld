@@ -4,6 +4,7 @@ import TestEntity from "../components/TestEntity";
 import TestTile from "../components/TestTile";
 import TestPlayer from "../components/TestPlayer";
 import InteractionSurface from "../components/InteractionSurface";
+import LogMessage from "./LogMessage";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
@@ -87,6 +88,14 @@ export default class World extends React.Component {
         <TestEntity>
           {({ state, events }) => (
             <React.Fragment>
+              {[...events].reverse().map((event, index) => (
+                <LogMessage key={index}>
+                  <pre>
+                    <strong>{event.type}</strong>{" "}
+                    {JSON.stringify(event.data, null, 2)}
+                  </pre>
+                </LogMessage>
+              ))}
               <InteractionSurface createEvent={event => console.log(event)} />
               <TestPlayer
                 playerID={userID}
