@@ -6,6 +6,20 @@ import { baseTile, getSeed } from "../utilities/graphics.js";
 import triangulate from "../utilities/triangulate.js";
 
 const models = {
+  tileShade: {
+    data: {
+      positions: triangulate(baseTile(getSeed(123, 456))),
+      color: [0.236, 0.236, 0.236, 1],
+    },
+    z: -1,
+  },
+  playerShade: {
+    data: {
+      positions: [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]],
+      color: [0.382, 0.382, 0.382, 1],
+    },
+    z: -1,
+  },
   tile: {
     data: {
       positions: triangulate(baseTile(getSeed(123, 456))),
@@ -16,7 +30,7 @@ const models = {
   player: {
     data: {
       positions: [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]],
-      color: [1, 1, 1, 1],
+      color: [0, 0, 0, 1],
     },
     z: 0,
   },
@@ -66,7 +80,12 @@ export default class Renderer extends React.Component {
   drawLoop = context => {
     try {
       const time = performance.timing.navigationStart + performance.now() - 200;
-      const camera = positionAtTime(time, this.props.state, this.props.events);
+      const cameraState = positionAtTime(
+        time,
+        this.props.state,
+        this.props.events
+      );
+      const camera = [cameraState.x, cameraState.y];
       const height = document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;
       const scale = 1 - scrolled / height + 0.146 * (scrolled / height);
@@ -80,7 +99,7 @@ export default class Renderer extends React.Component {
       drawOrder.forEach(name => {
         const list = modelLists[name];
 
-        if (list.length === 0) {
+        if (!list || list.length === 0) {
           return;
         }
 
@@ -130,14 +149,14 @@ export default class Renderer extends React.Component {
       uniform float z;
 
       attribute vec2 position;
-      attribute vec4 offset;
+      attribute vec3 offset;
       attribute float seed;
 
       varying vec4 outputColor;
 
       void main() {
         vec2 translation = vec2(offset[0], offset[1]);
-        float angle = offset[3];
+        float angle = offset[2];
 
         vec2 rotatedPosition = vec2(
           position[0] * cos(angle) - position[1] * sin(angle),
@@ -146,14 +165,14 @@ export default class Renderer extends React.Component {
         vec2 translatedPosition = rotatedPosition + translation - camera;
         vec2 shiftedPosition = vec2(
           translatedPosition[0],
-          translatedPosition[1] + perspective * offset[2]
+          translatedPosition[1] + perspective * z
         );
         vec2 scaledPosition = vec2(
           (shiftedPosition[0] * unit) / viewportWidth,
           (shiftedPosition[1] * unit) / viewportHeight
         );
         gl_Position = vec4(scaledPosition, 0, 1);
-        float shade = 0.0 + offset[2] / 3.0;
+        float shade = 0.0 + z / 3.0;
         outputColor = color;
       }`,
 
@@ -169,14 +188,14 @@ export default class Renderer extends React.Component {
       }),
     },
     count: (context, { positions }) => positions.length,
-    instances: (context, { instances }) => instances / 10,
+    instances: (context, { instances }) => instances,
 
     uniforms: {
       viewportWidth: ({ viewportWidth }) => viewportWidth,
       viewportHeight: ({ viewportHeight }) => viewportHeight,
       unit: ({ viewportWidth, viewportHeight }, { scale }) =>
         Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale,
-      camera: (context, { camera }) => [camera.x, camera.y],
+      camera: (context, { camera }) => camera,
       perspective: config.perspective,
       color: (context, { color }) => color,
       z: (context, { z }) => z,

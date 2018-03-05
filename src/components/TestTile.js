@@ -30,7 +30,7 @@ export default class TestTile extends React.Component {
     const { x, y, state } = this.props;
 
     return {
-      models: ["tile"],
+      models: ["tileShade", "tile"],
       position: [x, y, 0],
       seed: this.seed,
       mountedAt: this.mountedAt,

@@ -27,10 +27,11 @@ export default class TestPlayer extends React.Component {
 
   update = time => {
     const { state, events } = this.props;
+    const position = positionAtTime(time, state, events);
 
     return {
-      models: ["player"],
-      position: positionAtTime(time, state, events),
+      models: ["player", "playerShade"],
+      position: [position.x, position.y, position.angle],
       seed: this.seed,
       mountedAt: this.mountedAt,
       unmountedAt: this.unmountedAt,
