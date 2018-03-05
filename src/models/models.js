@@ -48,11 +48,10 @@ let models = {
   },
 };
 
-const fetchModel = name => {
+const fetchModel = async name => {
   const modelToFetch = models[name].data;
-  import(`../models/${modelToFetch}.js`).then(
-    module => (models[name].data = module.default)
-  );
+  const data = await import(`../models/${modelToFetch}.js`);
+  models[name].data = data.default;
 };
 
 const getModel = name => {
