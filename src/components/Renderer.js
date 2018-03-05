@@ -1,42 +1,8 @@
 import React from "react";
 import startRegl from "regl";
 
-import { positionAtTime } from "../utilities/state.js";
-import { baseTile, getSeed } from "../utilities/graphics.js";
-import triangulate from "../utilities/triangulate.js";
+import { getModel, drawOrder } from "../utilities/models.js";
 
-const models = {
-  tileShade: {
-    data: {
-      positions: triangulate(baseTile(getSeed(123, 456))),
-      color: [0.236, 0.236, 0.236, 1],
-    },
-    z: -1,
-  },
-  playerShade: {
-    data: {
-      positions: [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]],
-      color: [0.382, 0.382, 0.382, 1],
-    },
-    z: -1,
-  },
-  tile: {
-    data: {
-      positions: triangulate(baseTile(getSeed(123, 456))),
-      color: [1, 1, 1, 1],
-    },
-    z: 0,
-  },
-  player: {
-    data: {
-      positions: [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]],
-      color: [0, 0, 0, 1],
-    },
-    z: 0,
-  },
-};
-
-const drawOrder = Object.keys(models).map(model => model);
 const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
 
 const createModelLists = (lists, { models, ...entity }) => {
@@ -93,6 +59,7 @@ export default class Renderer extends React.Component {
       const drawCalls = [];
       drawOrder.forEach(name => {
         const list = modelLists[name];
+        const model = getModel(name);
 
         if (!list || list.length === 0) {
           return;
@@ -102,9 +69,9 @@ export default class Renderer extends React.Component {
           time,
           camera,
           scale,
-          positions: models[name].data.positions,
-          color: models[name].data.color,
-          z: models[name].z,
+          positions: model.data.positions,
+          color: model.data.color,
+          z: model.z,
           offsets: list.map(({ position }) => position),
           seeds: list.map(({ seed }) => seed),
           // mountedTimes: list.map(({mountedAt}) => mountedAt),
