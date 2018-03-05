@@ -18,7 +18,6 @@ export default class TestPlayer extends React.Component {
     const { registerCamera } = this.props;
 
     this.mountedAt = performance.timing.navigationStart + performance.now();
-    this.seed = Math.ceil(Math.random() * 1000);
     this.props.subscribe(this.update);
 
     if (registerCamera) {
