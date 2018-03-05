@@ -17,10 +17,17 @@ export default class World extends React.PureComponent {
     userID: null,
     subscribe: () => {},
     unsubscribe: () => {},
+    registerCamera: () => {},
+    unregisterCamera: () => {},
   };
 
   render() {
-    const { subscribe, unsubscribe } = this.props;
+    const {
+      subscribe,
+      unsubscribe,
+      registerCamera,
+      unregisterCamera,
+    } = this.props;
 
     const tiles = [...new Array(testTileCount)].map((nada, index) => {
       const x = Math.floor(Math.random() * testTileRadius - testTileRadius / 2);
@@ -77,6 +84,20 @@ export default class World extends React.PureComponent {
             )}
           </TestEntity>
         ))}
+
+        <TestEntity>
+          {({ state, events }) => (
+            <TestPlayer
+              playerID={`dsajiofs${Math.ceil(Math.random() * 10000)}`}
+              subscribe={subscribe}
+              unsubscribe={unsubscribe}
+              registerCamera={registerCamera}
+              unregisterCamera={unregisterCamera}
+              state={state}
+              events={events}
+            />
+          )}
+        </TestEntity>
       </React.Fragment>
     );
   }

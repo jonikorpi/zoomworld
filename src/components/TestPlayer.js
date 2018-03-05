@@ -7,22 +7,34 @@ export default class TestPlayer extends React.Component {
   static defaultProps = {
     subscribe: () => {},
     unsubscribe: () => {},
+    registerCamera: null,
+    unregisterCamera: null,
     playerID: "anonymous",
     state: { x: 0, y: 0 },
     events: [],
   };
 
   componentWillMount() {
-    const { playerID } = this.props;
+    const { registerCamera } = this.props;
 
     this.mountedAt = performance.timing.navigationStart + performance.now();
     this.seed = Math.ceil(Math.random() * 1000);
     this.props.subscribe(this.update);
+
+    if (registerCamera) {
+      registerCamera(this.update);
+    }
   }
 
   componentWillUnmount() {
+    const { unsubscribe, unregisterCamera } = this.props;
+
     this.unmountedAt = performance.timing.navigationStart + performance.now();
-    this.props.unsubscribe(this.update);
+    unsubscribe(this.update);
+
+    if (unregisterCamera) {
+      unregisterCamera();
+    }
   }
 
   update = time => {

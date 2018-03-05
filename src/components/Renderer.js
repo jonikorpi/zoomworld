@@ -57,15 +57,15 @@ const clearConfiguration = {
   color: [0, 0, 0, 0],
 };
 
-export default class Renderer extends React.Component {
-  static defaultProps = {
-    state: { x: 0, y: 0, angle: 0 },
-    events: [],
-  };
+const getDefaultCamera = () => [0, 0];
 
+export default class Renderer extends React.Component {
   subscribers = [];
   subscribe = callback => this.subscribers.push(callback);
   unsubscribe = id => this.subscribers.splice(id - 1, 1);
+  getCamera = getDefaultCamera;
+  registerCamera = callback => (this.getCamera = callback);
+  unregisterCamera = callback => (this.getCamera = getDefaultCamera);
 
   regl = startRegl({
     extensions: ["angle_instanced_arrays"],
@@ -80,12 +80,7 @@ export default class Renderer extends React.Component {
   drawLoop = context => {
     try {
       const time = performance.timing.navigationStart + performance.now() - 200;
-      const cameraState = positionAtTime(
-        time,
-        this.props.state,
-        this.props.events
-      );
-      const camera = [cameraState.x, cameraState.y];
+      const camera = this.getCamera(time).position;
       const height = document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;
       const scale = 1 - scrolled / height + 0.146 * (scrolled / height);
@@ -144,7 +139,7 @@ export default class Renderer extends React.Component {
       uniform float viewportHeight;
       uniform float unit;
       uniform float perspective;
-      uniform vec2 camera;
+      uniform vec3 camera;
       uniform vec4 color;
       uniform float z;
 
@@ -154,6 +149,9 @@ export default class Renderer extends React.Component {
 
       varying vec4 outputColor;
 
+      vec2 cameraTranslation = vec2(camera[0], camera[1]);
+      float cameraAngle = camera[2];
+
       void main() {
         vec2 translation = vec2(offset[0], offset[1]);
         float angle = offset[2];
@@ -162,7 +160,7 @@ export default class Renderer extends React.Component {
           position[0] * cos(angle) - position[1] * sin(angle),
           position[1] * cos(angle) + position[0] * sin(angle)
         );
-        vec2 translatedPosition = rotatedPosition + translation - camera;
+        vec2 translatedPosition = rotatedPosition + translation - cameraTranslation;
         vec2 shiftedPosition = vec2(
           translatedPosition[0],
           translatedPosition[1] + perspective * z
