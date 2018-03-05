@@ -38,11 +38,13 @@ export default class TestEntity extends React.Component {
       event => event.time + (event.data.duration || 0) > now
     );
 
-    const flattenedState = positionAtTime(now, state, finishedEvents);
+    const flattenedPosition = positionAtTime(now, state, finishedEvents);
 
     this.setState({
       state: {
-        ...flattenedState,
+        x: flattenedPosition[0],
+        y: flattenedPosition[1],
+        angle: flattenedPosition[2],
       },
       events: [
         ...unfinishedEvents,

@@ -1,8 +1,5 @@
 import React from "react";
 
-import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
-import { positionAtTime } from "../utilities/state.js";
-
 export default class TestTile extends React.Component {
   static defaultProps = {
     subscribe: () => {},
@@ -17,7 +14,6 @@ export default class TestTile extends React.Component {
     const { x, y } = this.props;
 
     this.mountedAt = performance.timing.navigationStart + performance.now();
-    this.seed = getSeed(x, y);
     this.props.subscribe(this.update);
   }
 
