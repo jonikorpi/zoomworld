@@ -9,7 +9,7 @@ const fragmentShader = `
 `;
 
 const vertexShader = `
-  precision highp float;
+  precision mediump float;
   uniform float viewportWidth;
   uniform float viewportHeight;
   uniform float unit;
