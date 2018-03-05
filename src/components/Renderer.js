@@ -70,7 +70,7 @@ export default class Renderer extends React.Component {
           camera,
           scale,
           positions: model.data.positions,
-          color: model.data.color,
+          color: model.color,
           z: model.z,
           offsets: list.map(({ position }) => position),
           seeds: list.map(({ seed }) => seed),

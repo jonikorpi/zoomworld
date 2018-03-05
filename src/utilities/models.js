@@ -6,39 +6,48 @@ let models = {
   placeholder: {
     data: {
       positions: placeholderPositions,
-      color: [0, 0, 0, 0.5],
     },
+    color: [0, 0, 0, 0.5],
     z: 0,
   },
   tileShade: {
-    z: -1,
-  },
-  playerShade: {
+    data: "tile",
+    color: [0.236, 0.236, 0.236, 1],
     z: -1,
   },
   tile: {
+    data: "tile",
+    color: [1, 1, 1, 1],
     z: 0,
   },
+  playerShade: {
+    data: "player",
+    color: [0.382, 0.382, 0.382, 1],
+    z: -1,
+  },
   player: {
+    data: "player",
+    color: [0, 0, 0, 1],
     z: 0,
   },
 };
 
-const fetchModel = name =>
-  import(`../models/${name}.js`).then(
+const fetchModel = name => {
+  const modelToFetch = models[name].data;
+  import(`../models/${modelToFetch}.js`).then(
     module => (models[name].data = module.default)
   );
+};
 
 const getModel = name => {
-  if (models[name].data) {
-    return models[name];
-  } else {
+  if (typeof models[name].data === "string") {
     fetchModel(name);
-
     return {
       ...models[name],
       data: models["placeholder"].data,
     };
+  } else {
+    return models[name];
   }
 };
 

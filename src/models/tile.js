@@ -5,5 +5,4 @@ const positions = triangulate(baseTile(getSeed(123, 456)));
 
 export default {
   positions: positions,
-  color: [1, 1, 1, 1],
 };
