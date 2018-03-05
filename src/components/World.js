@@ -3,6 +3,7 @@ import React from "react";
 import TestEntity from "../components/TestEntity";
 import TestTile from "../components/TestTile";
 import TestPlayer from "../components/TestPlayer";
+import InteractionSurface from "../components/InteractionSurface";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
@@ -24,6 +25,7 @@ export default class World extends React.Component {
       unsubscribe,
       registerCamera,
       unregisterCamera,
+      userID,
     } = this.props;
 
     const tiles = [...new Array(testTileCount)].map((nada, index) => {
@@ -84,15 +86,18 @@ export default class World extends React.Component {
 
         <TestEntity>
           {({ state, events }) => (
-            <TestPlayer
-              playerID={`dsajiofs${Math.ceil(Math.random() * 10000)}`}
-              subscribe={subscribe}
-              unsubscribe={unsubscribe}
-              registerCamera={registerCamera}
-              unregisterCamera={unregisterCamera}
-              state={state}
-              events={events}
-            />
+            <React.Fragment>
+              <InteractionSurface createEvent={event => console.log(event)} />
+              <TestPlayer
+                playerID={userID}
+                subscribe={subscribe}
+                unsubscribe={unsubscribe}
+                registerCamera={registerCamera}
+                unregisterCamera={unregisterCamera}
+                state={state}
+                events={events}
+              />
+            </React.Fragment>
           )}
         </TestEntity>
       </React.Fragment>
