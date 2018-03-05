@@ -1,13 +1,23 @@
 import triangulate from "../utilities/triangulate.js";
 
-const placeholderPositions = triangulate([0, 0, 1, 0, 1, 1, 0, 1]);
+const placeholderPositions = triangulate([
+  -0.5,
+  -0.5,
+  0.5,
+  -0.5,
+  0.5,
+  0.5,
+  -0.5,
+  0.5,
+]);
 
 let models = {
   placeholder: {
     data: {
       positions: placeholderPositions,
     },
-    color: [0, 0, 0, 0.5],
+    color: [1, 1, 1, 1],
+    primitive: "line loop",
     z: 0,
   },
   tileShade: {
@@ -43,8 +53,8 @@ const getModel = name => {
   if (typeof models[name].data === "string") {
     fetchModel(name);
     return {
-      ...models[name],
-      data: models["placeholder"].data,
+      ...models["placeholder"],
+      z: models[name].z,
     };
   } else {
     return models[name];

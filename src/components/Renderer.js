@@ -72,6 +72,8 @@ export default class Renderer extends React.Component {
           positions: model.data.positions,
           color: model.color,
           z: model.z,
+          lineWidth: model.lineWidth || 1,
+          primitive: model.primitive || "triangles",
           offsets: list.map(({ position }) => position),
           seeds: list.map(({ seed }) => seed),
           // mountedTimes: list.map(({mountedAt}) => mountedAt),
@@ -154,6 +156,8 @@ export default class Renderer extends React.Component {
     },
     count: (context, { positions }) => positions.length,
     instances: (context, { instances }) => instances,
+    primitive: (context, { primitive }) => primitive,
+    lineWidth: (context, { lineWidth }) => lineWidth,
 
     uniforms: {
       viewportWidth: ({ viewportWidth }) => viewportWidth,
