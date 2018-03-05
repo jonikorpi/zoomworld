@@ -1,5 +1,5 @@
 const fragmentShader = `
-  precision mediump float;
+  precision lowp float;
 
   varying vec4 outputColor;
 
@@ -9,7 +9,7 @@ const fragmentShader = `
 `;
 
 const vertexShader = `
-  precision mediump float;
+  precision highp float;
   uniform float viewportWidth;
   uniform float viewportHeight;
   uniform float unit;
