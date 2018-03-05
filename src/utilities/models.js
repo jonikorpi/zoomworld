@@ -34,11 +34,13 @@ let models = {
     data: "player",
     color: [0.382, 0.382, 0.382, 1],
     z: -1,
+    scale: 0.125,
   },
   player: {
     data: "player",
     color: [0, 0, 0, 1],
     z: 0,
+    scale: 0.125,
   },
 };
 

@@ -14,7 +14,7 @@ const createModelLists = (lists, { models, ...entity }) => {
 };
 
 const config = {
-  unitSize: 14.6,
+  unitSize: 20,
   unitType: "vmin",
   perspective: 0.0382,
 };
@@ -74,7 +74,7 @@ export default class Renderer extends React.Component {
           z: model.z,
           lineWidth: model.lineWidth || 1,
           primitive: model.primitive || "triangles",
-          offsets: list.map(({ position }) => position),
+          offsets: list.map(({ position }) => [...position, model.scale || 1]),
           seeds: list.map(({ seed }) => seed),
           // mountedTimes: list.map(({mountedAt}) => mountedAt),
           // unmountedTimes: list.map(({unmountedAt}) => unmountedAt),
@@ -113,7 +113,7 @@ export default class Renderer extends React.Component {
       uniform float z;
 
       attribute vec2 position;
-      attribute vec3 offset;
+      attribute vec4 offset;
       attribute float seed;
 
       varying vec4 outputColor;
@@ -124,22 +124,27 @@ export default class Renderer extends React.Component {
       void main() {
         vec2 translation = vec2(offset[0], offset[1]);
         float angle = offset[2];
+        float modelScale = offset[3];
 
+        vec2 scaledPosition = vec2(
+          position[0] * modelScale,
+          position[1] * modelScale
+        );
         vec2 rotatedPosition = vec2(
-          position[0] * cos(angle) - position[1] * sin(angle),
-          position[1] * cos(angle) + position[0] * sin(angle)
+          scaledPosition[0] * cos(angle) - scaledPosition[1] * sin(angle),
+          scaledPosition[1] * cos(angle) + scaledPosition[0] * sin(angle)
         );
         vec2 translatedPosition = rotatedPosition + translation - cameraTranslation;
         vec2 shiftedPosition = vec2(
           translatedPosition[0],
           translatedPosition[1] + perspective * z
         );
-        vec2 scaledPosition = vec2(
-          (shiftedPosition[0] * unit) / viewportWidth,
-          (shiftedPosition[1] * unit) / viewportHeight
+        vec2 cameraScaledPosition = vec2(
+          unit / viewportWidth * shiftedPosition[0],
+          unit / viewportHeight * shiftedPosition[1]
         );
-        gl_Position = vec4(scaledPosition, 0, 1);
-        float shade = 0.0 + z / 3.0;
+
+        gl_Position = vec4(cameraScaledPosition, 0, 1);
         outputColor = color;
       }`,
 

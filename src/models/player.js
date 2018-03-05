@@ -3,5 +3,5 @@
 // const positions = triangulate(…);
 
 export default {
-  positions: [[0.25, 0], [-0.125, -0.125], [-0.125, 0.125]],
+  positions: [[0.5, 0], [-1, -0.5], [-1, 0.5]],
 };
