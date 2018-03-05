@@ -2,7 +2,7 @@ import React from "react";
 import startRegl from "regl";
 import * as models from "../shaders/models.shader.js";
 
-import { getModel, drawOrder } from "../utilities/models.js";
+import { getModel, drawOrder } from "../models/models.js";
 
 // const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
 
@@ -76,7 +76,7 @@ export default class Renderer extends React.Component {
           lineWidth: model.lineWidth || 1,
           primitive: model.primitive || "triangles",
           offsets: list.map(({ position }) => [...position, model.scale || 1]),
-          seeds: list.map(({ seed }) => seed),
+          randomness: model.randomness || 0,
           // mountedTimes: list.map(({mountedAt}) => mountedAt),
           // unmountedTimes: list.map(({unmountedAt}) => unmountedAt),
           instances: list.length,
@@ -103,10 +103,6 @@ export default class Renderer extends React.Component {
         buffer: offsets,
         divisor: 1,
       }),
-      seed: (context, { seeds }) => ({
-        buffer: seeds,
-        divisor: 1,
-      }),
     },
     count: (context, { positions }) => positions.length,
     instances: (context, { instances }) => instances,
@@ -122,6 +118,7 @@ export default class Renderer extends React.Component {
       perspective: config.perspective,
       color: (context, { color }) => color,
       z: (context, { z }) => z,
+      randomness: (context, { randomness }) => randomness,
     },
     blend: {
       enable: true,

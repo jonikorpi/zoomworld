@@ -44,7 +44,6 @@ export default class TestPlayer extends React.Component {
     return {
       models: ["player", "playerShade"],
       position: [position.x, position.y, position.angle],
-      seed: this.seed,
       mountedAt: this.mountedAt,
       unmountedAt: this.unmountedAt,
     };

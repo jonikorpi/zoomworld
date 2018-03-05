@@ -32,7 +32,6 @@ export default class TestTile extends React.Component {
     return {
       models: ["tileShade", "tile"],
       position: [x, y, 0],
-      seed: this.seed,
       mountedAt: this.mountedAt,
       unmountedAt: this.unmountedAt,
     };

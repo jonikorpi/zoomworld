@@ -17,15 +17,25 @@ const vertexShader = `
   uniform vec3 camera;
   uniform vec4 color;
   uniform float z;
+  uniform float randomness;
 
   attribute vec2 position;
   attribute vec4 offset;
-  attribute float seed;
 
   varying vec4 outputColor;
 
   vec2 cameraTranslation = vec2(camera[0], camera[1]);
   float cameraAngle = camera[2];
+
+  // http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
+  highp float rand(vec2 co) {
+    highp float a = 12.9898;
+    highp float b = 78.233;
+    highp float c = 43758.5453;
+    highp float dt= dot(co.xy ,vec2(a,b));
+    highp float sn= mod(dt,3.14);
+    return fract(sin(sn) * c);
+  }
 
   void main() {
     vec2 translation = vec2(offset[0], offset[1]);
@@ -36,9 +46,13 @@ const vertexShader = `
       position[0] * modelScale,
       position[1] * modelScale
     );
+    vec2 randomizedPosition = vec2(
+      scaledPosition[0] + randomness * rand(position - translation),
+      scaledPosition[1] + randomness * rand(position + translation)
+    );
     vec2 rotatedPosition = vec2(
-      scaledPosition[0] * cos(angle) - scaledPosition[1] * sin(angle),
-      scaledPosition[1] * cos(angle) + scaledPosition[0] * sin(angle)
+      randomizedPosition[0] * cos(angle) - randomizedPosition[1] * sin(angle),
+      randomizedPosition[1] * cos(angle) + randomizedPosition[0] * sin(angle)
     );
     vec2 translatedPosition = rotatedPosition + translation - cameraTranslation;
     vec2 shiftedPosition = vec2(

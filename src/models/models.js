@@ -22,13 +22,17 @@ let models = {
   },
   tileShade: {
     data: "tile",
-    color: [0, 0, 0, 0.236],
+    color: [0.324854902, 0.462164706, 0.529145098, 1],
     z: -1,
+    randomness: 0.12,
+    scale: 1.15,
   },
   tile: {
     data: "tile",
     color: [0.236, 0.236, 0.236, 1],
     z: 0,
+    randomness: 0.12,
+    scale: 1.15,
   },
   playerShade: {
     data: "player",
