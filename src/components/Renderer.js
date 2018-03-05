@@ -4,7 +4,7 @@ import * as models from "../shaders/models.shader.js";
 
 import { getModel, drawOrder } from "../utilities/models.js";
 
-const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
+// const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
 
 const createModelLists = (lists, { models, ...entity }) => {
   models.forEach(model => {
@@ -54,7 +54,7 @@ export default class Renderer extends React.Component {
 
       const modelLists = this.subscribers
         .map(callback => callback.call(callback, time))
-        .sort(orderByY)
+        // .sort(orderByY)
         .reduce(createModelLists, {});
 
       const drawCalls = [];
