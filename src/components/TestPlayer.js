@@ -15,11 +15,9 @@ export default class TestPlayer extends React.Component {
   };
 
   componentWillMount() {
-    const { registerCamera } = this.props;
-
+    const { subscribe, registerCamera } = this.props;
     this.mountedAt = performance.timing.navigationStart + performance.now();
-    this.props.subscribe(this.update);
-
+    subscribe(this.update);
     if (registerCamera) {
       registerCamera(this.update);
     }
@@ -27,10 +25,8 @@ export default class TestPlayer extends React.Component {
 
   componentWillUnmount() {
     const { unsubscribe, unregisterCamera } = this.props;
-
     this.unmountedAt = performance.timing.navigationStart + performance.now();
     unsubscribe(this.update);
-
     if (unregisterCamera) {
       unregisterCamera();
     }

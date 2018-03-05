@@ -12,7 +12,6 @@ export default class TestTile extends React.Component {
 
   componentWillMount() {
     const { x, y } = this.props;
-
     this.mountedAt = performance.timing.navigationStart + performance.now();
     this.props.subscribe(this.update);
   }
