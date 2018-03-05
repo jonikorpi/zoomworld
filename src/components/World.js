@@ -4,9 +4,6 @@ import TestEntity from "../components/TestEntity";
 import TestTile from "../components/TestTile";
 import TestPlayer from "../components/TestPlayer";
 
-import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
-import { positionAtTime } from "../utilities/state.js";
-
 const testTileRadius = 10;
 const testEntityRadius = 10;
 const testTileCount = testTileRadius * testTileRadius;

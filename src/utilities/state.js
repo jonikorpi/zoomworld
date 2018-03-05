@@ -1,4 +1,4 @@
-import { easeInOut, angleLerp } from "../utilities/graphics.js";
+import { easeInOut } from "../utilities/graphics.js";
 
 const positionAtTime = (now, state, events) => {
   const result = events.reduce(
