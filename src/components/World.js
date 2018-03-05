@@ -9,7 +9,7 @@ const testEntityRadius = 10;
 const testTileCount = testTileRadius * testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
-export default class World extends React.PureComponent {
+export default class World extends React.Component {
   static defaultProps = {
     userID: null,
     subscribe: () => {},
