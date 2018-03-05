@@ -36,7 +36,7 @@ html {
   --shroud: black;
   --halfShroud: rgba(0, 0, 0, 0.382);
 
-  --water: hsl(0, 0%, 50%);
+  --water: hsl(200, 23.6%, 50%);
   --wave: hsl(0, 0%, 85.4%);
   --ground: hsl(0, 0%, 14.6%);
   --ground2: hsl(0, 0%, 9%);

@@ -174,6 +174,15 @@ export default class Renderer extends React.Component {
       color: (context, { color }) => color,
       z: (context, { z }) => z,
     },
+    blend: {
+      enable: true,
+      func: {
+        srcRGB: "src alpha",
+        srcAlpha: 1,
+        dstRGB: "one minus src alpha",
+        dstAlpha: 1,
+      },
+    },
     depth: {
       enable: false,
     },

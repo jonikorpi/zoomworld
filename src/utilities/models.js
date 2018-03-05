@@ -22,7 +22,7 @@ let models = {
   },
   tileShade: {
     data: "tile",
-    color: [0.236, 0.236, 0.236, 1],
+    color: [0, 0, 0, 0.236],
     z: -1,
   },
   tile: {
@@ -32,13 +32,13 @@ let models = {
   },
   playerShade: {
     data: "player",
-    color: [0.382, 0.382, 0.382, 1],
+    color: [0, 0, 0, 0.146],
     z: -1,
     scale: 0.125,
   },
   player: {
     data: "player",
-    color: [0, 0, 0, 1],
+    color: [0.146, 0.146, 0.146, 1],
     z: 0,
     scale: 0.125,
   },
