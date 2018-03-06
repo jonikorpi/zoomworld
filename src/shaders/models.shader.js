@@ -47,8 +47,8 @@ const vertexShader = `
       position[1] * modelScale
     );
     vec2 randomizedPosition = vec2(
-      scaledPosition[0] + randomness * rand(position - translation),
-      scaledPosition[1] + randomness * rand(position + translation)
+      scaledPosition[0] + randomness * (rand(position - translation) - 0.5),
+      scaledPosition[1] + randomness * (rand(position + translation) - 0.5)
     );
     vec2 rotatedPosition = vec2(
       randomizedPosition[0] * cos(angle) - randomizedPosition[1] * sin(angle),
