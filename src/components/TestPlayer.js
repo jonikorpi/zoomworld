@@ -9,6 +9,7 @@ export default class TestPlayer extends React.Component {
     unsubscribe: () => {},
     registerCamera: null,
     unregisterCamera: null,
+    onUpdate: null,
     playerID: "anonymous",
     state: { x: 0, y: 0 },
     events: [],
@@ -33,11 +34,16 @@ export default class TestPlayer extends React.Component {
   }
 
   update = time => {
-    const { state, events } = this.props;
+    const { state, events, onUpdate } = this.props;
+    const position = positionAtTime(time, state, events);
+
+    if (onUpdate) {
+      onUpdate(position);
+    }
 
     return {
       models: ["player", "playerShade"],
-      position: positionAtTime(time, state, events),
+      position: position,
       mountedAt: this.mountedAt,
       unmountedAt: this.unmountedAt,
     };

@@ -8,8 +8,8 @@ const createEvent = event => {
   return {
     x: x / magnitude,
     y: y / magnitude,
-    speed: 2,
-    duration: 10000,
+    speed: 1,
+    duration: 5000,
   };
 };
 
