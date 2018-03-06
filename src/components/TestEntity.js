@@ -27,9 +27,18 @@ export default class TestEntity extends React.Component {
 
   counter = 123;
 
-  addEvent = () => {
+  addRandomEvent = () => {
+    this.addEvent({
+      x: random(1, this.counter++) * 2 - 1,
+      y: random(1, this.counter++) * 2 - 1,
+      speed: 2,
+      duration: 10000,
+    });
+  };
+
+  addEvent = data => {
     const { state, events } = this.state;
-    const now = Date.now() - 200;
+    const now = performance.timing.navigationStart + performance.now() - 200;
 
     const finishedEvents = [...events].filter(
       event => event.time + (event.data.duration || 0) <= now
@@ -52,12 +61,7 @@ export default class TestEntity extends React.Component {
           ".key": "event-" + now,
           type: "impulse",
           time: now,
-          data: {
-            x: random(1, this.counter++) * 2 - 1,
-            y: random(1, this.counter++) * 2 - 1,
-            speed: 2,
-            duration: 10000,
-          },
+          data: data,
         },
       ],
     });
@@ -67,7 +71,7 @@ export default class TestEntity extends React.Component {
     if (this.props.moveAround) {
       this.counter = this.props.index || 123;
       this.timer = window.setInterval(
-        this.addEvent,
+        this.addRandomEvent,
         2000 + random(1, this.counter++) * 3000
       );
     }
@@ -78,6 +82,6 @@ export default class TestEntity extends React.Component {
   }
 
   render() {
-    return this.props.children(this.state);
+    return this.props.children(this.state, this.addEvent);
   }
 }

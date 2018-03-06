@@ -85,8 +85,8 @@ export default class World extends React.Component {
           </TestEntity>
         ))}
 
-        <TestEntity>
-          {({ state, events }) => (
+        <TestEntity moveAround={false}>
+          {({ state, events }, addEvent) => (
             <React.Fragment>
               {[...events].reverse().map((event, index) => (
                 <LogMessage key={index}>
@@ -96,7 +96,7 @@ export default class World extends React.Component {
                   </pre>
                 </LogMessage>
               ))}
-              <InteractionSurface createEvent={event => console.log(event)} />
+              <InteractionSurface addEvent={addEvent} />
               <TestPlayer
                 playerID={userID}
                 subscribe={subscribe}
