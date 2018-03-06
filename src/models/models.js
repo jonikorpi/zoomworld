@@ -12,7 +12,7 @@ let models = {
     data: placeholderData,
     color: [1, 1, 1, 1],
     primitive: "line loop",
-    z: 0,
+    directionless: true,
   },
   tileShade: {
     data: "tile",
@@ -20,31 +20,39 @@ let models = {
     z: -1,
     randomness: 0.12,
     scale: 1.15,
+    directionless: true,
   },
   tile: {
     data: "tile",
     color: [0.236, 0.236, 0.236, 1],
-    z: 0,
     randomness: 0.12,
     scale: 1.15,
+    directionless: true,
   },
   tileOutline: {
     data: squareData,
     color: [1, 1, 1, 1],
     primitive: "line loop",
-    z: 0,
+    directionless: true,
+  },
+  wind: {
+    data: {
+      positions: [[0.75, 0], [-0.5, -0.5], [-0.5, 0.5]],
+    },
+    color: [1, 1, 1, 0.382],
+    scale: 0.5,
+    primitive: "line loop",
   },
   playerShade: {
     data: "player",
     color: [0, 0, 0, 0.146],
     z: -1,
-    scale: 0.125,
+    scale: 0.0625,
   },
   player: {
     data: "player",
     color: [0.91, 0.91, 0.91, 1],
-    z: 0,
-    scale: 0.125,
+    scale: 0.0625,
   },
 };
 

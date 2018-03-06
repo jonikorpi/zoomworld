@@ -9,7 +9,7 @@ export default class Entity extends React.Component {
     registerCamera: null,
     unregisterCamera: null,
     onUpdate: null,
-    state: { x: 0, y: 0 },
+    state: { x: 0, y: 0, angle: 0 },
     events: [],
     models: ["placeholder"],
     mayMove: true,
@@ -37,7 +37,7 @@ export default class Entity extends React.Component {
     const { state, events, onUpdate, mayMove, models } = this.props;
     const position = mayMove
       ? positionAtTime(time, state, events)
-      : [state.x, state.y, 0];
+      : [state.x, state.y, state.angle];
 
     if (onUpdate) {
       onUpdate(position);

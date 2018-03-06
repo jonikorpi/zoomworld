@@ -12,10 +12,12 @@ const testTileCount = testTileRadius * testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
 const tiles = [...new Array(testTileCount)].map((nada, index) => {
-  const x = Math.floor(Math.random() * testTileRadius - testTileRadius / 2);
-  const y = Math.floor(Math.random() * testTileRadius - testTileRadius / 2);
+  const x = index % testTileRadius - testTileRadius / 2;
+  const y = Math.floor(index / testTileRadius) - testTileRadius / 2;
+  const angle = Math.sin(x + y) * Math.PI * 2;
+  const hasGround = Math.random() < 0.5;
 
-  return [x, y];
+  return { x, y, angle, hasGround };
 });
 const players = [...new Array(testEntityCount)].map((nada, index) => {
   return {
@@ -50,12 +52,13 @@ export default class World extends React.Component {
 
     return (
       <React.Fragment>
-        {tiles.map(([x, y], index) => (
+        {tiles.map(({ x, y, angle, hasGround }, index) => (
           <FakeFirebase
             index={index + 134}
             key={index}
-            x={Math.floor(x)}
-            y={Math.floor(y)}
+            x={Math.floor(x) + 0.5}
+            y={Math.floor(y) + 0.5}
+            angle={angle}
             moveAround={false}
           >
             {({ state, events }) => (
@@ -65,7 +68,7 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 mayMove={false}
-                models={["tile", "tileShade"]}
+                models={hasGround ? ["tile", "tileShade", "wind"] : ["wind"]}
               />
             )}
           </FakeFirebase>
@@ -87,7 +90,7 @@ export default class World extends React.Component {
 
         <FakeFirebase moveAround={false}>
           {({ state, events }, addEvent) => (
-            <PlayerUI>
+            <PlayerUI addEvent={addEvent}>
               {({ currentTile }, updateCurrentTile) => (
                 <React.Fragment>
                   <LogMessage>

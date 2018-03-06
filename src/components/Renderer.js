@@ -15,7 +15,7 @@ const createModelLists = (lists, { models, ...entity }) => {
 };
 
 const config = {
-  unitSize: 20,
+  unitSize: 23.6,
   unitType: "vmin",
   perspective: 0.0382,
 };
@@ -72,9 +72,14 @@ export default class Renderer extends React.Component {
           scale,
           positions: model.data.positions,
           color: model.color,
-          z: model.z,
+          z: model.z || 0,
           primitive: model.primitive || "triangles",
-          offsets: list.map(({ position }) => [...position, model.scale || 1]),
+          offsets: list.map(({ position }) => [
+            position[0],
+            position[1],
+            model.directionless ? 0 : position[2],
+            model.scale || 1,
+          ]),
           randomness: model.randomness || 0,
           // mountedTimes: list.map(({mountedAt}) => mountedAt),
           // unmountedTimes: list.map(({unmountedAt}) => unmountedAt),

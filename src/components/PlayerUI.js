@@ -12,6 +12,13 @@ export default class PlayerUI extends React.Component {
 
     if (newX !== x || newY !== y) {
       this.setState({ currentTile: [newX, newY] });
+      const wind = Math.sin(newX + newY) * Math.PI * 2;
+      this.props.addEvent({
+        x: Math.cos(wind),
+        y: Math.sin(wind),
+        speed: 0.5,
+        duration: 3000,
+      });
     }
   };
 

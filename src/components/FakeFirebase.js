@@ -43,7 +43,7 @@ export default class FakeFirebase extends React.Component {
     this.addEvent({
       x: random(1, this.counter++) * 2 - 1,
       y: random(1, this.counter++) * 2 - 1,
-      speed: 2,
+      speed: 1,
       duration: 10000,
     });
   };
