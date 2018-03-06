@@ -3,7 +3,7 @@ import React from "react";
 import { positionAtTime } from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
-export default class TestEntity extends React.Component {
+export default class FakeFirebase extends React.Component {
   static defaultProps = {
     x: 0,
     y: 0,
@@ -23,6 +23,18 @@ export default class TestEntity extends React.Component {
       },
       events: [],
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { x, y, angle } = nextProps;
+
+    this.setState({
+      state: {
+        x: x,
+        y: y,
+        angle: angle,
+      },
+    });
   }
 
   counter = 123;

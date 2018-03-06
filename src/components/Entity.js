@@ -1,18 +1,18 @@
 import React from "react";
 
-import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
 import { positionAtTime } from "../utilities/state.js";
 
-export default class TestPlayer extends React.Component {
+export default class Entity extends React.Component {
   static defaultProps = {
     subscribe: () => {},
     unsubscribe: () => {},
     registerCamera: null,
     unregisterCamera: null,
     onUpdate: null,
-    playerID: "anonymous",
     state: { x: 0, y: 0 },
     events: [],
+    models: ["placeholder"],
+    mayMove: true,
   };
 
   componentWillMount() {
@@ -34,18 +34,20 @@ export default class TestPlayer extends React.Component {
   }
 
   update = time => {
-    const { state, events, onUpdate } = this.props;
-    const position = positionAtTime(time, state, events);
+    const { state, events, onUpdate, mayMove, models } = this.props;
+    const position = mayMove
+      ? positionAtTime(time, state, events)
+      : [state.x, state.y, 0];
 
     if (onUpdate) {
       onUpdate(position);
     }
 
     return {
-      models: ["player", "playerShade"],
+      models: models,
       position: position,
-      mountedAt: this.mountedAt,
-      unmountedAt: this.unmountedAt,
+      // mountedAt: this.mountedAt,
+      // unmountedAt: this.unmountedAt,
     };
   };
 

@@ -1,21 +1,15 @@
 import triangulate from "../utilities/triangulate.js";
 
-const placeholderPositions = triangulate([
-  -0.5,
-  -0.5,
-  0.5,
-  -0.5,
-  0.5,
-  0.5,
-  -0.5,
-  0.5,
-]);
+const placeholderData = {
+  positions: triangulate([-0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5]),
+};
+const squareData = {
+  positions: triangulate([0, 0, 1, 0, 1, 1, 0, 1]),
+};
 
 let models = {
   placeholder: {
-    data: {
-      positions: placeholderPositions,
-    },
+    data: placeholderData,
     color: [1, 1, 1, 1],
     primitive: "line loop",
     z: 0,
@@ -33,6 +27,12 @@ let models = {
     z: 0,
     randomness: 0.12,
     scale: 1.15,
+  },
+  tileOutline: {
+    data: squareData,
+    color: [1, 1, 1, 1],
+    primitive: "line loop",
+    z: 0,
   },
   playerShade: {
     data: "player",

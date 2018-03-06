@@ -1,8 +1,7 @@
 import React from "react";
 
-import TestEntity from "../components/TestEntity";
-import TestTile from "../components/TestTile";
-import TestPlayer from "../components/TestPlayer";
+import FakeFirebase from "../components/FakeFirebase";
+import Entity from "../components/Entity";
 import InteractionSurface from "../components/InteractionSurface";
 import LogMessage from "./LogMessage";
 import PlayerUI from "./PlayerUI";
@@ -18,7 +17,7 @@ const tiles = [...new Array(testTileCount)].map((nada, index) => {
 
   return [x, y];
 });
-const entities = [...new Array(testEntityCount)].map((nada, index) => {
+const players = [...new Array(testEntityCount)].map((nada, index) => {
   return {
     models: "player",
     state: {
@@ -52,7 +51,7 @@ export default class World extends React.Component {
     return (
       <React.Fragment>
         {tiles.map(([x, y], index) => (
-          <TestEntity
+          <FakeFirebase
             index={index + 134}
             key={index}
             x={Math.floor(x)}
@@ -60,33 +59,33 @@ export default class World extends React.Component {
             moveAround={false}
           >
             {({ state, events }) => (
-              <TestTile
-                x={x}
-                y={y}
+              <Entity
                 subscribe={subscribe}
                 unsubscribe={unsubscribe}
                 state={state}
                 events={events}
+                mayMove={false}
+                models={["tile", "tileShade"]}
               />
             )}
-          </TestEntity>
+          </FakeFirebase>
         ))}
 
-        {entities.map(({ state: { x, y } }, index) => (
-          <TestEntity key={index} index={index + 123} x={x} y={y}>
+        {players.map(({ state: { x, y } }, index) => (
+          <FakeFirebase key={index} index={index + 123} x={x} y={y}>
             {({ state, events }) => (
-              <TestPlayer
-                playerID={`dsajiofs${Math.ceil(Math.random() * 10000)}`}
+              <Entity
                 subscribe={subscribe}
                 unsubscribe={unsubscribe}
                 state={state}
                 events={events}
+                models={["player", "playerShade"]}
               />
             )}
-          </TestEntity>
+          </FakeFirebase>
         ))}
 
-        <TestEntity moveAround={false}>
+        <FakeFirebase moveAround={false}>
           {({ state, events }, addEvent) => (
             <PlayerUI>
               {({ currentTile }, updateCurrentTile) => (
@@ -103,8 +102,7 @@ export default class World extends React.Component {
                     </LogMessage>
                   ))}
                   <InteractionSurface addEvent={addEvent} />
-                  <TestPlayer
-                    playerID={userID}
+                  <Entity
                     subscribe={subscribe}
                     unsubscribe={unsubscribe}
                     registerCamera={registerCamera}
@@ -112,12 +110,29 @@ export default class World extends React.Component {
                     onUpdate={position => updateCurrentTile(position)}
                     state={state}
                     events={events}
+                    models={["player", "playerShade"]}
                   />
+                  <FakeFirebase
+                    x={currentTile[0]}
+                    y={currentTile[1]}
+                    moveAround={false}
+                  >
+                    {({ state, events }) => (
+                      <Entity
+                        subscribe={subscribe}
+                        unsubscribe={unsubscribe}
+                        state={state}
+                        events={events}
+                        mayMove={false}
+                        models={["tileOutline"]}
+                      />
+                    )}
+                  </FakeFirebase>
                 </React.Fragment>
               )}
             </PlayerUI>
           )}
-        </TestEntity>
+        </FakeFirebase>
       </React.Fragment>
     );
   }
