@@ -1,127 +1,141 @@
 import React from "react";
 
-import Position from "../components/Position";
-import TestEntity from "../components/TestEntity";
-import SVG from "../components/SVG";
-import Graphic from "../components/Graphic";
-
-import { config, getSeed, baseTile, random } from "../utilities/graphics.js";
+import FakeFirebase from "../components/FakeFirebase";
+import Entity from "../components/Entity";
+import InteractionSurface from "../components/InteractionSurface";
+import LogMessage from "./LogMessage";
+import PlayerUI from "./PlayerUI";
 
 const testTileRadius = 10;
 const testEntityRadius = 10;
 const testTileCount = testTileRadius * testTileRadius;
 const testEntityCount = testEntityRadius * testEntityRadius;
 
-export default class World extends React.PureComponent {
+const tiles = [...new Array(testTileCount)].map((nada, index) => {
+  const x = index % testTileRadius - testTileRadius / 2;
+  const y = Math.floor(index / testTileRadius) - testTileRadius / 2;
+  const angle = Math.sin(x + y) * Math.PI * 2;
+  const hasGround = Math.random() < 0.5;
+
+  return { x, y, angle, hasGround };
+});
+const players = [...new Array(testEntityCount)].map((nada, index) => {
+  return {
+    models: "player",
+    state: {
+      x: Math.random() * testEntityRadius - testEntityRadius / 2,
+      y: Math.random() * testEntityRadius - testEntityRadius / 2,
+      velocityX: 0,
+      velocityY: 0,
+    },
+    events: [],
+  };
+});
+
+export default class World extends React.Component {
   static defaultProps = {
     userID: null,
-    offsetX: 0,
-    offsetY: 0,
+    subscribe: () => {},
+    unsubscribe: () => {},
+    registerCamera: () => {},
+    unregisterCamera: () => {},
   };
 
-  counter = 123;
-
   render() {
-    const { offsetX, offsetY } = this.props;
+    const {
+      subscribe,
+      unsubscribe,
+      registerCamera,
+      unregisterCamera,
+      userID,
+    } = this.props;
 
     return (
       <React.Fragment>
-        {[...new Array(testTileCount)].map((nada, index) => {
-          const x =
-            random(1, this.counter++) * testTileRadius - testTileRadius / 2;
-          const y =
-            random(1, this.counter++) * testTileRadius - testTileRadius / 2;
-
-          return (
-            <TestEntity
-              index={index + 134}
-              key={index}
-              x={offsetX + Math.floor(x)}
-              y={offsetY + Math.floor(y)}
-              moveAround={false}
-            >
-              {({ state, events }) => {
-                const tile = baseTile(getSeed(x, y))
-                  .join(" ")
-                  .toString();
-
-                return (
-                  <React.Fragment>
-                    <Position state={state} events={events} mergeZ={true}>
-                      <SVG>
-                        <Graphic type="waterLine" points={tile} />
-                      </SVG>
-                    </Position>
-                    <Position state={state} events={events} z={1} mergeZ={true}>
-                      <SVG>
-                        <Graphic
-                          type="ground"
-                          fill="var(--ground3)"
-                          points={tile}
-                        />
-                      </SVG>
-                    </Position>
-                    <Position state={state} events={events} z={2} mergeZ={true}>
-                      <SVG>
-                        <Graphic
-                          type="ground"
-                          fill="var(--ground2)"
-                          points={tile}
-                        />
-                      </SVG>
-                    </Position>
-                    <Position state={state} events={events} z={3} mergeZ={true}>
-                      <SVG>
-                        <Graphic
-                          type="ground"
-                          fill="var(--ground)"
-                          points={tile}
-                        />
-                      </SVG>
-                    </Position>
-                  </React.Fragment>
-                );
-              }}
-            </TestEntity>
-          );
-        })}
-
-        {[...new Array(testEntityCount)].map((nada, index) => (
-          <TestEntity
+        {tiles.map(({ x, y, angle, hasGround }, index) => (
+          <FakeFirebase
+            index={index + 134}
             key={index}
-            index={index + 123}
-            x={
-              offsetX +
-              random(1, this.counter++) * testEntityRadius -
-              testEntityRadius / 2
-            }
-            y={
-              offsetY +
-              random(1, this.counter++) * testEntityRadius -
-              testEntityRadius / 2
-            }
+            x={Math.floor(x) + 0.5}
+            y={Math.floor(y) + 0.5}
+            angle={angle}
+            moveAround={false}
           >
             {({ state, events }) => (
-              <React.Fragment>
-                <Position state={state} events={events}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={1}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={2}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={3}>
-                  #{index}
-                </Position>
-                <Position state={state} events={events} z={4}>
-                  #{index}
-                </Position>
-              </React.Fragment>
+              <Entity
+                subscribe={subscribe}
+                unsubscribe={unsubscribe}
+                state={state}
+                events={events}
+                mayMove={false}
+                models={hasGround ? ["tile", "tileShade", "wind"] : ["wind"]}
+              />
             )}
-          </TestEntity>
+          </FakeFirebase>
         ))}
+
+        {players.map(({ state: { x, y } }, index) => (
+          <FakeFirebase key={index} index={index + 123} x={x} y={y}>
+            {({ state, events }) => (
+              <Entity
+                subscribe={subscribe}
+                unsubscribe={unsubscribe}
+                state={state}
+                events={events}
+                models={["player", "playerShade"]}
+              />
+            )}
+          </FakeFirebase>
+        ))}
+
+        <FakeFirebase moveAround={false}>
+          {({ state, events }, addEvent) => (
+            <PlayerUI addEvent={addEvent}>
+              {({ currentTile }, updateCurrentTile) => (
+                <React.Fragment>
+                  <LogMessage>
+                    <strong>Current</strong> [{currentTile[0]}, {currentTile[1]}]
+                  </LogMessage>
+                  {[...events].reverse().map((event, index) => (
+                    <LogMessage key={index}>
+                      <pre>
+                        <strong>{event.type}</strong>{" "}
+                        {JSON.stringify(event.data, null, 2)}
+                      </pre>
+                    </LogMessage>
+                  ))}
+                  <InteractionSurface addEvent={addEvent} />
+                  <Entity
+                    subscribe={subscribe}
+                    unsubscribe={unsubscribe}
+                    registerCamera={registerCamera}
+                    unregisterCamera={unregisterCamera}
+                    onUpdate={position => updateCurrentTile(position)}
+                    state={state}
+                    events={events}
+                    models={["player", "playerShade"]}
+                  />
+                  <FakeFirebase
+                    x={currentTile[0]}
+                    y={currentTile[1]}
+                    moveAround={false}
+                  >
+                    {({ state, events }) => (
+                      <Entity
+                        subscribe={subscribe}
+                        unsubscribe={unsubscribe}
+                        state={state}
+                        events={events}
+                        mayMove={false}
+                        models={["tileOutline"]}
+                      />
+                    )}
+                  </FakeFirebase>
+                </React.Fragment>
+              )}
+            </PlayerUI>
+          )}
+        </FakeFirebase>
       </React.Fragment>
     );
   }

@@ -1,5 +1,5 @@
 import React from "react";
-import firebase from "firebase/app";
+import "firebase/app";
 import "firebase/database";
 import { connect } from "react-firebase";
 

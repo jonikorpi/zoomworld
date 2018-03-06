@@ -19,7 +19,7 @@
 html {
   font-display: optional;
   font-size: 133%; /* Fallback: used if browser doesn't support calc() */
-  font-size: calc(1.14em + 0.2vw + 0.2vh + 0.1vmin);
+  font-size: calc(1em + 0.2vw + 0.2vh + 0.1vmin);
 
   /* Colors and other variables often needed by CSS go here,
      as a single source of truth, but still accessible
@@ -36,7 +36,7 @@ html {
   --shroud: black;
   --halfShroud: rgba(0, 0, 0, 0.382);
 
-  --water: hsl(0, 0%, 50%);
+  --water: hsl(200, 23.6%, 50%);
   --wave: hsl(0, 0%, 85.4%);
   --ground: hsl(0, 0%, 14.6%);
   --ground2: hsl(0, 0%, 9%);

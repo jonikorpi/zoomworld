@@ -2,9 +2,10 @@ import React from "react";
 import { hydrate, render } from "react-dom";
 // import registerServiceWorker from './registerServiceWorker';
 import firebase from "firebase/app";
-import "web-animations-js";
+// import "web-animations-js";
 
 import "./css/reset.css";
+import "./css/safeAreas.css";
 import "./css/globals.css";
 import "./css/components.css";
 import Game from "./components/Game";
