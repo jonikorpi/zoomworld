@@ -15,8 +15,7 @@ const createModelLists = (lists, { models, ...entity }) => {
 };
 
 const config = {
-  unitSize: 23.6,
-  unitType: "vmin",
+  unitSize: 41.4,
   perspective: 0.0382,
 };
 
@@ -48,7 +47,7 @@ export default class Renderer extends React.Component {
     this.regl.destroy();
   }
 
-  drawLoop = context => {
+  drawLoop = ({ viewportWidth, viewportHeight }) => {
     try {
       const time =
         performance.timing.navigationStart +
@@ -58,9 +57,18 @@ export default class Renderer extends React.Component {
       const height = document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;
       const scale = 1 - scrolled / height + 0.146 * (scrolled / height);
+      const xRatio = Math.max(1, viewportWidth / viewportHeight) * 50;
+      const yRatio = Math.max(1, viewportHeight / viewportWidth) * 50;
 
       const modelLists = this.subscribers
         .map(callback => callback.call(callback, time))
+        .filter(
+          ({ position }) =>
+            Math.abs(position[0] - camera[0]) - 1 <
+              xRatio / config.unitSize / scale &&
+            Math.abs(position[1] - camera[1]) - 1 <
+              yRatio / config.unitSize / scale
+        )
         // .sort(orderByY)
         .reduce(createModelLists, {});
 
