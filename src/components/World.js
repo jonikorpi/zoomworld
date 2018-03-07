@@ -50,7 +50,7 @@ export default class World extends React.Component {
         let seed = getSeed(x, y);
         const angle = Math.sin(x + y) * Math.PI * 2;
         const hasGround = random(1, seed++) < 0.3;
-        const playerCount = Math.floor(random(5, seed++));
+        const playerCount = Math.floor(random(2, seed++));
 
         let players = [];
         for (let index = 0; index < playerCount; index++) {
