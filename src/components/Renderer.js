@@ -30,9 +30,10 @@ export default class Renderer extends React.Component {
     lagCompensation: 0,
   };
 
-  subscribers = [];
-  subscribe = callback => this.subscribers.push(callback);
-  unsubscribe = id => this.subscribers.splice(id - 1, 1);
+  subscribers = {};
+  subscribe = (subscriberID, callback) =>
+    (this.subscribers[subscriberID] = callback);
+  unsubscribe = subscriberID => delete this.subscribers[subscriberID];
   getCamera = getDefaultCamera;
   registerCamera = callback => (this.getCamera = callback);
   unregisterCamera = callback => (this.getCamera = getDefaultCamera);
@@ -62,7 +63,7 @@ export default class Renderer extends React.Component {
       const unit =
         Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale;
 
-      const modelLists = this.subscribers
+      const modelLists = Object.values(this.subscribers)
         .map(callback => callback.call(callback, time))
         .filter(
           ({ position }) =>

@@ -1,4 +1,5 @@
 import React from "react";
+import uuid4 from "uuid/v4";
 
 import { positionAtTime } from "../utilities/state.js";
 
@@ -16,10 +17,12 @@ export default class Entity extends React.Component {
     timeOffset: 0,
   };
 
+  ID = uuid4();
+
   componentWillMount() {
     const { subscribe, registerCamera } = this.props;
     this.mountedAt = performance.timing.navigationStart + performance.now();
-    subscribe(this.update);
+    subscribe(this.ID, this.update);
     if (registerCamera) {
       registerCamera(this.update);
     }
@@ -28,7 +31,7 @@ export default class Entity extends React.Component {
   componentWillUnmount() {
     const { unsubscribe, unregisterCamera } = this.props;
     this.unmountedAt = performance.timing.navigationStart + performance.now();
-    unsubscribe(this.update);
+    unsubscribe(this.ID);
     if (unregisterCamera) {
       unregisterCamera();
     }

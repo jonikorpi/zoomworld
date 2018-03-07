@@ -25,18 +25,6 @@ export default class FakeFirebase extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { x, y, angle } = nextProps;
-
-    this.setState({
-      state: {
-        x: x,
-        y: y,
-        angle: angle,
-      },
-    });
-  }
-
   counter = 123;
 
   addRandomEvent = () => {
