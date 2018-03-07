@@ -87,7 +87,7 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 mayMove={false}
-                models={hasGround ? ["tile", "tileShade", "wind"] : ["wind"]}
+                models={hasGround ? ["tile", "tileShade"] : []}
               />
             )}
           </FakeFirebase>
