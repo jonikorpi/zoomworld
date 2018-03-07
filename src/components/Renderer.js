@@ -72,35 +72,32 @@ export default class Renderer extends React.Component {
         // .sort(orderByY)
         .reduce(createModelLists, {});
 
-      const drawCalls = [];
-      drawOrder.forEach(name => {
-        const list = modelLists[name];
-        const model = getModel(name);
+      const drawCalls = drawOrder
+        .filter(name => modelLists[name] && modelLists[name].length > 0)
+        .map(name => {
+          const list = modelLists[name];
+          const model = getModel(name);
 
-        if (!list || list.length === 0) {
-          return;
-        }
-
-        drawCalls.push({
-          time,
-          camera,
-          scale,
-          positions: model.data.positions,
-          color: model.color,
-          z: model.z || 0,
-          primitive: model.primitive || "triangles",
-          offsets: list.map(({ position }) => [
-            position[0],
-            position[1],
-            model.directionless ? 0 : position[2],
-            model.scale || 1,
-          ]),
-          randomness: model.randomness || 0,
-          // mountedTimes: list.map(({mountedAt}) => mountedAt),
-          // unmountedTimes: list.map(({unmountedAt}) => unmountedAt),
-          instances: list.length,
+          return {
+            time,
+            camera,
+            scale,
+            positions: model.data.positions,
+            color: model.color,
+            z: model.z || 0,
+            primitive: model.primitive || "triangles",
+            offsets: list.map(({ position }) => [
+              position[0],
+              position[1],
+              model.directionless ? 0 : position[2],
+              model.scale || 1,
+            ]),
+            randomness: model.randomness || 0,
+            // mountedTimes: list.map(({mountedAt}) => mountedAt),
+            // unmountedTimes: list.map(({unmountedAt}) => unmountedAt),
+            instances: list.length,
+          };
         });
-      });
 
       this.regl.clear(clearConfiguration);
       this.drawModels(drawCalls);
