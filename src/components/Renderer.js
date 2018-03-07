@@ -15,7 +15,7 @@ const createModelLists = (lists, { models, ...entity }) => {
 };
 
 const config = {
-  unitSize: 41.4,
+  unitSize: 23.6,
   perspective: 0.0382,
 };
 
