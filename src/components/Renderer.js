@@ -59,6 +59,8 @@ export default class Renderer extends React.Component {
       const scale = 1 - scrolled / height + 0.146 * (scrolled / height);
       const xRatio = Math.max(1, viewportWidth / viewportHeight) * 50;
       const yRatio = Math.max(1, viewportHeight / viewportWidth) * 50;
+      const unit =
+        Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale;
 
       const modelLists = this.subscribers
         .map(callback => callback.call(callback, time))
@@ -81,7 +83,7 @@ export default class Renderer extends React.Component {
           return {
             time,
             camera,
-            scale,
+            unit,
             positions: model.data.positions,
             color: model.color,
             z: model.z || 0,
@@ -127,8 +129,7 @@ export default class Renderer extends React.Component {
     uniforms: {
       viewportWidth: ({ viewportWidth }) => viewportWidth,
       viewportHeight: ({ viewportHeight }) => viewportHeight,
-      unit: ({ viewportWidth, viewportHeight }, { scale }) =>
-        Math.min(viewportWidth, viewportHeight) * config.unitSize / 50 * scale,
+      unit: (context, { unit }) => unit,
       camera: (context, { camera }) => camera,
       perspective: config.perspective,
       color: (context, { color }) => color,
