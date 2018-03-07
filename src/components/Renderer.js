@@ -27,6 +27,10 @@ const clearConfiguration = {
 const getDefaultCamera = () => [0, 0];
 
 export default class Renderer extends React.Component {
+  static defaultProps = {
+    lagCompensation: 0,
+  };
+
   subscribers = [];
   subscribe = callback => this.subscribers.push(callback);
   unsubscribe = id => this.subscribers.splice(id - 1, 1);
@@ -46,7 +50,10 @@ export default class Renderer extends React.Component {
 
   drawLoop = context => {
     try {
-      const time = performance.timing.navigationStart + performance.now() - 200;
+      const time =
+        performance.timing.navigationStart +
+        performance.now() -
+        this.props.lagCompensation;
       const camera = this.getCamera(time).position;
       const height = document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;

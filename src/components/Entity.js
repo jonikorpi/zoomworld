@@ -13,6 +13,7 @@ export default class Entity extends React.Component {
     events: [],
     models: ["placeholder"],
     mayMove: true,
+    timeOffset: 0,
   };
 
   componentWillMount() {
@@ -34,9 +35,9 @@ export default class Entity extends React.Component {
   }
 
   update = time => {
-    const { state, events, onUpdate, mayMove, models } = this.props;
+    const { state, events, onUpdate, mayMove, models, timeOffset } = this.props;
     const position = mayMove
-      ? positionAtTime(time, state, events)
+      ? positionAtTime(time + timeOffset, state, events)
       : [state.x, state.y, state.angle];
 
     if (onUpdate) {

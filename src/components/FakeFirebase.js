@@ -50,7 +50,7 @@ export default class FakeFirebase extends React.Component {
 
   addEvent = data => {
     const { state, events } = this.state;
-    const now = performance.timing.navigationStart + performance.now() - 200;
+    const now = performance.timing.navigationStart + performance.now();
 
     const finishedEvents = [...events].filter(
       event => event.time + (event.data.duration || 0) <= now

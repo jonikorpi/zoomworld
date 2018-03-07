@@ -39,6 +39,7 @@ export default class World extends React.Component {
     unsubscribe: () => {},
     registerCamera: () => {},
     unregisterCamera: () => {},
+    lagCompensation: 0,
   };
 
   render() {
@@ -48,6 +49,7 @@ export default class World extends React.Component {
       registerCamera,
       unregisterCamera,
       userID,
+      lagCompensation,
     } = this.props;
 
     return (
@@ -128,6 +130,7 @@ export default class World extends React.Component {
                         events={events}
                         mayMove={false}
                         models={["tileOutline"]}
+                        timeOffset={lagCompensation}
                       />
                     )}
                   </FakeFirebase>
