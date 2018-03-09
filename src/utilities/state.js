@@ -62,4 +62,8 @@ const mergeImpulse = (
   return finalState;
 };
 
-export { positionAtTime, stateAtTime, findLastEventEndingTime };
+const precompute = events => {
+  return events;
+};
+
+export { positionAtTime, stateAtTime, findLastEventEndingTime, precompute };
