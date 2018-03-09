@@ -117,7 +117,7 @@ export default class World extends React.Component {
                 <LogMessage key={index}>
                   <pre>
                     <strong>{event.type}</strong>{" "}
-                    {JSON.stringify(event.data, null, 2)}
+                    {JSON.stringify(event, null, 2)}
                   </pre>
                 </LogMessage>
               ))}
