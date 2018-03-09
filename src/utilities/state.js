@@ -1,27 +1,7 @@
 import { easeInOut } from "../utilities/graphics.js";
 
-const positionAtTime = (now, state, events) => {
-  const result = events.reduce(
-    (finalState, { type, time, data }) =>
-      type === "impulse"
-        ? mergeImpulse(finalState, now, type, time, data)
-        : finalState,
-    { ...state, velocityX: 0, velocityY: 0, lastAngle: 0 }
-  );
-
-  const velocity = Math.abs(result.velocityY) + Math.abs(result.velocityX);
-
-  return [
-    result.x,
-    result.y,
-    velocity > 0
-      ? Math.atan2(result.velocityY, result.velocityX)
-      : result.lastAngle,
-  ];
-};
-
-const stateAtTime = (now, state, events) =>
-  events.reduce(
+const stateAtTime = (now, state, events) => {
+  let result = events.reduce(
     (finalState, { type, time, data }) => {
       switch (type) {
         case "impulse":
@@ -31,8 +11,21 @@ const stateAtTime = (now, state, events) =>
           return finalState;
       }
     },
-    { ...state, velocityX: 0, velocityY: 0 }
+    { ...state, velocityX: 0, velocityY: 0, lastAngle: 0 }
   );
+
+  result.angle =
+    Math.abs(result.velocityY) + Math.abs(result.velocityX) > 0
+      ? Math.atan2(result.velocityY, result.velocityX)
+      : result.lastAngle;
+
+  return result;
+};
+
+const positionAtTime = (now, state, events) => {
+  const { x, y, angle } = stateAtTime(now, state, events);
+  return [x, y, angle];
+};
 
 const findLastEventEndingTime = (end, { time, data: { duration } }) =>
   time + duration > end ? time + duration : end;
