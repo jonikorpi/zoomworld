@@ -15,7 +15,6 @@ body {
 #root {
   height: 200vh;
   overflow: hidden;
-  opacity: 0.5;
 }
 
 #log {
@@ -34,7 +33,18 @@ body {
   top: 0;
   width: 100%;
   height: 100vh;
-  z-index: 1000;
+  /* z-index: 1000; */
+}
+
+.interactionTypes {
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+
+.interactionTypes label {
+  display: block;
+  padding: 0.5rem;
 }
 
 strong {

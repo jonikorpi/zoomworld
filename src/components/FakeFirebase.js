@@ -29,14 +29,17 @@ export default class FakeFirebase extends React.Component {
 
   addRandomEvent = () => {
     this.addEvent({
-      x: random(1, this.counter++) * 2 - 1,
-      y: random(1, this.counter++) * 2 - 1,
-      speed: 1,
-      duration: 10000,
+      type: "impulse",
+      data: {
+        x: random(1, this.counter++) * 2 - 1,
+        y: random(1, this.counter++) * 2 - 1,
+        speed: 1,
+        duration: 10000,
+      },
     });
   };
 
-  addEvent = data => {
+  addEvent = event => {
     const { state, events } = this.state;
     const now = performance.timing.navigationStart + performance.now();
 
@@ -59,9 +62,9 @@ export default class FakeFirebase extends React.Component {
         ...unfinishedEvents,
         {
           ".key": "event-" + now,
-          type: "impulse",
+          type: event.type,
           time: now,
-          data: data,
+          data: event.data,
         },
       ],
     });
