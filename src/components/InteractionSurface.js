@@ -31,6 +31,7 @@ const createEvent = (event, type) => {
         type: type,
         data: {
           speed: Math.round(y / window.innerHeight * 10),
+          duration: 3000,
         },
       };
   }
