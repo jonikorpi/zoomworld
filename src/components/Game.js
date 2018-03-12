@@ -9,7 +9,6 @@ import World from "./World";
 export default class Game extends React.Component {
   render() {
     // const { isDevelopment } = this.props;
-    const lagCompensation = 200;
 
     return (
       <FirebaseUser>
@@ -31,7 +30,7 @@ export default class Game extends React.Component {
             {({ player, online }) => {
               return (
                 <React.Fragment>
-                  <Renderer lagCompensation={lagCompensation}>
+                  <Renderer>
                     {({
                       subscribe,
                       unsubscribe,
@@ -45,7 +44,6 @@ export default class Game extends React.Component {
                         unsubscribe={unsubscribe}
                         registerCamera={registerCamera}
                         unregisterCamera={unregisterCamera}
-                        lagCompensation={lagCompensation}
                       />
                     )}
                   </Renderer>

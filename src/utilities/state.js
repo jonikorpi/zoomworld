@@ -39,7 +39,7 @@ const mergeImpulse = (
   time,
   { x = 0, y = 0, force = 1, duration = 0 }
 ) => {
-  const elapsed = now - time;
+  const elapsed = Math.max(0, now - time);
   const completion = Math.min(1, elapsed / (duration || 1));
   const easing = easeOut(5)(completion);
   const adjustedForce = force / 10;

@@ -102,6 +102,7 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
+                timeOffset={-200}
               />
             )}
           </FakeFirebase>
@@ -131,7 +132,6 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
-                timeOffset={lagCompensation}
               />
               <Entity
                 subscribe={subscribe}
