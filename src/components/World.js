@@ -112,7 +112,9 @@ export default class World extends React.Component {
           {({ state, events }, addEvent) => (
             <React.Fragment>
               <LogMessage>
-                <strong>Current</strong> [{currentTile[0]}, {currentTile[1]}]
+                <pre>
+                  <strong>state</strong> {JSON.stringify(state, null, 2)}
+                </pre>
               </LogMessage>
               {[...events].reverse().map((event, index) => (
                 <LogMessage key={index}>
