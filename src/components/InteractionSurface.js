@@ -1,19 +1,19 @@
 import React from "react";
 
 const createEvent = (event, type) => {
-  const x = event.x - window.innerWidth / 2;
-  const y = -event.y + window.innerHeight / 2;
-  const magnitude = Math.sqrt(x * x + y * y);
-
   switch (type) {
     default:
     case "impulse":
+      const x = event.x - window.innerWidth / 2;
+      const y = -event.y + window.innerHeight / 2;
+      const magnitude = Math.sqrt(x * x + y * y);
+
       return {
         type: type,
         data: {
           x: x / magnitude,
           y: y / magnitude,
-          speed: 1,
+          force: 1,
           duration: 5000,
         },
       };
@@ -21,9 +21,8 @@ const createEvent = (event, type) => {
       return {
         type: type,
         data: {
-          angle: Math.atan2(y, x),
-          speed: 1,
-          duration: 5000,
+          force: 1,
+          duration: 2000,
         },
       };
   }

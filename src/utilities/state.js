@@ -1,27 +1,27 @@
-import { easeInOut } from "../utilities/graphics.js";
+import { easeOut } from "../utilities/graphics.js";
 
 const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
 const stateAtTime = (now, state, events) => {
-  let result = [...events].sort(sortByTime).reduce(
-    (finalState, { type, time, data }) => {
+  const stateAfterVelocity = mergeImpulse(
+    { ...state, velocityX: 0, velocityY: 0 },
+    now,
+    "impulse",
+    state.time,
+    { x: state.velocityX, y: state.velocityY }
+  );
+
+  return [...events]
+    .sort(sortByTime)
+    .reduce((finalState, { type, time, data }) => {
       switch (type) {
         case "impulse":
           return mergeImpulse(finalState, now, type, time, data);
+        case "brake":
         default:
-          console.warn(`Not handling unrecognized event type: ${type}`);
           return finalState;
       }
-    },
-    { ...state, velocityX: 0, velocityY: 0, lastAngle: 0 }
-  );
-
-  result.angle =
-    Math.abs(result.velocityY) + Math.abs(result.velocityX) > 0
-      ? Math.atan2(result.velocityY, result.velocityX)
-      : result.lastAngle;
-
-  return result;
+    }, stateAfterVelocity);
 };
 
 const positionAtTime = (now, state, events) => {
@@ -33,28 +33,28 @@ const findLastEventEndingTime = (end, { time, data: { duration } }) =>
   time + duration > end ? time + duration : end;
 
 const mergeImpulse = (
-  finalState,
+  state,
   now,
   type,
   time,
-  { x = 0, y = 0, speed = 0, duration = 0 }
+  { x = 0, y = 0, force = 1, duration = 0 }
 ) => {
   const elapsed = now - time;
-  const endsAt = time + duration;
-  const hasEnded = endsAt < now;
-  const completion = hasEnded ? 1 : elapsed / duration;
-  const easing = easeInOut(2)(completion);
-  const thrust = -Math.abs(easing - 0.5) + 0.5;
-  const velocityX = finalState.velocityX + thrust * speed * x;
-  const velocityY = finalState.velocityY + thrust * speed * y;
+  const completion = Math.min(1, elapsed / (duration || 1));
+  const easing = easeOut(5)(completion);
+  const adjustedForce = force / 10;
 
-  finalState.x += easing * speed * x;
-  finalState.y += easing * speed * y;
-  finalState.velocityX = velocityX;
-  finalState.velocityY = velocityY;
-  finalState.lastAngle = Math.atan2(y, x);
+  const translateX = elapsed / 1000 * easing * adjustedForce * x;
+  const translateY = elapsed / 1000 * easing * adjustedForce * y;
 
-  return finalState;
+  state.x += translateX;
+  state.y += translateY;
+  state.velocityX += adjustedForce * x;
+  state.velocityY += adjustedForce * y;
+  state.angle = Math.atan2(y, x);
+  state.time = now;
+
+  return state;
 };
 
 export { positionAtTime, stateAtTime, findLastEventEndingTime };

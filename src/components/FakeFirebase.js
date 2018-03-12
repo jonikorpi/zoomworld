@@ -1,6 +1,6 @@
 import React from "react";
 
-import { positionAtTime } from "../utilities/state.js";
+import { stateAtTime } from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
 export default class FakeFirebase extends React.Component {
@@ -20,6 +20,9 @@ export default class FakeFirebase extends React.Component {
         x: x,
         y: y,
         angle: angle,
+        velocityX: 0,
+        velocityY: 0,
+        time: 0,
       },
       events: [],
     };
@@ -33,8 +36,8 @@ export default class FakeFirebase extends React.Component {
       data: {
         x: random(1, this.counter++) * 2 - 1,
         y: random(1, this.counter++) * 2 - 1,
-        speed: 1,
-        duration: 10000,
+        force: 1,
+        duration: 5000,
       },
     });
   };
@@ -50,14 +53,8 @@ export default class FakeFirebase extends React.Component {
       event => event.time + (event.data.duration || 0) > now
     );
 
-    const flattenedPosition = positionAtTime(now, state, finishedEvents);
-
     this.setState({
-      state: {
-        x: flattenedPosition[0],
-        y: flattenedPosition[1],
-        angle: flattenedPosition[2],
-      },
+      state: stateAtTime(now, state, finishedEvents),
       events: [
         ...unfinishedEvents,
         {
