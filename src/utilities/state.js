@@ -1,7 +1,9 @@
 import { easeInOut } from "../utilities/graphics.js";
 
+const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
+
 const stateAtTime = (now, state, events) => {
-  let result = events.reduce(
+  let result = [...events].sort(sortByTime).reduce(
     (finalState, { type, time, data }) => {
       switch (type) {
         case "impulse":
@@ -55,40 +57,4 @@ const mergeImpulse = (
   return finalState;
 };
 
-const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
-
-const addEndingTime = (results, event) => {
-  const { time, data, type } = event;
-  const { duration } = data;
-  const { unstackableStartingTimes } = results;
-  const shouldStack = typeof unstackableStartingTimes[type] === "undefined";
-  const naturallyEndsAt = duration ? time + duration : Infinity;
-
-  if (shouldStack) {
-    event.endsAt = naturallyEndsAt;
-  } else {
-    event.endsAt = Math.min(unstackableStartingTimes[type], naturallyEndsAt);
-    unstackableStartingTimes[type] = Math.min(
-      unstackableStartingTimes[type],
-      time
-    );
-  }
-
-  results.events.push(event);
-  return results;
-};
-
-const precompute = events => {
-  return [...events]
-    .sort(sortByTime)
-    .reduceRight(addEndingTime, {
-      events: [],
-      unstackableStartingTimes: {
-        throttle: Infinity,
-        heading: Infinity,
-      },
-    })
-    .events.reverse();
-};
-
-export { positionAtTime, stateAtTime, findLastEventEndingTime, precompute };
+export { positionAtTime, stateAtTime, findLastEventEndingTime };

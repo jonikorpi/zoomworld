@@ -1,6 +1,6 @@
 import React from "react";
 
-import { positionAtTime, precompute } from "../utilities/state.js";
+import { positionAtTime } from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
 export default class FakeFirebase extends React.Component {
@@ -86,9 +86,6 @@ export default class FakeFirebase extends React.Component {
 
   render() {
     const { state, events } = this.state;
-    return this.props.children(
-      { state, events: events.length > 0 ? precompute(events) : events },
-      this.addEvent
-    );
+    return this.props.children({ state, events: events }, this.addEvent);
   }
 }

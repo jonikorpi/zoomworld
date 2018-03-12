@@ -17,21 +17,13 @@ const createEvent = (event, type) => {
           duration: 5000,
         },
       };
-    case "heading":
+    case "brake":
       return {
         type: type,
         data: {
           angle: Math.atan2(y, x),
           speed: 1,
           duration: 5000,
-        },
-      };
-    case "throttle":
-      return {
-        type: type,
-        data: {
-          speed: Math.round(y / window.innerHeight * 10),
-          duration: 3000,
         },
       };
   }
@@ -75,21 +67,11 @@ class InteractionSurface extends React.Component {
             <input
               type="radio"
               name="type"
-              value="heading"
-              checked={type === "heading"}
+              value="brake"
+              checked={type === "brake"}
               onChange={this.changeType}
             />{" "}
-            heading
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="type"
-              value="throttle"
-              checked={type === "throttle"}
-              onChange={this.changeType}
-            />{" "}
-            throttle
+            brake
           </label>
         </div>
       </React.Fragment>
