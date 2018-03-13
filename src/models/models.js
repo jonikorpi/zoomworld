@@ -46,13 +46,13 @@ let models = {
   playerShade: {
     data: "player",
     color: [0, 0, 0, 0.146],
-    z: -1,
-    scale: 0.0625,
+    z: -0.5,
+    scale: 0.0382,
   },
   player: {
     data: "player",
     color: [0.91, 0.91, 0.91, 1],
-    scale: 0.0625,
+    scale: 0.0382,
   },
 };
 

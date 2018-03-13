@@ -1,8 +1,9 @@
 import React from "react";
 import startRegl from "regl";
-import * as models from "../shaders/models.shader.js";
 
+import * as models from "../shaders/models.shader.js";
 import { getModel, drawOrder } from "../models/models.js";
+import { config } from "../utilities/graphics.js";
 
 // const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
 
@@ -12,11 +13,6 @@ const createModelLists = (lists, { models, ...entity }) => {
     lists[model].push(entity);
   });
   return lists;
-};
-
-const config = {
-  unitSize: 38.2,
-  perspective: 0.0382,
 };
 
 const clearConfiguration = {

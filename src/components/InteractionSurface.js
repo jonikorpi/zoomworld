@@ -1,9 +1,18 @@
 import React from "react";
 
+import { config } from "../utilities/graphics.js";
+
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
   const y = -event.y + window.innerHeight / 2;
-  const magnitude = Math.sqrt(x * x + y * y);
+  const unitInPixels =
+    Math.min(window.innerHeight, window.innerWidth) * config.unitSize / 100;
+  const worldX = x / unitInPixels;
+  const worldY = y / unitInPixels;
+  const distance = Math.sqrt(worldX * worldX + worldY * worldY);
+  const distanceTax = 1000 * Math.max(0, 0.1 / distance);
+  const weight = 1;
+  const force = 1;
 
   switch (type) {
     default:
@@ -11,27 +20,18 @@ const createEvent = (event, type) => {
       return {
         type: type,
         data: {
-          x: x / magnitude,
-          y: y / magnitude,
-          speed: 1,
-          duration: 5000,
+          x: worldX,
+          y: worldY,
+          duration: Math.floor(distance * 5000 / force * weight + distanceTax),
         },
       };
-    case "heading":
+    case "thrust":
       return {
         type: type,
         data: {
-          angle: Math.atan2(y, x),
-          speed: 1,
-          duration: 5000,
-        },
-      };
-    case "throttle":
-      return {
-        type: type,
-        data: {
-          speed: Math.round(y / window.innerHeight * 10),
-          duration: 3000,
+          x: worldX,
+          y: worldY,
+          duration: Math.floor(distance * 5000 / force * weight + distanceTax),
         },
       };
   }
@@ -43,7 +43,7 @@ class InteractionSurface extends React.Component {
   };
 
   state = {
-    type: "impulse",
+    type: "thrust",
   };
 
   changeType = event => {
@@ -75,21 +75,11 @@ class InteractionSurface extends React.Component {
             <input
               type="radio"
               name="type"
-              value="heading"
-              checked={type === "heading"}
+              value="thrust"
+              checked={type === "thrust"}
               onChange={this.changeType}
             />{" "}
-            heading
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="type"
-              value="throttle"
-              checked={type === "throttle"}
-              onChange={this.changeType}
-            />{" "}
-            throttle
+            thrust
           </label>
         </div>
       </React.Fragment>

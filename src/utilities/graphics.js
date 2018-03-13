@@ -1,12 +1,6 @@
 const config = {
-  tileSize: 256,
-  tileCanvasMultiplier: 2,
-  waterLevel: 0,
-  groundLevel: 2,
-  shroudLevel: 20,
-  shroudThickness: 1,
-  unitSize: 14.6,
-  unitType: "vmin",
+  unitSize: 38.2,
+  perspective: 0.0382,
 };
 
 const random = (number = 1, seed = 1) => {
@@ -67,6 +61,10 @@ const easeOut = p => t => 1 - Math.abs(Math.pow(t - 1, p));
 const easeInOut = p => t =>
   t < 0.5 ? easeIn(p)(t * 2) / 2 : easeOut(p)(t * 2 - 1) / 2 + 0.5;
 
+const easeInSin = t => 1 + Math.sin(Math.PI / 2 * t - Math.PI / 2);
+const easeOutSin = t => Math.sin(Math.PI / 2 * t);
+const easeInOutSin = t => (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2;
+
 // https://gist.github.com/shaunlebron/8832585
 const shortAngleDist = (current, target) => {
   const max = Math.PI * 2;
@@ -88,4 +86,7 @@ export {
   shortAngleDist,
   angleLerp,
   lerp,
+  easeInSin,
+  easeOutSin,
+  easeInOutSin,
 };

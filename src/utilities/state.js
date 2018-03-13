@@ -1,23 +1,21 @@
-import { easeInOut } from "../utilities/graphics.js";
+import bezier from "bezier-easing";
 
 const stateAtTime = (now, state, events) => {
   let result = events.reduce(
-    (finalState, { type, time, data }) => {
+    (finalState, { type, time, data, endsAt }) => {
       switch (type) {
         case "impulse":
-          return mergeImpulse(finalState, now, type, time, data);
+          return mergeImpulse(finalState, now, time, data, endsAt);
+        case "thrust":
+          return mergeThrust(finalState, now, time, data, endsAt);
         default:
-          console.warn(`Not handling unrecognized event type: ${type}`);
           return finalState;
       }
     },
-    { ...state, velocityX: 0, velocityY: 0, lastAngle: 0 }
+    { ...state, lastAngle: 0 }
   );
 
-  result.angle =
-    Math.abs(result.velocityY) + Math.abs(result.velocityX) > 0
-      ? Math.atan2(result.velocityY, result.velocityX)
-      : result.lastAngle;
+  result.angle = result.lastAngle;
 
   return result;
 };
@@ -30,26 +28,62 @@ const positionAtTime = (now, state, events) => {
 const findLastEventEndingTime = (end, { time, data: { duration } }) =>
   time + duration > end ? time + duration : end;
 
+const impulseEasing = [0.445, 0.05, 0.55, 0.95];
+const thrustEasing = [0.455, 0.03, 0.355, 1];
+
 const mergeImpulse = (
   finalState,
-  now,
-  type,
-  time,
-  { x = 0, y = 0, speed = 0, duration = 0 }
+  now = 0,
+  time = 0,
+  { x = 0, y = 0, duration = 0 },
+  endsAt = 0
 ) => {
   const elapsed = now - time;
-  const endsAt = time + duration;
-  const hasEnded = endsAt < now;
-  const completion = hasEnded ? 1 : elapsed / duration;
-  const easing = easeInOut(2)(completion);
-  const thrust = -Math.abs(easing - 0.5) + 0.5;
-  const velocityX = finalState.velocityX + thrust * speed * x;
-  const velocityY = finalState.velocityY + thrust * speed * y;
+  const completion = Math.max(0, Math.min(1, elapsed / duration));
+  const ratio = Math.min(1, duration / 1000);
+  const easing = bezier(
+    impulseEasing[0] * ratio,
+    impulseEasing[1] * ratio,
+    1 - (1 - impulseEasing[2]) * ratio,
+    1 - (1 - impulseEasing[3]) * ratio
+  )(completion);
 
-  finalState.x += easing * speed * x;
-  finalState.y += easing * speed * y;
-  finalState.velocityX = velocityX;
-  finalState.velocityY = velocityY;
+  finalState.x += easing * x;
+  finalState.y += easing * y;
+
+  return finalState;
+};
+
+const mergeThrust = (
+  finalState,
+  now = 0,
+  time = 0,
+  { x = 0, y = 0, duration = 0 },
+  endsAt = 0
+) => {
+  const elapsed = now - time;
+  const endedEarly = endsAt < time + duration;
+  const endedAfter = endedEarly ? endsAt - time : duration;
+  const missedDuration = duration - endedAfter;
+  const pastEnding = now - endsAt;
+  const cancellationPoint = endedAfter / duration;
+  const trailCompletion = endedEarly
+    ? Math.max(0, Math.min(1, cancellationPoint + pastEnding / missedDuration))
+    : 0;
+  const completion =
+    Math.max(0, Math.min(1, elapsed / endedAfter)) * cancellationPoint;
+  const ratio = Math.min(1, duration / 1000);
+  const curve = bezier(
+    thrustEasing[0] * ratio,
+    thrustEasing[1] * ratio,
+    1 - (1 - thrustEasing[2]) * ratio,
+    1 - (1 - thrustEasing[3]) * ratio
+  );
+  const translation = curve(completion);
+  const trailing = curve(trailCompletion);
+
+  finalState.x += translation * x + trailing * x;
+  finalState.y += translation * y + trailing * y;
   finalState.lastAngle = Math.atan2(y, x);
 
   return finalState;
@@ -84,8 +118,7 @@ const precompute = events => {
     .reduceRight(addEndingTime, {
       events: [],
       unstackableStartingTimes: {
-        throttle: Infinity,
-        heading: Infinity,
+        thrust: Infinity,
       },
     })
     .events.reverse();
