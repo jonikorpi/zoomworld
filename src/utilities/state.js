@@ -1,9 +1,7 @@
 import { easeInOut } from "../utilities/graphics.js";
 
-const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
-
 const stateAtTime = (now, state, events) => {
-  let result = [...events].sort(sortByTime).reduce(
+  let result = events.reduce(
     (finalState, { type, time, data }) => {
       switch (type) {
         case "impulse":
@@ -39,24 +37,6 @@ const mergeImpulse = (
   time,
   { x = 0, y = 0, speed = 0, duration = 0 }
 ) => {
-<<<<<<< HEAD
-  const elapsed = Math.max(0, now - time);
-  const completion = Math.min(1, elapsed / (duration || 1));
-  const easing = easeOut(5)(completion);
-  const adjustedForce = force / 10;
-
-  const translateX = elapsed / 1000 * easing * adjustedForce * x;
-  const translateY = elapsed / 1000 * easing * adjustedForce * y;
-
-  state.x += translateX;
-  state.y += translateY;
-  state.velocityX += adjustedForce * x;
-  state.velocityY += adjustedForce * y;
-  state.angle = Math.atan2(y, x);
-  state.time = now;
-
-  return state;
-=======
   const elapsed = now - time;
   const endsAt = time + duration;
   const hasEnded = endsAt < now;
@@ -73,7 +53,42 @@ const mergeImpulse = (
   finalState.lastAngle = Math.atan2(y, x);
 
   return finalState;
->>>>>>> parent of cd2ded3... Removes drag from impulses
 };
 
-export { positionAtTime, stateAtTime, findLastEventEndingTime };
+const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
+
+const addEndingTime = (results, event) => {
+  const { time, data, type } = event;
+  const { duration } = data;
+  const { unstackableStartingTimes } = results;
+  const shouldStack = typeof unstackableStartingTimes[type] === "undefined";
+  const naturallyEndsAt = duration ? time + duration : Infinity;
+
+  if (shouldStack) {
+    event.endsAt = naturallyEndsAt;
+  } else {
+    event.endsAt = Math.min(unstackableStartingTimes[type], naturallyEndsAt);
+    unstackableStartingTimes[type] = Math.min(
+      unstackableStartingTimes[type],
+      time
+    );
+  }
+
+  results.events.push(event);
+  return results;
+};
+
+const precompute = events => {
+  return [...events]
+    .sort(sortByTime)
+    .reduceRight(addEndingTime, {
+      events: [],
+      unstackableStartingTimes: {
+        throttle: Infinity,
+        heading: Infinity,
+      },
+    })
+    .events.reverse();
+};
+
+export { positionAtTime, stateAtTime, findLastEventEndingTime, precompute };
