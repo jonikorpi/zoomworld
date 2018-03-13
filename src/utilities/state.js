@@ -1,27 +1,27 @@
-import { easeOut } from "../utilities/graphics.js";
+import { easeInOut } from "../utilities/graphics.js";
 
 const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
 const stateAtTime = (now, state, events) => {
-  const stateAfterVelocity = mergeImpulse(
-    { ...state, velocityX: 0, velocityY: 0 },
-    now,
-    "impulse",
-    state.time,
-    { x: state.velocityX, y: state.velocityY }
-  );
-
-  return [...events]
-    .sort(sortByTime)
-    .reduce((finalState, { type, time, data }) => {
+  let result = [...events].sort(sortByTime).reduce(
+    (finalState, { type, time, data }) => {
       switch (type) {
         case "impulse":
           return mergeImpulse(finalState, now, type, time, data);
-        case "brake":
         default:
+          console.warn(`Not handling unrecognized event type: ${type}`);
           return finalState;
       }
-    }, stateAfterVelocity);
+    },
+    { ...state, velocityX: 0, velocityY: 0, lastAngle: 0 }
+  );
+
+  result.angle =
+    Math.abs(result.velocityY) + Math.abs(result.velocityX) > 0
+      ? Math.atan2(result.velocityY, result.velocityX)
+      : result.lastAngle;
+
+  return result;
 };
 
 const positionAtTime = (now, state, events) => {
@@ -33,12 +33,13 @@ const findLastEventEndingTime = (end, { time, data: { duration } }) =>
   time + duration > end ? time + duration : end;
 
 const mergeImpulse = (
-  state,
+  finalState,
   now,
   type,
   time,
-  { x = 0, y = 0, force = 1, duration = 0 }
+  { x = 0, y = 0, speed = 0, duration = 0 }
 ) => {
+<<<<<<< HEAD
   const elapsed = Math.max(0, now - time);
   const completion = Math.min(1, elapsed / (duration || 1));
   const easing = easeOut(5)(completion);
@@ -55,6 +56,24 @@ const mergeImpulse = (
   state.time = now;
 
   return state;
+=======
+  const elapsed = now - time;
+  const endsAt = time + duration;
+  const hasEnded = endsAt < now;
+  const completion = hasEnded ? 1 : elapsed / duration;
+  const easing = easeInOut(2)(completion);
+  const thrust = -Math.abs(easing - 0.5) + 0.5;
+  const velocityX = finalState.velocityX + thrust * speed * x;
+  const velocityY = finalState.velocityY + thrust * speed * y;
+
+  finalState.x += easing * speed * x;
+  finalState.y += easing * speed * y;
+  finalState.velocityX = velocityX;
+  finalState.velocityY = velocityY;
+  finalState.lastAngle = Math.atan2(y, x);
+
+  return finalState;
+>>>>>>> parent of cd2ded3... Removes drag from impulses
 };
 
 export { positionAtTime, stateAtTime, findLastEventEndingTime };

@@ -10,7 +10,7 @@ export default class Entity extends React.Component {
     registerCamera: null,
     unregisterCamera: null,
     onUpdate: null,
-    state: { x: 0, y: 0, angle: 0, velocityX: 0, velocityY: 0, time: 0 },
+    state: { x: 0, y: 0, angle: 0 },
     events: [],
     models: ["placeholder"],
     mayMove: true,
