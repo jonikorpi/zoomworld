@@ -22,7 +22,7 @@ const createEvent = (event, type) => {
         data: {
           x: worldX,
           y: worldY,
-          duration: Math.floor(distance * 5000 / force * weight + distanceTax),
+          duration: Math.floor(distance * 8000 / force * weight + distanceTax),
         },
       };
     case "thrust":
@@ -31,7 +31,7 @@ const createEvent = (event, type) => {
         data: {
           x: worldX,
           y: worldY,
-          duration: Math.floor(distance * 5000 / force * weight + distanceTax),
+          duration: Math.floor(distance * 8000 / force * weight + distanceTax),
         },
       };
   }

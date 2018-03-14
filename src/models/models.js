@@ -47,12 +47,12 @@ let models = {
     data: "player",
     color: [0, 0, 0, 0.146],
     z: -0.5,
-    scale: 0.0382,
+    scale: 0.0236,
   },
   player: {
     data: "player",
     color: [0.91, 0.91, 0.91, 1],
-    scale: 0.0382,
+    scale: 0.0236,
   },
 };
 
