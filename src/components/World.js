@@ -10,10 +10,7 @@ import { random, getSeed } from "../utilities/graphics";
 export default class World extends React.Component {
   static defaultProps = {
     userID: null,
-    subscribe: () => {},
-    unsubscribe: () => {},
-    registerCamera: () => {},
-    unregisterCamera: () => {},
+    renderer: {},
     lagCompensation: 0,
   };
 
@@ -33,14 +30,7 @@ export default class World extends React.Component {
   };
 
   render() {
-    const {
-      subscribe,
-      unsubscribe,
-      registerCamera,
-      unregisterCamera,
-      userID,
-      lagCompensation,
-    } = this.props;
+    const { renderer, userID, lagCompensation } = this.props;
 
     const { currentTile, vision } = this.state;
 
@@ -82,8 +72,7 @@ export default class World extends React.Component {
           >
             {({ state, events }) => (
               <Entity
-                subscribe={subscribe}
-                unsubscribe={unsubscribe}
+                renderer={renderer}
                 state={state}
                 events={events}
                 mayMove={false}
@@ -97,8 +86,7 @@ export default class World extends React.Component {
           <FakeFirebase key={playerID} index={index + 123} x={x} y={y}>
             {({ state, events }) => (
               <Entity
-                subscribe={subscribe}
-                unsubscribe={unsubscribe}
+                renderer={renderer}
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
@@ -126,18 +114,15 @@ export default class World extends React.Component {
               ))}
               <InteractionSurface addEvent={addEvent} />
               <Entity
-                subscribe={subscribe}
-                unsubscribe={unsubscribe}
-                registerCamera={registerCamera}
-                unregisterCamera={unregisterCamera}
+                renderer={renderer}
+                shouldRegisterCamera={true}
                 onUpdate={position => this.updateCurrentTile(position)}
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
               />
               <Entity
-                subscribe={subscribe}
-                unsubscribe={unsubscribe}
+                renderer={renderer}
                 state={{ x: currentTile[0], y: currentTile[1] }}
                 mayMove={false}
                 models={["tileOutline"]}

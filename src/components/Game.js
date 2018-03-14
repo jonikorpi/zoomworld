@@ -31,19 +31,11 @@ export default class Game extends React.Component {
               return (
                 <React.Fragment>
                   <Renderer>
-                    {({
-                      subscribe,
-                      unsubscribe,
-                      registerCamera,
-                      unregisterCamera,
-                    }) => (
+                    {renderer => (
                       <World
                         userID={userID}
                         player={player}
-                        subscribe={subscribe}
-                        unsubscribe={unsubscribe}
-                        registerCamera={registerCamera}
-                        unregisterCamera={unregisterCamera}
+                        renderer={renderer}
                       />
                     )}
                   </Renderer>

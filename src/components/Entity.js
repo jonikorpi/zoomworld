@@ -5,10 +5,8 @@ import { positionAtTime } from "../utilities/state.js";
 
 export default class Entity extends React.Component {
   static defaultProps = {
-    subscribe: () => {},
-    unsubscribe: () => {},
-    registerCamera: null,
-    unregisterCamera: null,
+    renderer: {},
+    shouldRegisterCamera: false,
     onUpdate: null,
     state: { x: 0, y: 0, angle: 0 },
     events: [],
@@ -20,19 +18,25 @@ export default class Entity extends React.Component {
   ID = uuid4();
 
   componentWillMount() {
-    const { subscribe, registerCamera } = this.props;
+    const {
+      renderer: { subscribe, registerCamera },
+      shouldRegisterCamera,
+    } = this.props;
     this.mountedAt = performance.timing.navigationStart + performance.now();
     subscribe(this.ID, this.update);
-    if (registerCamera) {
+    if (shouldRegisterCamera) {
       registerCamera(this.update);
     }
   }
 
   componentWillUnmount() {
-    const { unsubscribe, unregisterCamera } = this.props;
+    const {
+      renderer: { unsubscribe, unregisterCamera },
+      shouldRegisterCamera,
+    } = this.props;
     this.unmountedAt = performance.timing.navigationStart + performance.now();
     unsubscribe(this.ID);
-    if (unregisterCamera) {
+    if (shouldRegisterCamera) {
       unregisterCamera();
     }
   }

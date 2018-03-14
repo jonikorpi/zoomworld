@@ -19,7 +19,7 @@ const clearConfiguration = {
   color: [0, 0, 0, 0],
 };
 
-const getDefaultCamera = () => [0, 0];
+const getDefaultCamera = () => [0, 0, 0];
 
 export default class Renderer extends React.Component {
   subscribers = {};
