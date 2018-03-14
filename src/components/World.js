@@ -6,6 +6,7 @@ import InteractionSurface from "../components/InteractionSurface";
 import LogMessage from "./LogMessage";
 
 import { random, getSeed } from "../utilities/graphics";
+import { findLastEventEndingTime } from "../utilities/state";
 
 export default class World extends React.Component {
   static defaultProps = {
@@ -120,6 +121,15 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
+              />
+              <Entity
+                renderer={renderer}
+                state={state}
+                events={events}
+                models={["target"]}
+                timeOffset={
+                  events.reduce(findLastEventEndingTime, 0) - Date.now()
+                }
               />
               <Entity
                 renderer={renderer}
