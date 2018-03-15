@@ -29,12 +29,12 @@ export default class FakeFirebase extends React.Component {
 
   addRandomEvent = () => {
     this.addEvent({
-      type: "impulse",
+      type: "thrust",
       data: {
         x: random(1, this.counter++) * 2 - 1,
         y: random(1, this.counter++) * 2 - 1,
         duration: Math.floor(
-          8000 /
+          12000 /
             (1 + random(1, this.counter++)) *
             (1 + random(1, this.counter++))
         ),
