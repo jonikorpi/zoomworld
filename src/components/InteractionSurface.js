@@ -2,6 +2,8 @@ import React from "react";
 
 import { config } from "../utilities/graphics.js";
 
+const types = ["walk", "impulse", "thrust"];
+
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
   const y = -event.y + window.innerHeight / 2;
@@ -22,7 +24,9 @@ const createEvent = (event, type) => {
         data: {
           x: worldX,
           y: worldY,
-          duration: Math.floor(distance * 12000 / force * weight + distanceTax),
+          duration: Math.floor(
+            distance * 12000 / (force * weight) + distanceTax
+          ),
         },
       };
     case "thrust":
@@ -31,7 +35,18 @@ const createEvent = (event, type) => {
         data: {
           x: worldX,
           y: worldY,
-          duration: Math.floor(distance * 12000 / force * weight + distanceTax),
+          duration: Math.floor(
+            distance * 12000 / (force * weight) + distanceTax
+          ),
+        },
+      };
+    case "walk":
+      return {
+        type: type,
+        data: {
+          x: worldX,
+          y: worldY,
+          duration: Math.floor(distance * 12000 / (force * weight)),
         },
       };
   }
@@ -43,44 +58,38 @@ class InteractionSurface extends React.Component {
   };
 
   state = {
-    type: "thrust",
+    selectedType: "walk",
   };
 
   changeType = event => {
-    this.setState({ type: event.target.value });
+    this.setState({ selectedType: event.target.value });
   };
 
   handleClick = event => {
-    this.props.addEvent(createEvent(event.nativeEvent, this.state.type));
+    this.props.addEvent(
+      createEvent(event.nativeEvent, this.state.selectedType)
+    );
   };
 
   render() {
-    const { type } = this.state;
+    const { selectedType } = this.state;
 
     return (
       <React.Fragment>
         <button className="interactionSurface" onClick={this.handleClick} />
         <div className="interactionTypes">
-          <label>
-            <input
-              type="radio"
-              name="type"
-              value="impulse"
-              checked={type === "impulse"}
-              onChange={this.changeType}
-            />{" "}
-            impulse
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="type"
-              value="thrust"
-              checked={type === "thrust"}
-              onChange={this.changeType}
-            />{" "}
-            thrust
-          </label>
+          {types.map((type, index) => (
+            <label key={index}>
+              <input
+                type="radio"
+                name="type"
+                value={type}
+                checked={selectedType === type}
+                onChange={this.changeType}
+              />{" "}
+              {type}
+            </label>
+          ))}
         </div>
       </React.Fragment>
     );

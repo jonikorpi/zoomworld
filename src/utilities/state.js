@@ -9,6 +9,8 @@ const stateAtTime = (now, state, events) => {
           return mergeImpulse(finalState, now, time, data, endsAt);
         case "thrust":
           return mergeThrust(finalState, now, time, data, endsAt);
+        case "walk":
+          return mergeWalk(finalState, now, time, data, endsAt);
         default:
           return finalState;
       }
@@ -92,6 +94,28 @@ const mergeThrust = (
   return finalState;
 };
 
+const mergeWalk = (
+  finalState,
+  now = 0,
+  time = 0,
+  { x = 0, y = 0, duration = 0 },
+  endsAt = 0
+) => {
+  const elapsed = now - time;
+  const endedEarly = endsAt < time + duration;
+  const endedAfter = endedEarly ? endsAt - time : duration;
+  const endingPoint = endedAfter / duration;
+  const completion =
+    Math.max(0, Math.min(1, elapsed / endedAfter)) * endingPoint;
+  const translation = completion;
+
+  finalState.x += translation * x;
+  finalState.y += translation * y;
+  finalState.lastAngle = Math.atan2(y, x);
+
+  return finalState;
+};
+
 const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
 const addEndingTime = (results, event) => {
@@ -122,6 +146,7 @@ const precompute = events => {
       events: [],
       unstackableStartingTimes: {
         thrust: Infinity,
+        walk: Infinity,
       },
     })
     .events.reverse();
