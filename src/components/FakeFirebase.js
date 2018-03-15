@@ -43,15 +43,12 @@ export default class FakeFirebase extends React.Component {
   };
 
   addEvent = event => {
-    const { state, events } = this.state;
+    const { state } = this.state;
+    const events = precompute(this.state.events);
     const now = performance.timing.navigationStart + performance.now();
 
-    const finishedEvents = [...events].filter(
-      event => event.time + (event.data.duration || 0) <= now
-    );
-    const unfinishedEvents = [...events].filter(
-      event => event.time + (event.data.duration || 0) > now
-    );
+    const finishedEvents = [...events].filter(event => event.endsAt <= now);
+    const unfinishedEvents = [...events].filter(event => event.endsAt > now);
 
     const flattenedPosition = positionAtTime(now, state, finishedEvents);
 
