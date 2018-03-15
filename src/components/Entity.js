@@ -2,6 +2,7 @@ import React from "react";
 import uuid4 from "uuid/v4";
 
 import { positionAtTime } from "../utilities/state.js";
+import { lerp, angleLerp } from "../utilities/graphics.js";
 
 export default class Entity extends React.Component {
   static defaultProps = {
@@ -43,13 +44,23 @@ export default class Entity extends React.Component {
 
   update = time => {
     const { state, events, onUpdate, mayMove, models, timeOffset } = this.props;
-    const position = mayMove
+    const currentPosition = mayMove
       ? positionAtTime(time + timeOffset, state, events)
       : [state.x, state.y, state.angle];
+
+    const position = this.lastPosition
+      ? [
+          lerp(this.lastPosition[0], currentPosition[0], 0.5),
+          lerp(this.lastPosition[1], currentPosition[1], 0.5),
+          angleLerp(this.lastPosition[2], currentPosition[2], 0.25),
+        ]
+      : currentPosition;
 
     if (onUpdate) {
       onUpdate(position);
     }
+
+    this.lastPosition = position;
 
     return {
       models: models,
