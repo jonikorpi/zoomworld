@@ -1,4 +1,5 @@
 import bezier from "bezier-easing";
+import { easeOut } from "../utilities/graphics";
 
 const stateAtTime = (now, state, events) => {
   let result = events.reduce(
@@ -64,14 +65,9 @@ const mergeThrust = (
   const elapsed = now - time;
   const endedEarly = endsAt < time + duration;
   const endedAfter = endedEarly ? endsAt - time : duration;
-  const missedDuration = duration - endedAfter;
-  const pastEnding = now - endsAt;
-  const cancellationPoint = endedAfter / duration;
-  const trailCompletion = endedEarly
-    ? Math.max(0, Math.min(1, cancellationPoint + pastEnding / missedDuration))
-    : 0;
+  const endingPoint = endedAfter / duration;
   const completion =
-    Math.max(0, Math.min(1, elapsed / endedAfter)) * cancellationPoint;
+    Math.max(0, Math.min(1, elapsed / endedAfter)) * endingPoint;
   const ratio = Math.min(1, duration / 1000);
   const curve = bezier(
     thrustEasing[0] * ratio,
@@ -80,7 +76,14 @@ const mergeThrust = (
     1 - (1 - thrustEasing[3]) * ratio
   );
   const translation = curve(completion);
-  const trailing = curve(trailCompletion);
+
+  const missedDuration = duration - endedAfter;
+  const pastEnding = now - endsAt;
+  const thrust = -Math.abs(translation - 0.5) + 0.5;
+  const trailCompletion = endedEarly
+    ? Math.max(0, Math.min(1, pastEnding / Math.max(1000, missedDuration)))
+    : 0;
+  const trailing = endedEarly ? easeOut(2)(trailCompletion) * thrust : 0;
 
   finalState.x += translation * x + trailing * x;
   finalState.y += translation * y + trailing * y;
