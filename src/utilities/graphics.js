@@ -1,5 +1,5 @@
 const config = {
-  unitSize: 25,
+  unitSize: 38.2,
   perspective: 0.0382,
 };
 
