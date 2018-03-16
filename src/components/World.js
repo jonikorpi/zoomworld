@@ -128,7 +128,9 @@ export default class World extends React.Component {
                 events={events}
                 models={["target"]}
                 timeOffset={
-                  events.reduce(findLastEventEndingTime, 0) - Date.now()
+                  events.reduce(findLastEventEndingTime, 0) -
+                  performance.timing.navigationStart +
+                  performance.now()
                 }
               />
               <Entity
