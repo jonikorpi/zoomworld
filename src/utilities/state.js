@@ -1,5 +1,4 @@
-import bezier from "bezier-easing";
-import { easeOut } from "../utilities/graphics";
+import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
 
 const stateAtTime = (now, state, events) => {
   let result = events.reduce(
@@ -31,9 +30,6 @@ const positionAtTime = (now, state, events) => {
 const findLastEventEndingTime = (end, { time, data: { duration } }) =>
   time + duration > end ? time + duration : end;
 
-const impulseEasing = [0.445, 0.05, 0.55, 0.95];
-const thrustEasing = [0.455, 0.03, 0.355, 1];
-
 const mergeImpulse = (
   finalState,
   now = 0,
@@ -43,13 +39,7 @@ const mergeImpulse = (
 ) => {
   const elapsed = now - time;
   const completion = Math.max(0, Math.min(1, elapsed / duration));
-  const ratio = Math.min(1, duration / 1000);
-  const easing = bezier(
-    impulseEasing[0] * ratio,
-    impulseEasing[1] * ratio,
-    1 - (1 - impulseEasing[2]) * ratio,
-    1 - (1 - impulseEasing[3]) * ratio
-  )(completion);
+  const easing = easeInOut(2)(completion);
 
   finalState.x += easing * x;
   finalState.y += easing * y;
@@ -68,27 +58,31 @@ const mergeThrust = (
   const endedEarly = endsAt < time + duration;
   const endedAfter = endedEarly ? endsAt - time : duration;
   const endingPoint = endedAfter / duration;
-  const completion =
-    Math.max(0, Math.min(1, elapsed / endedAfter)) * endingPoint;
-  const ratio = Math.min(1, duration / 1000);
-  const curve = bezier(
-    thrustEasing[0] * ratio,
-    thrustEasing[1] * ratio,
-    1 - (1 - thrustEasing[2]) * ratio,
-    1 - (1 - thrustEasing[3]) * ratio
+
+  const onRampDuration = Math.min(1000, duration / 2.618);
+  const offRampDuration = Math.min(1000, duration / 2.618);
+  const middleDuration = duration - onRampDuration - offRampDuration;
+
+  const onRampCompletion = easeIn(2)(
+    Math.min(1, Math.max(0, elapsed / onRampDuration))
   );
-  const translation = curve(completion);
+  const middleCompletion = Math.max(
+    0,
+    Math.min(1, elapsed / (onRampDuration + middleDuration))
+  );
+  const offRampCompletion = easeOut(2)(
+    Math.min(
+      1,
+      Math.max(0, (elapsed - onRampDuration - middleDuration) / offRampDuration)
+    )
+  );
 
-  const missedDuration = duration - endedAfter;
-  const pastEnding = now - endsAt;
-  const thrust = -Math.abs(translation - 0.5) + 0.5;
-  const trailCompletion = endedEarly
-    ? Math.max(0, Math.min(1, pastEnding / Math.max(1000, missedDuration)))
-    : 0;
-  const trailing = endedEarly ? easeOut(2)(trailCompletion) * thrust : 0;
+  const onRamp = onRampCompletion * (onRampDuration / duration);
+  const middle = middleCompletion * (middleDuration / duration);
+  const offRamp = offRampCompletion * (offRampDuration / duration);
 
-  finalState.x += translation * x + trailing * x;
-  finalState.y += translation * y + trailing * y;
+  finalState.x += onRamp * x + middle * x + offRamp * x;
+  finalState.y += onRamp * y + middle * y + offRamp * y;
   finalState.lastAngle = Math.atan2(y, x);
 
   return finalState;

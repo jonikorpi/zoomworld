@@ -2,7 +2,7 @@ import React from "react";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["walk", "impulse", "thrust"];
+const types = ["thrust", "walk", "impulse"];
 
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
@@ -36,7 +36,7 @@ const createEvent = (event, type) => {
           x: worldX,
           y: worldY,
           duration: Math.floor(
-            distance * 12000 / (force * weight) + distanceTax
+            distance * 6000 / (force * weight) + distanceTax
           ),
         },
       };
@@ -58,7 +58,7 @@ class InteractionSurface extends React.Component {
   };
 
   state = {
-    selectedType: "walk",
+    selectedType: types[0],
   };
 
   changeType = event => {
