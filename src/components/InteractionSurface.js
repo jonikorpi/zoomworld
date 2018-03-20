@@ -2,7 +2,7 @@ import React from "react";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["walk", "stop", "thrust", "impulse"];
+const types = ["impulse", "walk", "stop"];
 
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
@@ -12,33 +12,15 @@ const createEvent = (event, type) => {
     Math.min(window.innerHeight, window.innerWidth) * config.unitSize / 100;
   const worldX = x / unitInPixels;
   const worldY = y / unitInPixels;
-  const distance = Math.sqrt(worldX * worldX + worldY * worldY);
-  const distanceTax = 1000 * Math.max(0, 0.1 / distance);
-  const weight = 1;
-  const force = 1;
 
   switch (type) {
-    default:
     case "impulse":
       return {
         type: type,
         data: {
-          x: worldX,
-          y: worldY,
-          duration: Math.floor(
-            distance * 12000 / (force * weight) + distanceTax
-          ),
-        },
-      };
-    case "thrust":
-      return {
-        type: type,
-        data: {
-          x: worldX,
-          y: worldY,
-          duration: Math.floor(
-            distance * 6000 / (force * weight) + distanceTax
-          ),
+          x: x / magnitude,
+          y: y / magnitude,
+          force: 1,
         },
       };
     case "walk":
@@ -50,6 +32,7 @@ const createEvent = (event, type) => {
           speed: 1,
         },
       };
+    default:
     case "stop":
       return {
         type: type,

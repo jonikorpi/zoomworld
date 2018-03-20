@@ -8,14 +8,12 @@ const stateAtTime = (now, state, events) => {
       }
 
       switch (type) {
-        case "impulse":
-          return mergeImpulse(finalState, now, time, data, endsAt);
-        case "thrust":
-          return mergeThrust(finalState, now, time, data, endsAt);
         case "walk":
           return mergeWalk(finalState, now, time, data, endsAt);
         case "stop":
           return mergeStop(finalState, now, time);
+        case "impulse":
+          return mergeImpulse(finalState, now, time, data, endsAt);
         default:
           return finalState;
       }
@@ -38,56 +36,20 @@ const mergeImpulse = (
   finalState,
   now = 0,
   time = 0,
-  { x = 0, y = 0, duration = 0 },
+  { x = 0, y = 0, force = 0 },
   endsAt = 0
 ) => {
-  const elapsed = now - time;
-  const completion = Math.max(0, Math.min(1, elapsed / duration));
-  const easing = easeInOut(2)(completion);
+  // const hasEnded = endsAt !== Infinity;
+  // const endedAfter = hasEnded ? endsAt - time : 0;
+  const timeSinceStart = now - time;
+  const elapsed = Math.min(timeSinceStart, endsAt - time);
 
-  finalState.x += easing * x;
-  finalState.y += easing * y;
+  const unitsPerSecond = 5 / force;
+  const completion =
+    easeOut(2)(Math.min(1, elapsed / 1000 * unitsPerSecond)) * (force / 5);
 
-  return finalState;
-};
-
-const mergeThrust = (
-  finalState,
-  now = 0,
-  time = 0,
-  { x = 0, y = 0, duration = 0 },
-  endsAt = 0
-) => {
-  const elapsed = now - time;
-  const endedEarly = endsAt < time + duration;
-  const endedAfter = endedEarly ? endsAt - time : duration;
-  const endingPoint = endedAfter / duration;
-
-  const onRampDuration = Math.min(1000, duration / 2.618);
-  const offRampDuration = Math.min(1000, duration / 2.618);
-  const middleDuration = duration - onRampDuration - offRampDuration;
-
-  const onRampCompletion = easeIn(2)(
-    Math.min(1, Math.max(0, elapsed / onRampDuration))
-  );
-  const middleCompletion = Math.max(
-    0,
-    Math.min(1, elapsed / (onRampDuration + middleDuration))
-  );
-  const offRampCompletion = easeOut(2)(
-    Math.min(
-      1,
-      Math.max(0, (elapsed - onRampDuration - middleDuration) / offRampDuration)
-    )
-  );
-
-  const onRamp = onRampCompletion * (onRampDuration / duration);
-  const middle = middleCompletion * (middleDuration / duration);
-  const offRamp = offRampCompletion * (offRampDuration / duration);
-
-  finalState.x += onRamp * x + middle * x + offRamp * x;
-  finalState.y += onRamp * y + middle * y + offRamp * y;
-  finalState.lastAngle = Math.atan2(y, x);
+  finalState.x += completion * x;
+  finalState.y += completion * y;
 
   return finalState;
 };
@@ -163,7 +125,6 @@ const precompute = events => {
       interruptingEventTypes: {
         walk: true,
         stop: true,
-        thrust: true,
       },
       lastInterruptingEventStartingTime: Infinity,
     })
