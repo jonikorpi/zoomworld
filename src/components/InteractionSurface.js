@@ -2,7 +2,7 @@ import React from "react";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["impulse", "walk", "stop"];
+const types = ["walk", "impulse", "stop"];
 
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
