@@ -2,7 +2,7 @@ import React from "react";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["walk", "thrust", "impulse"];
+const types = ["walk", "stop", "thrust", "impulse"];
 
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
@@ -49,6 +49,10 @@ const createEvent = (event, type) => {
           y: y / magnitude,
           speed: 1,
         },
+      };
+    case "stop":
+      return {
+        type: type,
       };
   }
 };

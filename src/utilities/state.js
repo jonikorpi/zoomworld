@@ -14,14 +14,14 @@ const stateAtTime = (now, state, events) => {
           return mergeThrust(finalState, now, time, data, endsAt);
         case "walk":
           return mergeWalk(finalState, now, time, data, endsAt);
+        case "stop":
+          return mergeStop(finalState, now, time);
         default:
           return finalState;
       }
     },
     { ...state, momentumX: 0, momentumY: 0, lastAngle: 0 }
   );
-
-  result.angle = result.lastAngle;
 
   return result;
 };
@@ -107,7 +107,7 @@ const mergeWalk = (
   const translation = elapsed / 1000 * (speed / 8);
   finalState.x += translation * x;
   finalState.y += translation * y;
-  finalState.lastAngle = Math.atan2(y, x);
+  finalState.angle = Math.atan2(y, x);
 
   const ramp = 1000 * speed;
   const onRamp = easeIn(2)(
@@ -123,23 +123,29 @@ const mergeWalk = (
   return finalState;
 };
 
+const mergeStop = (finalState, now = 0, time = 0) => {
+  return finalState;
+};
+
 const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
 const addEndingTime = (results, event) => {
   const { time, data, type } = event;
-  const { duration } = data;
-  const { unstackableStartingTimes } = results;
-  const shouldStack = typeof unstackableStartingTimes[type] === "undefined";
+  const duration = data ? data.duration : null;
+  const { interruptingEventTypes } = results;
   const naturallyEndsAt = duration ? time + duration : Infinity;
 
-  if (shouldStack) {
-    event.endsAt = naturallyEndsAt;
-  } else {
-    event.endsAt = Math.min(unstackableStartingTimes[type], naturallyEndsAt);
-    unstackableStartingTimes[type] = Math.min(
-      unstackableStartingTimes[type],
+  if (interruptingEventTypes[type]) {
+    event.endsAt = Math.min(
+      results.lastInterruptingEventStartingTime,
+      naturallyEndsAt
+    );
+    results.lastInterruptingEventStartingTime = Math.min(
+      results.lastInterruptingEventStartingTime,
       time
     );
+  } else {
+    event.endsAt = naturallyEndsAt;
   }
 
   results.events.push(event);
@@ -151,10 +157,12 @@ const precompute = events => {
     .sort(sortByTime)
     .reduceRight(addEndingTime, {
       events: [],
-      unstackableStartingTimes: {
-        thrust: Infinity,
-        walk: Infinity,
+      interruptingEventTypes: {
+        walk: true,
+        stop: true,
+        thrust: true,
       },
+      lastInterruptingEventStartingTime: Infinity,
     })
     .events.reverse();
 };
