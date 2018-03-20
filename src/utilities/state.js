@@ -14,7 +14,7 @@ const stateAtTime = (now, state, events) => {
           return finalState;
       }
     },
-    { ...state, lastAngle: 0 }
+    { ...state, momentumX: 0, momentumY: 0, lastAngle: 0 }
   );
 
   result.angle = result.lastAngle;
@@ -95,12 +95,26 @@ const mergeWalk = (
   { x = 0, y = 0, speed = 0 },
   endsAt = Infinity
 ) => {
-  const elapsed = Math.max(0, Math.min(now - time, endsAt - time));
-  const translation = elapsed / 1000 * (speed / 8);
+  const hasEnded = endsAt !== Infinity;
+  const endedAfter = hasEnded ? endsAt - time : 0;
+  const timeSinceStart = now - time;
+  const elapsed = Math.max(0, Math.min(timeSinceStart, endsAt - time));
 
+  const translation = elapsed / 1000 * (speed / 8);
   finalState.x += translation * x;
   finalState.y += translation * y;
   finalState.lastAngle = Math.atan2(y, x);
+
+  const ramp = 1000 * speed;
+  const onRamp = easeIn(2)(
+    Math.max(0, Math.min(1, (hasEnded ? endedAfter : timeSinceStart) / ramp))
+  );
+  const offRamp = hasEnded
+    ? easeOut(2)(Math.max(0, Math.min(1, (timeSinceStart - endedAfter) / ramp)))
+    : 0;
+  const momentum = onRamp - onRamp * offRamp;
+  finalState.momentumX += momentum * x;
+  finalState.momentumY += momentum * y;
 
   return finalState;
 };
