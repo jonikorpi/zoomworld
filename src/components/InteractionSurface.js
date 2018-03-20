@@ -1,4 +1,5 @@
 import React from "react";
+import throttle from "lodash.throttle";
 
 import { config } from "../utilities/graphics.js";
 
@@ -53,10 +54,9 @@ class InteractionSurface extends React.Component {
     this.setState({ selectedType: event.target.value });
   };
 
+  addEvent = throttle(this.props.addEvent, 200);
   handleClick = event => {
-    this.props.addEvent(
-      createEvent(event.nativeEvent, this.state.selectedType)
-    );
+    this.addEvent(createEvent(event.nativeEvent, this.state.selectedType));
   };
 
   render() {
