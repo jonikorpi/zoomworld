@@ -92,6 +92,7 @@ export default class World extends React.Component {
                 events={events}
                 models={["player", "playerShade"]}
                 timeOffset={-200}
+                shouldLerp={true}
               />
             )}
           </FakeFirebase>
@@ -121,6 +122,7 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
+                shouldLerp={true}
               />
               <Entity
                 renderer={renderer}

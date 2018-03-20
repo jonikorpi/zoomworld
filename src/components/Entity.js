@@ -14,6 +14,7 @@ export default class Entity extends React.Component {
     models: ["placeholder"],
     mayMove: true,
     timeOffset: 0,
+    shouldLerp: false,
   };
 
   ID = uuid4();
@@ -43,18 +44,27 @@ export default class Entity extends React.Component {
   }
 
   update = time => {
-    const { state, events, onUpdate, mayMove, models, timeOffset } = this.props;
+    const {
+      state,
+      events,
+      onUpdate,
+      mayMove,
+      models,
+      timeOffset,
+      shouldLerp,
+    } = this.props;
     const currentPosition = mayMove
       ? positionAtTime(time + timeOffset, state, events)
       : [state.x, state.y, state.angle];
 
-    const position = this.lastPosition
-      ? [
-          lerp(this.lastPosition[0], currentPosition[0], 0.5),
-          lerp(this.lastPosition[1], currentPosition[1], 0.5),
-          angleLerp(this.lastPosition[2], currentPosition[2], 0.25),
-        ]
-      : currentPosition;
+    const position =
+      shouldLerp && this.lastPosition
+        ? [
+            lerp(this.lastPosition[0], currentPosition[0], 0.5),
+            lerp(this.lastPosition[1], currentPosition[1], 0.5),
+            angleLerp(this.lastPosition[2], currentPosition[2], 0.25),
+          ]
+        : currentPosition;
 
     if (onUpdate) {
       onUpdate(position);
