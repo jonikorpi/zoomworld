@@ -36,7 +36,7 @@ const mergeImpulse = (
   finalState,
   now = 0,
   time = 0,
-  { x = 0, y = 0, force = 0 },
+  { x = 0, y = 0, duration = 0 },
   endsAt = 0
 ) => {
   // const hasEnded = endsAt !== Infinity;
@@ -44,9 +44,8 @@ const mergeImpulse = (
   const timeSinceStart = now - time;
   const elapsed = Math.min(timeSinceStart, endsAt - time);
 
-  const unitsPerSecond = 5 / force;
   const completion =
-    easeOut(2)(Math.min(1, elapsed / 1000 * unitsPerSecond)) * (force / 5);
+    easeOut(2)(Math.min(1, elapsed / duration)) * (duration / 1000);
 
   finalState.x += completion * x;
   finalState.y += completion * y;

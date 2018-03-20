@@ -20,7 +20,7 @@ const createEvent = (event, type) => {
         data: {
           x: x / magnitude,
           y: y / magnitude,
-          force: 1,
+          duration: 250 * 1,
         },
       };
     case "walk":
