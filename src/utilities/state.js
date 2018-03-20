@@ -3,6 +3,10 @@ import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
 const stateAtTime = (now, state, events) => {
   let result = events.reduce(
     (finalState, { type, time, data, endsAt }) => {
+      if (now < time) {
+        return finalState;
+      }
+
       switch (type) {
         case "impulse":
           return mergeImpulse(finalState, now, time, data, endsAt);
@@ -98,7 +102,7 @@ const mergeWalk = (
   const hasEnded = endsAt !== Infinity;
   const endedAfter = hasEnded ? endsAt - time : 0;
   const timeSinceStart = now - time;
-  const elapsed = Math.max(0, Math.min(timeSinceStart, endsAt - time));
+  const elapsed = Math.min(timeSinceStart, endsAt - time);
 
   const translation = elapsed / 1000 * (speed / 8);
   finalState.x += translation * x;
