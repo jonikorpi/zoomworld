@@ -2,11 +2,12 @@ import React from "react";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["thrust", "walk", "impulse"];
+const types = ["walk", "thrust", "impulse"];
 
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
   const y = -event.y + window.innerHeight / 2;
+  const magnitude = Math.sqrt(x * x + y * y);
   const unitInPixels =
     Math.min(window.innerHeight, window.innerWidth) * config.unitSize / 100;
   const worldX = x / unitInPixels;
@@ -44,9 +45,9 @@ const createEvent = (event, type) => {
       return {
         type: type,
         data: {
-          x: worldX,
-          y: worldY,
-          duration: Math.floor(distance * 12000 / (force * weight)),
+          x: x / magnitude,
+          y: y / magnitude,
+          speed: 1,
         },
       };
   }

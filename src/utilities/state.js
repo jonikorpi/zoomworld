@@ -92,16 +92,11 @@ const mergeWalk = (
   finalState,
   now = 0,
   time = 0,
-  { x = 0, y = 0, duration = 0 },
-  endsAt = 0
+  { x = 0, y = 0, speed = 0 },
+  endsAt = Infinity
 ) => {
-  const elapsed = now - time;
-  const endedEarly = endsAt < time + duration;
-  const endedAfter = endedEarly ? endsAt - time : duration;
-  const endingPoint = endedAfter / duration;
-  const completion =
-    Math.max(0, Math.min(1, elapsed / endedAfter)) * endingPoint;
-  const translation = completion;
+  const elapsed = Math.min(now - time, endsAt - time);
+  const translation = elapsed / 1000 * (speed / 8);
 
   finalState.x += translation * x;
   finalState.y += translation * y;

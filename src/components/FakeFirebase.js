@@ -29,15 +29,11 @@ export default class FakeFirebase extends React.Component {
 
   addRandomEvent = () => {
     this.addEvent({
-      type: "thrust",
+      type: "walk",
       data: {
         x: random(1, this.counter++) * 2 - 1,
         y: random(1, this.counter++) * 2 - 1,
-        duration: Math.floor(
-          12000 /
-            (1 + random(1, this.counter++)) *
-            (1 + random(1, this.counter++))
-        ),
+        speed: Math.ceil(random(1, this.counter++) * 2),
       },
     });
   };
