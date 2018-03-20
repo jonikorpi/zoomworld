@@ -144,6 +144,7 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["target"]}
+                shouldLerp={true}
                 timeOffset={60000}
               />
               <Entity

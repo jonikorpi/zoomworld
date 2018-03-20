@@ -79,11 +79,11 @@ const mergeWalk = (
     Math.max(0, Math.min(1, (hasEnded ? endedAfter : timeSinceStart) / ramp))
   );
   const offRamp = hasEnded
-    ? easeOut(2)(Math.max(0, Math.min(1, (timeSinceStart - endedAfter) / ramp)))
+    ? easeIn(2)(Math.max(0, Math.min(1, (timeSinceStart - endedAfter) / ramp)))
     : 0;
   const momentum = onRamp - onRamp * offRamp;
-  finalState.momentumX += momentum * x;
-  finalState.momentumY += momentum * y;
+  finalState.momentumX += momentum * x / distance;
+  finalState.momentumY += momentum * y / distance;
 
   return finalState;
 };
