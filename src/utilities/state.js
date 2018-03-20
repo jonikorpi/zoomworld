@@ -1,5 +1,7 @@
 import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
 
+const eventBufferLength = 5000;
+
 const stateAtTime = (now, state, events) => {
   let result = events.reduce(
     (finalState, { type, time, data, endsAt }) => {
@@ -131,4 +133,10 @@ const precompute = events => {
     .events.reverse();
 };
 
-export { positionAtTime, stateAtTime, findLastEventEndingTime, precompute };
+export {
+  positionAtTime,
+  stateAtTime,
+  findLastEventEndingTime,
+  precompute,
+  eventBufferLength,
+};

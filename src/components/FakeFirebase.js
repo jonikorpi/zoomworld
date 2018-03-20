@@ -1,6 +1,10 @@
 import React from "react";
 
-import { positionAtTime, precompute } from "../utilities/state.js";
+import {
+  positionAtTime,
+  precompute,
+  eventBufferLength,
+} from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
 export default class FakeFirebase extends React.Component {
@@ -43,8 +47,12 @@ export default class FakeFirebase extends React.Component {
     const events = precompute(this.state.events);
     const now = performance.timing.navigationStart + performance.now();
 
-    const finishedEvents = [...events].filter(event => event.endsAt <= now);
-    const unfinishedEvents = [...events].filter(event => event.endsAt > now);
+    const finishedEvents = [...events].filter(
+      event => event.endsAt <= now - eventBufferLength
+    );
+    const unfinishedEvents = [...events].filter(
+      event => event.endsAt > now - eventBufferLength
+    );
 
     const flattenedPosition = positionAtTime(now, state, finishedEvents);
 
