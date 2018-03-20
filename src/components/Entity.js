@@ -15,6 +15,7 @@ export default class Entity extends React.Component {
     mayMove: true,
     timeOffset: 0,
     shouldLerp: false,
+    positionGetter: positionAtTime,
   };
 
   ID = uuid4();
@@ -52,9 +53,10 @@ export default class Entity extends React.Component {
       models,
       timeOffset,
       shouldLerp,
+      positionGetter,
     } = this.props;
     const currentPosition = mayMove
-      ? positionAtTime(time + timeOffset, state, events)
+      ? positionGetter(time + timeOffset, state, events)
       : [state.x, state.y, state.angle];
 
     const position =

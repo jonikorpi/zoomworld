@@ -6,7 +6,7 @@ import InteractionSurface from "../components/InteractionSurface";
 import LogMessage from "./LogMessage";
 
 import { random, getSeed } from "../utilities/graphics";
-import { findLastEventEndingTime } from "../utilities/state";
+import { stateAtTime } from "../utilities/state";
 
 export default class World extends React.Component {
   static defaultProps = {
@@ -123,6 +123,21 @@ export default class World extends React.Component {
                 events={events}
                 models={["player", "playerShade"]}
                 shouldLerp={true}
+              />
+              <Entity
+                renderer={renderer}
+                state={state}
+                events={events}
+                models={["target"]}
+                positionGetter={(time, state, events) => {
+                  const { x, y, momentumX, momentumY, angle } = stateAtTime(
+                    time,
+                    state,
+                    events
+                  );
+
+                  return [x + momentumX / 3, y + momentumY / 3, angle];
+                }}
               />
               <Entity
                 renderer={renderer}
