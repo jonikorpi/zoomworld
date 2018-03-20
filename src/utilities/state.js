@@ -8,7 +8,7 @@ const stateAtTime = (now, state, events) => {
       }
 
       switch (type) {
-        case "walk":
+        case "run":
           return mergeWalk(finalState, now, time, data, endsAt);
         case "stop":
           return mergeStop(finalState, now, time);
@@ -123,7 +123,7 @@ const precompute = events => {
     .reduceRight(addEndingTime, {
       events: [],
       interruptingEventTypes: {
-        walk: true,
+        run: true,
         stop: true,
       },
       lastInterruptingEventStartingTime: Infinity,

@@ -3,7 +3,7 @@ import throttle from "lodash.throttle";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["walk", "impulse", "stop"];
+const types = ["run", "impulse", "stop"];
 
 const createEvent = (event, type) => {
   const x = event.x - window.innerWidth / 2;
@@ -24,7 +24,7 @@ const createEvent = (event, type) => {
           duration: 250 * 1,
         },
       };
-    case "walk":
+    case "run":
       return {
         type: type,
         data: {
