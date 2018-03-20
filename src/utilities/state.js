@@ -104,9 +104,12 @@ const mergeWalk = (
   const timeSinceStart = now - time;
   const elapsed = Math.min(timeSinceStart, endsAt - time);
 
-  const translation = elapsed / 1000 * (speed / 8);
-  finalState.x += translation * x;
-  finalState.y += translation * y;
+  const distance = Math.sqrt(x * x + y * y);
+  const unitsPerSecond = speed / 8;
+  const completion = Math.min(1, elapsed / 1000 * unitsPerSecond / distance);
+
+  finalState.x += completion * x;
+  finalState.y += completion * y;
   finalState.angle = Math.atan2(y, x);
 
   const ramp = 1000 * speed;

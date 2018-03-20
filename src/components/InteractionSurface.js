@@ -45,8 +45,8 @@ const createEvent = (event, type) => {
       return {
         type: type,
         data: {
-          x: x / magnitude,
-          y: y / magnitude,
+          x: worldX,
+          y: worldY,
           speed: 1,
         },
       };

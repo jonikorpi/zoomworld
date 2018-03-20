@@ -129,7 +129,7 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["target"]}
-                timeOffset={8000}
+                timeOffset={60000}
               />
               <Entity
                 renderer={renderer}
