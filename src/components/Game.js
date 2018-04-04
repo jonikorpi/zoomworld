@@ -40,6 +40,18 @@ export default class Game extends React.Component {
                     )}
                   </Renderer>
 
+                  <div className="hud" id="map">
+                    <h1 className="safeAll pinTopLeft">Map UI</h1>
+                  </div>
+
+                  <div className="hud" id="world">
+                    <h1 className="safeAll pinBottomCenter">World UI</h1>
+                  </div>
+
+                  <div className="hud" id="avatar">
+                    <h1 className="safeAll pinTopLeft">Avatar UI</h1>
+                  </div>
+
                   {!online && (
                     <LogMessage>
                       Offline, connecting to database…{" "}

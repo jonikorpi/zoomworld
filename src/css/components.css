@@ -13,8 +13,36 @@ body {
 }
 
 #root {
-  height: 200vh;
-  overflow: hidden;
+}
+
+.hud {
+  height: 100vh;
+  outline: 1px solid;
+  position: relative;
+}
+
+#map {
+}
+
+#world {
+  height: 300vh;
+}
+
+#avatar {
+}
+
+.pinTopLeft {
+  position: sticky;
+  left: 0;
+  top: 0;
+}
+
+.pinBottomCenter {
+  position: sticky;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
 }
 
 #log {
