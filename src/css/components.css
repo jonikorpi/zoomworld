@@ -19,6 +19,7 @@ body {
   height: 100vh;
   outline: 1px solid;
   position: relative;
+  display: flex;
 }
 
 #map {
@@ -31,18 +32,16 @@ body {
 #avatar {
 }
 
-.pinTopLeft {
+.pinTop {
   position: sticky;
-  left: 0;
   top: 0;
+  align-self: flex-start;
 }
 
-.pinBottomCenter {
+.pinBottom {
   position: sticky;
-  left: 0;
-  right: 0;
   bottom: 0;
-  text-align: center;
+  align-self: flex-end;
 }
 
 #log {
