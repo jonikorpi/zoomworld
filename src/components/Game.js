@@ -48,8 +48,8 @@ export default class Game extends React.Component {
                     <h1 className="safeAll pinBottom">World UI</h1>
                   </div>
 
-                  <div className="hud" id="avatar">
-                    <h1 className="safeAll pinTop">Avatar UI</h1>
+                  <div className="hud" id="inventory">
+                    <h1 className="safeAll pinTop">Inventory UI</h1>
                   </div>
 
                   {!online && (

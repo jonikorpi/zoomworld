@@ -3,7 +3,7 @@ import startRegl from "regl";
 
 import * as models from "../shaders/models.shader.js";
 import { getModel, drawOrder } from "../models/models.js";
-import { config } from "../utilities/graphics.js";
+import { config, easeIn, easeOut } from "../utilities/graphics.js";
 
 // const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
 
@@ -20,6 +20,10 @@ const clearConfiguration = {
 };
 
 const getDefaultCamera = () => [0, 0, 0];
+
+const mapScale = 0.1;
+const worldScale = 1;
+const inventoryScale = 5;
 
 export default class Renderer extends React.Component {
   subscribers = {};
@@ -44,9 +48,19 @@ export default class Renderer extends React.Component {
     try {
       const time = performance.timing.navigationStart + performance.now();
       const camera = this.getCamera(time).position;
-      const height = document.documentElement.offsetHeight - window.innerHeight;
+
+      const scrollHeight =
+        document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;
-      const scale = 1 - scrolled / height + 0.146 * (scrolled / height);
+
+      const scale =
+        mapScale +
+        easeOut(4)(scrolled / (scrollHeight / 2)) * (worldScale - mapScale) +
+        easeIn(4)(
+          Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
+        ) *
+          (inventoryScale - mapScale);
+
       const xRatio = Math.max(1, viewportWidth / viewportHeight) * 50;
       const yRatio = Math.max(1, viewportHeight / viewportWidth) * 50;
       const unit =
