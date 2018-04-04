@@ -3,7 +3,7 @@ import startRegl from "regl";
 
 import * as models from "../shaders/models.shader.js";
 import { getModel, drawOrder } from "../models/models.js";
-import { config, easeIn, easeOut } from "../utilities/graphics.js";
+import { config, easeIn, easeOut, lerp } from "../utilities/graphics.js";
 
 // const orderByY = (a, b) => (a.position.y > b.position.y ? 1 : -1);
 
@@ -47,19 +47,37 @@ export default class Renderer extends React.Component {
   drawLoop = ({ viewportWidth, viewportHeight }) => {
     try {
       const time = performance.timing.navigationStart + performance.now();
-      const camera = this.getCamera(time).position;
 
       const scrollHeight =
         document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;
 
+      const mapToWorld = easeOut(5)(Math.min(1, scrolled / (scrollHeight / 2)));
+      const worldToInventory = easeIn(5)(
+        Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
+      );
       const scale =
         mapScale +
-        easeOut(4)(scrolled / (scrollHeight / 2)) * (worldScale - mapScale) +
-        easeIn(4)(
-          Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
-        ) *
-          (inventoryScale - mapScale);
+        mapToWorld * (worldScale - mapScale) +
+        worldToInventory * (inventoryScale - worldScale);
+
+      const mapPosition = [-5, -15, 0];
+      const worldPosition = [0.5, -0.5, 0];
+      const inventoryPosition = this.getCamera(time).position;
+
+      const betweenMapAndWorld = mapToWorld < 1;
+
+      const camera = betweenMapAndWorld
+        ? [
+            lerp(mapPosition[0], worldPosition[0], mapToWorld),
+            lerp(mapPosition[1], worldPosition[1], mapToWorld),
+            lerp(mapPosition[2], worldPosition[2], mapToWorld),
+          ]
+        : [
+            lerp(worldPosition[0], inventoryPosition[0], worldToInventory),
+            lerp(worldPosition[1], inventoryPosition[1], worldToInventory),
+            lerp(worldPosition[2], inventoryPosition[2], worldToInventory),
+          ];
 
       const xRatio = Math.max(1, viewportWidth / viewportHeight) * 50;
       const yRatio = Math.max(1, viewportHeight / viewportWidth) * 50;
