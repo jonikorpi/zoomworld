@@ -20,6 +20,7 @@ body {
   outline: 1px solid;
   position: relative;
   display: flex;
+  pointer-events: none;
 }
 
 #map {
