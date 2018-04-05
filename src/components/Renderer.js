@@ -21,7 +21,7 @@ const clearConfiguration = {
 
 const getDefaultCamera = () => [0, 0, 0];
 
-const mapScale = 0.1;
+const mapScale = 0.01;
 const worldScale = 1;
 const inventoryScale = 5;
 
@@ -52,31 +52,39 @@ export default class Renderer extends React.Component {
         document.documentElement.offsetHeight - window.innerHeight;
       const scrolled = window.pageYOffset;
 
-      const mapToWorld = easeOut(5)(Math.min(1, scrolled / (scrollHeight / 2)));
-      const worldToInventory = easeIn(5)(
+      const scaleMapToWorld = easeOut(3)(
+        Math.min(1, scrolled / (scrollHeight / 2))
+      );
+      const scaleWorldToInventory = easeIn(3)(
         Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
       );
       const scale =
         mapScale +
-        mapToWorld * (worldScale - mapScale) +
-        worldToInventory * (inventoryScale - worldScale);
+        scaleMapToWorld * (worldScale - mapScale) +
+        scaleWorldToInventory * (inventoryScale - worldScale);
 
-      const mapPosition = [-5, -15, 0];
+      const panMapToWorld = easeOut(36)(
+        Math.min(1, scrolled / (scrollHeight / 2))
+      );
+      const panWorldToInventory = easeIn(2)(
+        Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
+      );
+      const mapPosition = [-9, -25, 0];
       const worldPosition = [0.5, -0.5, 0];
       const inventoryPosition = this.getCamera(time).position;
 
-      const betweenMapAndWorld = mapToWorld < 1;
+      const betweenMapAndWorld = scaleMapToWorld < 1;
 
       const camera = betweenMapAndWorld
         ? [
-            lerp(mapPosition[0], worldPosition[0], mapToWorld),
-            lerp(mapPosition[1], worldPosition[1], mapToWorld),
-            lerp(mapPosition[2], worldPosition[2], mapToWorld),
+            lerp(mapPosition[0], worldPosition[0], panMapToWorld),
+            lerp(mapPosition[1], worldPosition[1], panMapToWorld),
+            lerp(mapPosition[2], worldPosition[2], panMapToWorld),
           ]
         : [
-            lerp(worldPosition[0], inventoryPosition[0], worldToInventory),
-            lerp(worldPosition[1], inventoryPosition[1], worldToInventory),
-            lerp(worldPosition[2], inventoryPosition[2], worldToInventory),
+            lerp(worldPosition[0], inventoryPosition[0], panWorldToInventory),
+            lerp(worldPosition[1], inventoryPosition[1], panWorldToInventory),
+            lerp(worldPosition[2], inventoryPosition[2], panWorldToInventory),
           ];
 
       const xRatio = Math.max(1, viewportWidth / viewportHeight) * 50;
