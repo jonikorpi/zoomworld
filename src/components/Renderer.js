@@ -63,15 +63,15 @@ export default class Renderer extends React.Component {
         scaleMapToWorld * (worldScale - mapScale) +
         scaleWorldToInventory * (inventoryScale - worldScale);
 
-      const panMapToWorld = easeOut(36)(
+      const panMapToWorld = easeOut(128)(
         Math.min(1, scrolled / (scrollHeight / 2))
       );
       const panWorldToInventory = easeIn(2)(
         Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
       );
-      const mapPosition = [-9, -25, 0];
-      const worldPosition = [0.5, -0.5, 0];
-      const inventoryPosition = this.getCamera(time).position;
+      const mapPosition = [-33, -125, 0];
+      const worldPosition = this.getCamera(time).position;
+      const inventoryPosition = worldPosition;
 
       const betweenMapAndWorld = scaleMapToWorld < 1;
 
