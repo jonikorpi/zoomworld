@@ -27,7 +27,7 @@ export default class FakeFirebase extends React.Component {
         wheel: 0,
         velocity: 0,
         turnVelocity: 0,
-        weight: 0.1,
+        weight: 100,
         drag: 0.5,
         windX: 0,
         windY: 0,

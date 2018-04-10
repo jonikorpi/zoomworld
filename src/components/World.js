@@ -139,14 +139,14 @@ export default class World extends React.Component {
                   return [x + momentumX / 3, y + momentumY / 3, angle];
                 }}
               />
-              {/* <Entity
+              <Entity
                 renderer={renderer}
                 state={state}
                 events={events}
                 models={["target"]}
                 shouldLerp={true}
                 timeOffset={60000}
-              /> */}
+              />
               <Entity
                 renderer={renderer}
                 state={{ x: currentTile[0], y: currentTile[1] }}
