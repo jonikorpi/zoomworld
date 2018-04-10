@@ -11,7 +11,7 @@ export default class Entity extends React.Component {
     onUpdate: null,
     state: {
       time: Date.now(),
-      validUntil: Infinity,
+      validUntil: Date.now(),
       throttle: 0,
       wheel: 0,
       velocity: 0,

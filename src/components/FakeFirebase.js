@@ -22,7 +22,7 @@ export default class FakeFirebase extends React.Component {
     this.state = {
       state: {
         time: Date.now(),
-        validUntil: Infinity,
+        validUntil: Date.now(),
         throttle: 0,
         wheel: 0,
         velocity: 0,
@@ -68,7 +68,7 @@ export default class FakeFirebase extends React.Component {
         {
           ".key": "event-" + now,
           time: now,
-          ...event,
+          data: { ...event },
         },
       ],
     });
