@@ -1,7 +1,7 @@
 import React from "react";
 
 import {
-  positionAtTime,
+  stateAtTime,
   precompute,
   eventBufferLength,
 } from "../utilities/state.js";
@@ -21,6 +21,16 @@ export default class FakeFirebase extends React.Component {
 
     this.state = {
       state: {
+        time: Date.now(),
+        validUntil: Infinity,
+        throttle: 0,
+        wheel: 0,
+        velocity: 0,
+        turnVelocity: 0,
+        weight: 0.1,
+        drag: 0.5,
+        windX: 0,
+        windY: 0,
         x: x,
         y: y,
         angle: angle,
@@ -33,11 +43,8 @@ export default class FakeFirebase extends React.Component {
 
   addRandomEvent = () => {
     this.addEvent({
-      type: "run",
-      data: {
-        x: random(3, this.counter++) - 1.5,
-        y: random(3, this.counter++) - 1.5,
-        speed: Math.ceil(random(1, this.counter++) * 2),
+      [Math.random() > 0.5 ? "throttle" : "wheel"]: {
+        set: Math.random() * 2 - 1,
       },
     });
   };
@@ -48,27 +55,20 @@ export default class FakeFirebase extends React.Component {
     const now = performance.timing.navigationStart + performance.now();
 
     const finishedEvents = [...events].filter(
-      event => event.endsAt <= now - eventBufferLength
+      event => event.validUntil <= now - eventBufferLength
     );
     const unfinishedEvents = [...events].filter(
-      event => event.endsAt > now - eventBufferLength
+      event => event.validUntil > now - eventBufferLength
     );
 
-    const flattenedPosition = positionAtTime(now, state, finishedEvents);
-
     this.setState({
-      state: {
-        x: flattenedPosition[0],
-        y: flattenedPosition[1],
-        angle: flattenedPosition[2],
-      },
+      state: stateAtTime(now, state, finishedEvents),
       events: [
         ...unfinishedEvents,
         {
           ".key": "event-" + now,
-          type: event.type,
           time: now,
-          data: event.data,
+          ...event,
         },
       ],
     });

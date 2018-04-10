@@ -96,41 +96,17 @@ const mergeStop = (finalState, now = 0, time = 0) => {
 
 const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
-const addEndingTime = (results, event) => {
-  const { time, data, type } = event;
-  const duration = data ? data.duration : null;
-  const { interruptingEventTypes } = results;
-  const naturallyEndsAt = duration ? time + duration : Infinity;
-
-  if (interruptingEventTypes[type]) {
-    event.endsAt = Math.min(
-      results.lastInterruptingEventStartingTime,
-      naturallyEndsAt
-    );
-    results.lastInterruptingEventStartingTime = Math.min(
-      results.lastInterruptingEventStartingTime,
-      time
-    );
-  } else {
-    event.endsAt = naturallyEndsAt;
-  }
-
-  results.events.push(event);
-  return results;
-};
+const addEndingTime = (event, index, events) => ({
+  ...event,
+  validUntil: events[index - 1] ? events[index - 1].time : Infinity,
+});
 
 const precompute = events => {
   return [...events]
     .sort(sortByTime)
-    .reduceRight(addEndingTime, {
-      events: [],
-      interruptingEventTypes: {
-        run: true,
-        stop: true,
-      },
-      lastInterruptingEventStartingTime: Infinity,
-    })
-    .events.reverse();
+    .reverse()
+    .map(addEndingTime)
+    .reverse();
 };
 
 export {

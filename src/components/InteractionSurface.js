@@ -3,42 +3,12 @@ import throttle from "lodash.throttle";
 
 import { config } from "../utilities/graphics.js";
 
-const types = ["run", "impulse", "stop"];
-
 const createEvent = (event, type) => {
-  const x = event.x - window.innerWidth / 2;
-  const y = -event.y + window.innerHeight / 2;
-  const magnitude = Math.sqrt(x * x + y * y);
-  const unitInPixels =
-    Math.min(window.innerHeight, window.innerWidth) * config.unitSize / 100;
-  const worldX = x / unitInPixels;
-  const worldY = y / unitInPixels;
-
-  switch (type) {
-    case "impulse":
-      return {
-        type: type,
-        data: {
-          x: x / magnitude,
-          y: y / magnitude,
-          duration: 250 * 1,
-        },
-      };
-    case "run":
-      return {
-        type: type,
-        data: {
-          x: worldX,
-          y: worldY,
-          speed: 1,
-        },
-      };
-    default:
-    case "stop":
-      return {
-        type: type,
-      };
-  }
+  return {
+    [type]: {
+      set: +event.target.value,
+    },
+  };
 };
 
 class InteractionSurface extends React.Component {
@@ -46,39 +16,35 @@ class InteractionSurface extends React.Component {
     addEvent: () => {},
   };
 
-  state = {
-    selectedType: types[0],
+  addEvent = throttle(this.props.addEvent, 200, { leading: false });
+  handleWheel = event => {
+    this.addEvent(createEvent(event.nativeEvent, "wheel"));
   };
-
-  changeType = event => {
-    this.setState({ selectedType: event.target.value });
-  };
-
-  addEvent = throttle(this.props.addEvent, 200);
-  handleClick = event => {
-    this.addEvent(createEvent(event.nativeEvent, this.state.selectedType));
+  handleThrottle = event => {
+    this.addEvent(createEvent(event.nativeEvent, "throttle"));
   };
 
   render() {
-    const { selectedType } = this.state;
-
     return (
       <React.Fragment>
-        <button className="interactionSurface" onClick={this.handleClick} />
-        <div className="interactionTypes">
-          {types.map((type, index) => (
-            <label key={index}>
-              <input
-                type="radio"
-                name="type"
-                value={type}
-                checked={selectedType === type}
-                onChange={this.changeType}
-              />{" "}
-              {type}
-            </label>
-          ))}
-        </div>
+        <input
+          type="range"
+          min="-1"
+          max="1"
+          defaultValue="0"
+          step="0.1"
+          className="wheel"
+          onChange={this.handleWheel}
+        />
+        <input
+          type="range"
+          min="-1"
+          max="1"
+          defaultValue="0"
+          step="0.1"
+          className="throttle"
+          onChange={this.handleThrottle}
+        />
       </React.Fragment>
     );
   }
