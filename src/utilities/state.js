@@ -48,8 +48,6 @@ const simulate = (stateObject, from, to) => {
   const {
     throttle,
     wheel,
-    velocity,
-    turnVelocity,
     mass,
     drag,
     windX,
@@ -59,31 +57,32 @@ const simulate = (stateObject, from, to) => {
     angle,
   } = stateObject;
   const time = (to - from) / 1000;
+  const weight = mass * 10;
 
   // Throttle
   const force = (throttle > 0 ? 1 : 0.5) * throttle;
-  stateObject.velocity += force / mass * time;
-  stateObject.velocity -= stateObject.velocity * drag;
-  const speed = Math.abs(stateObject.velocity / time);
+  const acceleration = force / weight;
+  const velocity =
+    acceleration * time -
+    acceleration * (time * (1 - Math.pow(drag, time / weight)));
+  const distance = velocity * time;
 
   // Turn
-  stateObject.turnVelocity += wheel / (mass / 100) * time;
-  stateObject.turnVelocity -= stateObject.turnVelocity * drag;
-
-  const distance = stateObject.velocity;
-  const arcAngle = Math.abs(stateObject.turnVelocity);
+  const turnVelocity = wheel / (weight / 500) * time;
+  const turnAngle = turnVelocity;
+  const arcAngle = Math.abs(turnAngle);
   const radius = distance / arcAngle;
 
   let newY = isFinite(radius)
-    ? stateObject.turnVelocity < 0
+    ? turnVelocity < 0
       ? radius - radius * Math.cos(arcAngle)
       : -radius + radius * Math.cos(arcAngle)
     : 0;
   let newX = isFinite(radius) ? radius * Math.sin(arcAngle) : distance;
 
-  stateObject.x += newX * time;
-  stateObject.y += newY * time;
-  stateObject.angle = stateObject.turnVelocity < 0 ? arcAngle : -arcAngle;
+  stateObject.x += newX;
+  stateObject.y += newY;
+  stateObject.angle = turnVelocity < 0 ? arcAngle : -arcAngle;
 
   return stateObject;
 };

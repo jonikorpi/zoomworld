@@ -41,7 +41,7 @@ export default class World extends React.Component {
         let seed = getSeed(x, y);
         const angle = Math.sin(x + y) * Math.PI * 2;
         const hasGround = random(1, seed++) < 0.3;
-        const playerCount = Math.floor(random(2, seed++));
+        const playerCount = 0; //Math.floor(random(2, seed++));
 
         let players = [];
         for (let index = 0; index < playerCount; index++) {
@@ -129,15 +129,8 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["target"]}
-                positionGetter={(time, state, events) => {
-                  const { x, y, momentumX, momentumY, angle } = stateAtTime(
-                    time,
-                    state,
-                    events
-                  );
-
-                  return [x + momentumX / 3, y + momentumY / 3, angle];
-                }}
+                shouldLerp={true}
+                timeOffset={30000}
               />
               <Entity
                 renderer={renderer}
@@ -146,6 +139,14 @@ export default class World extends React.Component {
                 models={["target"]}
                 shouldLerp={true}
                 timeOffset={60000}
+              />
+              <Entity
+                renderer={renderer}
+                state={state}
+                events={events}
+                models={["target"]}
+                shouldLerp={true}
+                timeOffset={120000}
               />
               <Entity
                 renderer={renderer}
