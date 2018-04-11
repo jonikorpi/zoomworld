@@ -57,17 +57,16 @@ const simulate = (stateObject, from, to) => {
     angle,
   } = stateObject;
   const time = (to - from) / 1000;
-  const weight = mass * 10;
+  const weight = mass;
 
   // Throttle
   const force = (throttle > 0 ? 1 : 0.5) * throttle;
   const acceleration = force / weight;
-  const velocity =
-    acceleration * time - acceleration * (time * (1 - Math.pow(drag, time)));
+  const velocity = acceleration - acceleration * Math.pow(drag, time / weight);
   const distance = velocity * time;
 
   // Turn
-  const turnVelocity = wheel * Math.sqrt(velocity) * time;
+  const turnVelocity = wheel * force * time;
   const turnAngle = turnVelocity;
   const arcAngle = Math.abs(turnAngle);
   const radius = distance / arcAngle;
