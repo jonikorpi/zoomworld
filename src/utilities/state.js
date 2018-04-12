@@ -37,7 +37,9 @@ const mergeEvent = (stateObject, { data }) => {
     switch (operation) {
       case "set":
       default:
-        stateObject[stat] = value;
+        if (stateObject[stat] !== undefined) {
+          stateObject[stat] = value;
+        }
     }
   });
 
