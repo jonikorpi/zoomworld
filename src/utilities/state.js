@@ -1,10 +1,9 @@
 import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
 
-const eventBufferLength = 5000;
+// const eventBufferLength = 5000;
 
-let stateObject = {};
 const stateAtTime = (now, state, events) => {
-  stateObject = { ...state };
+  const stateObject = { ...state };
   simulate(stateObject, stateObject.time, events[0] ? events[0].time : now);
 
   events.forEach(event => {
@@ -14,6 +13,7 @@ const stateAtTime = (now, state, events) => {
     }
   });
 
+  delete stateObject.validUntil;
   return stateObject;
 };
 
@@ -47,19 +47,9 @@ const mergeEvent = (stateObject, { data }) => {
 };
 
 const simulate = (stateObject, from, to) => {
-  const {
-    throttle,
-    wheel,
-    mass,
-    drag,
-    windX,
-    windY,
-    x,
-    y,
-    angle,
-  } = stateObject;
+  const { throttle, wheel, mass, drag, windX, windY } = stateObject;
   const time = (to - from) / 1000;
-  const weight = mass;
+  const weight = mass / 2;
 
   // Throttle
   const force = (throttle > 0 ? 1 : 0.5) * throttle;
@@ -68,21 +58,36 @@ const simulate = (stateObject, from, to) => {
   const distance = velocity * time;
 
   // Turn
-  const turnVelocity = wheel * force * time;
-  const turnAngle = turnVelocity;
-  const arcAngle = Math.abs(turnAngle);
-  const radius = distance / arcAngle;
+  const turnVelocity = wheel * force;
+  const turnAngle = turnVelocity * time;
+  const curveAngle = Math.abs(turnAngle);
+  const radius = distance / curveAngle;
+  const curveSin = Math.sin(curveAngle);
+  const curveCos = Math.cos(curveAngle);
 
-  let newY = isFinite(radius)
+  // Place
+  const curveX = isFinite(radius) ? radius * curveSin : distance;
+  const curveY = isFinite(radius)
     ? turnVelocity < 0
-      ? radius - radius * Math.cos(arcAngle)
-      : -radius + radius * Math.cos(arcAngle)
+      ? radius - radius * curveCos
+      : -radius + radius * curveCos
     : 0;
-  let newX = isFinite(radius) ? radius * Math.sin(arcAngle) : distance;
 
+  // nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+  // ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+
+  // Transform
+  const angleSin = Math.sin(stateObject.angle);
+  const angleCos = Math.cos(stateObject.angle);
+  const newX = angleCos * curveX - angleSin * curveY;
+  const newY = angleCos * curveY + angleSin * curveX;
+
+  // Save
   stateObject.x += newX;
   stateObject.y += newY;
-  stateObject.angle = turnVelocity < 0 ? arcAngle : -arcAngle;
+  stateObject.angle = (stateObject.angle - turnAngle) % (2 * Math.PI);
+  stateObject.velocity = velocity;
+  stateObject.time = to;
 
   return stateObject;
 };
@@ -91,15 +96,11 @@ const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
 const addEndingTime = (event, index, events) => ({
   ...event,
-  validUntil: events[index - 1] ? events[index - 1].time : Infinity,
+  validUntil: events[index + 1] ? events[index + 1].time : Infinity,
 });
 
 const precompute = events => {
-  return [...events]
-    .sort(sortByTime)
-    .reverse()
-    .map(addEndingTime)
-    .reverse();
+  return [...events].sort(sortByTime).map(addEndingTime);
 };
 
 export {
@@ -107,5 +108,5 @@ export {
   stateAtTime,
   // findLastEventEndingTime,
   precompute,
-  eventBufferLength,
+  // eventBufferLength,
 };

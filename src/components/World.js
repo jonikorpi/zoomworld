@@ -106,7 +106,7 @@ export default class World extends React.Component {
                   <strong>state</strong> {JSON.stringify(state, null, 2)}
                 </pre>
               </LogMessage>
-              {[...events].reverse().map((event, index) => (
+              {[...events].map((event, index) => (
                 <LogMessage key={index}>
                   <pre>
                     <strong>{event.type}</strong>{" "}
@@ -130,6 +130,22 @@ export default class World extends React.Component {
                 events={events}
                 models={["target"]}
                 shouldLerp={true}
+                timeOffset={5000}
+              />
+              <Entity
+                renderer={renderer}
+                state={state}
+                events={events}
+                models={["target"]}
+                shouldLerp={true}
+                timeOffset={10000}
+              />
+              <Entity
+                renderer={renderer}
+                state={state}
+                events={events}
+                models={["target"]}
+                shouldLerp={true}
                 timeOffset={30000}
               />
               <Entity
@@ -139,14 +155,6 @@ export default class World extends React.Component {
                 models={["target"]}
                 shouldLerp={true}
                 timeOffset={60000}
-              />
-              <Entity
-                renderer={renderer}
-                state={state}
-                events={events}
-                models={["target"]}
-                shouldLerp={true}
-                timeOffset={120000}
               />
               <Entity
                 renderer={renderer}

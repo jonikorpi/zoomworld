@@ -23,7 +23,7 @@ const getDefaultCamera = () => [0, 0, 0];
 
 const mapScale = 0.01;
 const worldScale = 1;
-const inventoryScale = 5;
+const inventoryScale = 8;
 
 export default class Renderer extends React.Component {
   subscribers = {};
