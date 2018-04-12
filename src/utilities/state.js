@@ -73,9 +73,6 @@ const simulate = (stateObject, from, to) => {
       : -radius + radius * curveCos
     : 0;
 
-  // nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
-  // ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
-
   // Transform
   const angleSin = Math.sin(stateObject.angle);
   const angleCos = Math.cos(stateObject.angle);
