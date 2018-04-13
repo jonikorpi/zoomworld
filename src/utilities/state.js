@@ -49,16 +49,21 @@ const mergeEvent = (stateObject, { data }) => {
 const simulate = (stateObject, from, to) => {
   const { throttle, wheel, mass, drag, windX, windY } = stateObject;
   const time = (to - from) / 1000;
-  const weight = mass / 2;
+  const weight = mass * 1.618;
 
   // Throttle
   const force = (throttle > 0 ? 1 : 0.5) * throttle;
   const acceleration = force / weight;
-  const velocity = acceleration - acceleration * Math.pow(drag, time / weight);
+  // const velocity = acceleration - acceleration * Math.pow(drag, time / weight);
+  const dragImpact = Math.pow(drag, time / weight);
+  const velocity =
+    acceleration -
+    acceleration * dragImpact +
+    stateObject.velocity * dragImpact;
   const distance = velocity * time;
 
   // Turn
-  const turnVelocity = wheel * force;
+  const turnVelocity = (wheel / 2 + wheel / mass) * Math.abs(velocity * weight);
   const turnAngle = turnVelocity * time;
   const curveAngle = Math.abs(turnAngle);
   const radius = distance / curveAngle;

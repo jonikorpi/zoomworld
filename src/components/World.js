@@ -124,13 +124,13 @@ export default class World extends React.Component {
                 models={["player", "playerShade"]}
                 shouldLerp={true}
               />
-              <Entity
+              {/* <Entity
                 renderer={renderer}
                 state={state}
                 events={events}
                 models={["target"]}
                 shouldLerp={true}
-                timeOffset={5000}
+                timeOffset={1000}
               />
               <Entity
                 renderer={renderer}
@@ -138,7 +138,7 @@ export default class World extends React.Component {
                 events={events}
                 models={["target"]}
                 shouldLerp={true}
-                timeOffset={10000}
+                timeOffset={2000}
               />
               <Entity
                 renderer={renderer}
@@ -146,7 +146,7 @@ export default class World extends React.Component {
                 events={events}
                 models={["target"]}
                 shouldLerp={true}
-                timeOffset={30000}
+                timeOffset={3000}
               />
               <Entity
                 renderer={renderer}
@@ -154,8 +154,8 @@ export default class World extends React.Component {
                 events={events}
                 models={["target"]}
                 shouldLerp={true}
-                timeOffset={60000}
-              />
+                timeOffset={4000}
+              /> */}
               <Entity
                 renderer={renderer}
                 state={{ x: currentTile[0], y: currentTile[1] }}
