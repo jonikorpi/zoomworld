@@ -41,13 +41,13 @@ export default class World extends React.Component {
         let seed = getSeed(x, y);
         const angle = Math.sin(x + y) * Math.PI * 2;
         const hasGround = random(1, seed++) < 0.3;
-        const playerCount = 0; //Math.floor(random(2, seed++));
+        const playerCount = Math.floor(random(5, seed++));
 
         let players = [];
         for (let index = 0; index < playerCount; index++) {
           players.push({
-            x: x,
-            y: y,
+            x: x + random(1, seed++),
+            y: y + random(1, seed++),
             playerID: `player-${x}-${y}-${index}`,
           });
         }
