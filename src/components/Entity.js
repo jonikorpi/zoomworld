@@ -14,7 +14,6 @@ export default class Entity extends React.Component {
       throttle: 0,
       wheel: 0,
       velocity: 0,
-      turnVelocity: 0,
       mass: 10,
       drag: 0.5,
       windX: 0,

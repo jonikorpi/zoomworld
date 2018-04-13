@@ -124,38 +124,17 @@ export default class World extends React.Component {
                 models={["player", "playerShade"]}
                 shouldLerp={true}
               />
-              {/* <Entity
-                renderer={renderer}
-                state={state}
-                events={events}
-                models={["target"]}
-                shouldLerp={true}
-                timeOffset={1000}
-              />
-              <Entity
-                renderer={renderer}
-                state={state}
-                events={events}
-                models={["target"]}
-                shouldLerp={true}
-                timeOffset={2000}
-              />
-              <Entity
-                renderer={renderer}
-                state={state}
-                events={events}
-                models={["target"]}
-                shouldLerp={true}
-                timeOffset={3000}
-              />
-              <Entity
-                renderer={renderer}
-                state={state}
-                events={events}
-                models={["target"]}
-                shouldLerp={true}
-                timeOffset={4000}
-              /> */}
+              {[1000, 2000, 3000, 5000, 8000, 13000, 21000].map(offset => (
+                <Entity
+                  renderer={renderer}
+                  state={state}
+                  events={events}
+                  models={["target"]}
+                  shouldLerp={true}
+                  timeOffset={offset}
+                  key={offset}
+                />
+              ))}
               <Entity
                 renderer={renderer}
                 state={{ x: currentTile[0], y: currentTile[1] }}
