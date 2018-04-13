@@ -3,10 +3,10 @@ import throttle from "lodash.throttle";
 
 import { config } from "../utilities/graphics.js";
 
-const createEvent = (event, type) => {
+const createEvent = (value, type) => {
   return {
     [type]: {
-      set: +event.target.value,
+      set: value,
     },
   };
 };
@@ -16,23 +16,42 @@ class InteractionSurface extends React.Component {
     addEvent: () => {},
   };
 
+  state = {
+    wheel: 0,
+    throttle: 0,
+  };
+
   addEvent = throttle(this.props.addEvent, 200, { leading: false });
   handleWheel = event => {
-    this.addEvent(createEvent(event.nativeEvent, "wheel"));
+    const input = event.nativeEvent.target.value;
+    const value =
+      Math.abs(input) < 0.034 || Math.abs(input) > 0.966
+        ? Math.round(input)
+        : input;
+    this.setState({ wheel: value });
+    this.addEvent(createEvent(value, "wheel"));
   };
   handleThrottle = event => {
-    this.addEvent(createEvent(event.nativeEvent, "throttle"));
+    const input = event.nativeEvent.target.value;
+    const value =
+      Math.abs(input) < 0.034 || Math.abs(input) > 0.966
+        ? Math.round(input)
+        : input;
+    this.setState({ throttle: value });
+    this.addEvent(createEvent(value, "throttle"));
   };
 
   render() {
+    const { wheel, throttle } = this.state;
+
     return (
       <React.Fragment>
         <input
           type="range"
           min="-1"
           max="1"
-          defaultValue="0"
-          step="0.1"
+          step="0.01"
+          value={wheel}
           className="wheel"
           onChange={this.handleWheel}
         />
@@ -40,8 +59,8 @@ class InteractionSurface extends React.Component {
           type="range"
           min="-1"
           max="1"
-          defaultValue="0"
-          step="0.1"
+          step="0.01"
+          value={throttle}
           className="throttle"
           onChange={this.handleThrottle}
         />
