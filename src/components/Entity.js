@@ -72,13 +72,14 @@ export default class Entity extends React.Component {
       : [state.x, state.y, state.angle];
 
     const position =
-      shouldLerp && this.lastPosition
-        ? [
-            lerp(this.lastPosition[0], currentPosition[0], 0.5),
-            lerp(this.lastPosition[1], currentPosition[1], 0.5),
-            angleLerp(this.lastPosition[2], currentPosition[2], 0.25),
-          ]
-        : currentPosition;
+      // shouldLerp && this.lastPosition
+      //   ? [
+      //       lerp(this.lastPosition[0], currentPosition[0], 0.5),
+      //       lerp(this.lastPosition[1], currentPosition[1], 0.5),
+      //       angleLerp(this.lastPosition[2], currentPosition[2], 0.25),
+      //     ]
+      //   :
+      currentPosition;
 
     if (onUpdate) {
       onUpdate(position);

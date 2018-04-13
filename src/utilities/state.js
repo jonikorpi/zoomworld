@@ -17,13 +17,9 @@ const stateAtTime = (now, state, events) => {
   return stateObject;
 };
 
-let positionArray = [];
 const positionAtTime = (now, state, events) => {
   const { x, y, angle } = stateAtTime(now, state, events);
-  positionArray[0] = x;
-  positionArray[1] = y;
-  positionArray[2] = angle;
-  return positionArray;
+  return [x, y, angle];
 };
 
 // const findLastEventEndingTime = (end, { time, data: { duration } }) =>
