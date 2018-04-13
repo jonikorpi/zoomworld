@@ -71,8 +71,9 @@ const simulate = (stateObject, from, to) => {
   const curveCos = Math.cos(curveAngle);
 
   // Place
-  const curveX = isFinite(radius) ? radius * curveSin : distance;
-  const curveY = isFinite(radius)
+  const radiusIsFinite = isFinite(radius);
+  const curveX = radiusIsFinite ? radius * curveSin : distance;
+  const curveY = radiusIsFinite
     ? turnVelocity < 0
       ? radius - radius * curveCos
       : -radius + radius * curveCos
@@ -96,10 +97,10 @@ const simulate = (stateObject, from, to) => {
 
 const sortByTime = (a, b) => (a.time > b.time ? 1 : -1);
 
-const addEndingTime = (event, index, events) => ({
-  ...event,
-  validUntil: events[index + 1] ? events[index + 1].time : Infinity,
-});
+const addEndingTime = (event, index, events) => {
+  event.validUntil = events[index + 1] ? events[index + 1].time : Infinity;
+  return event;
+};
 
 const precompute = events => {
   return [...events].sort(sortByTime).map(addEndingTime);
