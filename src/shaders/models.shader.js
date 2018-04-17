@@ -9,18 +9,17 @@ const fragmentShader = `
 `;
 
 const vertexShader = `
-  precision mediump float;
-  uniform float viewportWidth;
-  uniform float viewportHeight;
+  uniform lowp float viewportWidth;
+  uniform lowp float viewportHeight;
   uniform float unit;
   uniform float perspective;
   uniform vec3 camera;
-  uniform vec4 color;
+  uniform lowp vec4 color;
   uniform float z;
   uniform float randomness;
 
-  attribute vec2 position;
-  attribute vec4 offset;
+  attribute lowp vec2 position;
+  attribute lowp vec4 offset;
 
   varying vec4 outputColor;
 
