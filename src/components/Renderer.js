@@ -19,8 +19,7 @@ const clearConfiguration = {
   color: [0, 0, 0, 0],
 };
 
-
-const mapScale = 0.01;
+const mapScale = 0.014;
 const worldScale = 1;
 const inventoryScale = 8;
 const defaultCamera = [0, 0, 0];
@@ -64,7 +63,7 @@ export default class Renderer extends React.Component {
         scaleMapToWorld * (worldScale - mapScale) +
         scaleWorldToInventory * (inventoryScale - worldScale);
 
-      const panMapToWorld = easeOut(128)(
+      const panMapToWorld = easeOut(196)(
         Math.min(1, scrolled / (scrollHeight / 2))
       );
       const panWorldToInventory = easeIn(2)(
@@ -83,6 +82,7 @@ export default class Renderer extends React.Component {
             lerp(mapPosition[2], worldPosition[2], panMapToWorld),
           ]
         : [
+            // TODO: useless
             lerp(worldPosition[0], inventoryPosition[0], panWorldToInventory),
             lerp(worldPosition[1], inventoryPosition[1], panWorldToInventory),
             lerp(worldPosition[2], inventoryPosition[2], panWorldToInventory),
