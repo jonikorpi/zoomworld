@@ -16,7 +16,7 @@ export default class World extends React.Component {
   };
 
   state = {
-    currentTile: [0, 0],
+    currentTile: [212, -39],
     vision: 5,
   };
 
@@ -98,7 +98,7 @@ export default class World extends React.Component {
           </FakeFirebase>
         ))}
 
-        <FakeFirebase moveAround={false}>
+        <FakeFirebase moveAround={false} x={212} y={-39}>
           {({ state, events }, addEvent) => (
             <React.Fragment>
               <LogMessage>
