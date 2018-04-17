@@ -19,20 +19,21 @@ const clearConfiguration = {
   color: [0, 0, 0, 0],
 };
 
-const getDefaultCamera = () => [0, 0, 0];
 
 const mapScale = 0.01;
 const worldScale = 1;
 const inventoryScale = 8;
+const defaultCamera = [0, 0, 0];
 
 export default class Renderer extends React.Component {
   subscribers = {};
   subscribe = (subscriberID, callback) =>
     (this.subscribers[subscriberID] = callback);
   unsubscribe = subscriberID => delete this.subscribers[subscriberID];
-  getCamera = getDefaultCamera;
+
+  getCamera = () => defaultCamera;
   registerCamera = callback => (this.getCamera = callback);
-  unregisterCamera = callback => (this.getCamera = getDefaultCamera);
+  unregisterCamera = callback => (this.getCamera = () => defaultCamera);
 
   regl = startRegl({
     extensions: ["angle_instanced_arrays"],
