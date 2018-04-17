@@ -57,21 +57,19 @@ body {
   font-size: 0.618rem;
 }
 
-.wheel {
+#interactionSurface {
   position: fixed;
-  left: 14.6%;
-  right: 14.6%;
-  bottom: 9%;
-  width: 70.8vw;
+  left: 3rem;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  width: calc(100% - 3rem);
+  cursor: grab;
+  outline: none;
 }
 
-.throttle {
-  position: fixed;
-  left: 91%;
-  top: 85.4%;
-  width: 70.8vh;
-  transform: rotate(-90deg);
-  transform-origin: left;
+#interactionSurface:active {
+  cursor: grabbing;
 }
 
 strong {

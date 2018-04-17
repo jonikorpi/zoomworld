@@ -44,28 +44,7 @@ class InteractionSurface extends React.Component {
   render() {
     const { wheel, throttle } = this.state;
 
-    return (
-      <React.Fragment>
-        <input
-          type="range"
-          min="-1"
-          max="1"
-          step="0.01"
-          value={wheel}
-          className="wheel"
-          onChange={this.handleWheel}
-        />
-        <input
-          type="range"
-          min="-1"
-          max="1"
-          step="0.01"
-          value={throttle}
-          className="throttle"
-          onChange={this.handleThrottle}
-        />
-      </React.Fragment>
-    );
+    return <button type="button" id="interactionSurface" />;
   }
 }
 
