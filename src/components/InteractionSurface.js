@@ -51,7 +51,7 @@ class InteractionSurface extends React.Component {
       if (+this.wheelElement.value !== -this.wheel) {
         const value = Math.abs(this.wheel / precision) > 0.05 ? this.wheel : 0;
         this.wheelElement.value = -value;
-        this.addEvent(createEvent(-value / precision, "wheel"));
+        this.addWheelEvent(createEvent(-value / precision, "wheel"));
       }
       this.x = scrollX;
       this.handleResetScroll();
@@ -63,7 +63,7 @@ class InteractionSurface extends React.Component {
         const value =
           Math.abs(this.throttle / precision) > 0.05 ? this.throttle : 0;
         this.throttleElement.value = value;
-        this.addEvent(createEvent(value / precision, "throttle"));
+        this.addThrottleEvent(createEvent(value / precision, "throttle"));
       }
       this.y = scrollY;
       this.handleResetScroll();
@@ -85,7 +85,8 @@ class InteractionSurface extends React.Component {
   handleKeyDown = ({ nativeEvent }) => {};
   handleKeyUp = ({ nativeEvent }) => {};
 
-  addEvent = debounce(this.props.addEvent, 200, { maxWait: 700 });
+  addThrottleEvent = debounce(this.props.addEvent, 200, { maxWait: 700 });
+  addWheelEvent = debounce(this.props.addEvent, 200, { maxWait: 700 });
 
   render() {
     return (
