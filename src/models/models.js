@@ -47,17 +47,17 @@ let models = {
     data: "player",
     color: [0, 0, 0, 0.146],
     z: -0.5,
-    scale: 0.03333,
+    scale: 0.146,
   },
   player: {
     data: "player",
     color: [0.91, 0.91, 0.91, 1],
-    scale: 0.03333,
+    scale: 0.146,
   },
   target: {
     data: "player",
     color: [1, 1, 0, 1],
-    scale: 0.03333,
+    scale: 0.146,
     primitive: "line loop",
   },
 };

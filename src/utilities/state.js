@@ -48,7 +48,7 @@ const simulate = (stateObject, from, to) => {
   const weight = mass * 2;
 
   // Throttle
-  const force = (throttle > 0 ? 1 : 0.5) * throttle;
+  const force = (throttle > 0 ? 1 : 0.5) * throttle * 5;
   const acceleration = force / weight;
   const dragImpact = Math.pow(drag, time / weight);
   const velocity =
