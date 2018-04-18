@@ -1,11 +1,12 @@
 :root,
 html,
 body {
-  width: 10000vw;
-  height: 10000vh;
+  -ms-overflow-style: none;
 }
 
 body {
+  width: 10000vw;
+  height: 10000vh;
 }
 
 #canvas {
@@ -49,18 +50,74 @@ body {
 }
 
 #wheel {
-  left: 50%;
+  left: 50vw;
   bottom: 0;
   transform: translateX(-50%);
 }
 
 #throttle {
-  top: 50%;
-  left: 100%;
+  top: 50vh;
+  left: 100vw;
   transform: translateX(-50%) rotate(-90deg);
   transform-origin: center bottom;
 }
 
 strong {
   font-weight: bold;
+}
+
+/* Scrollbars */
+
+::-moz-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-moz-scrollbar-track {
+  background: none;
+  color: none;
+  box-shadow: none;
+}
+
+::-moz-scrollbar-thumb {
+  background: none;
+  color: none;
+  box-shadow: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+  color: none;
+  box-shadow: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: none;
+  color: none;
+  box-shadow: none;
+}
+
+::scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::scrollbar-track {
+  background: none;
+  color: none;
+  box-shadow: none;
+}
+
+::scrollbar-thumb {
+  background: none;
+  color: none;
+  box-shadow: none;
 }

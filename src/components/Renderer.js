@@ -49,7 +49,7 @@ export default class Renderer extends React.Component {
       const time = performance.timing.navigationStart + performance.now();
 
       // const scrollHeight =
-      //   document.documentElement.offsetHeight - window.innerHeight;
+      //   document.body.clientHeight - window.innerHeight;
       // const scrolled = window.pageYOffset;
 
       // const scaleMapToWorld = easeOut(3)(

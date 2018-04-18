@@ -1,5 +1,4 @@
 import React from "react";
-import throttle from "lodash.throttle";
 import debounce from "lodash.debounce";
 
 import { config } from "../utilities/graphics.js";
@@ -23,14 +22,11 @@ class InteractionSurface extends React.Component {
 
   wheel = 0;
   throttle = 0;
-  x = Math.floor(
-    (document.documentElement.offsetWidth - window.innerWidth) / 2
-  );
-  y = Math.floor(
-    (document.documentElement.offsetHeight - window.innerHeight) / 2
-  );
+  x = Math.floor((document.body.clientWidth - window.innerWidth) / 2);
+  y = Math.floor((document.body.clientHeight - window.innerHeight) / 2);
 
   componentDidMount() {
+    this.resetScroll();
     this.loop = requestAnimationFrame(this.update);
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("keyup", this.handleKeyUp);
@@ -73,20 +69,18 @@ class InteractionSurface extends React.Component {
   };
 
   resetScroll = () => {
-    const scrollWidth =
-      document.documentElement.offsetWidth - window.innerWidth;
-    const scrollHeight =
-      document.documentElement.offsetHeight - window.innerHeight;
+    const scrollWidth = document.body.clientWidth - window.innerWidth;
+    const scrollHeight = document.body.clientHeight - window.innerHeight;
     window.scrollTo(scrollWidth / 2, scrollHeight / 2);
-    this.x = Math.floor(window.pageXOffset);
-    this.y = Math.floor(window.pageYOffset);
+    this.x = Math.floor(scrollWidth / 2);
+    this.y = Math.floor(scrollHeight / 2);
   };
 
   handleResetScroll = debounce(this.resetScroll, 500);
   handleKeyDown = ({ nativeEvent }) => {};
   handleKeyUp = ({ nativeEvent }) => {};
 
-  addEvent = throttle(this.props.addEvent, 200, { leading: false });
+  addEvent = debounce(this.props.addEvent, 200, { maxWait: 700 });
 
   render() {
     return (
