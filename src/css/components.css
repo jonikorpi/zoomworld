@@ -1,12 +1,9 @@
 :root,
 html,
 body {
-  -ms-overflow-style: none;
 }
 
 body {
-  width: 10000vw;
-  height: 10000vh;
 }
 
 #canvas {
@@ -39,8 +36,24 @@ body {
   left: 0;
   top: 0;
   right: 0;
-  bottom: 0;
-  padding-left: 3rem;
+  height: 100%;
+}
+
+#scroller {
+  pointer-events: all;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 100%;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+}
+
+#scrollerFiller {
+  width: 100000vw;
+  height: 100000vh;
 }
 
 #wheel,
@@ -68,56 +81,56 @@ strong {
 
 /* Scrollbars */
 
-::-moz-scrollbar {
+/* #scroller::-moz-scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-::-moz-scrollbar-track {
+#scroller::-moz-scrollbar-track {
   background: none;
   color: none;
   box-shadow: none;
 }
 
-::-moz-scrollbar-thumb {
+#scroller::-moz-scrollbar-thumb {
   background: none;
   color: none;
   box-shadow: none;
 }
 
-::-webkit-scrollbar {
+#scroller::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-::-webkit-scrollbar-track {
+#scroller::-webkit-scrollbar-track {
   background: none;
   color: none;
   box-shadow: none;
 }
 
-::-webkit-scrollbar-thumb {
+#scroller::-webkit-scrollbar-thumb {
   background: none;
   color: none;
   box-shadow: none;
 }
 
-::scrollbar {
+#scroller::scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-::scrollbar-track {
+#scroller::scrollbar-track {
   background: none;
   color: none;
   box-shadow: none;
 }
 
-::scrollbar-thumb {
+#scroller::scrollbar-thumb {
   background: none;
   color: none;
   box-shadow: none;
-}
+} */

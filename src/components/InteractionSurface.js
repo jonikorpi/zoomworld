@@ -22,10 +22,14 @@ class InteractionSurface extends React.Component {
 
   wheel = 0;
   throttle = 0;
-  x = Math.floor((document.body.clientWidth - window.innerWidth) / 2);
-  y = Math.floor((document.body.clientHeight - window.innerHeight) / 2);
 
   componentDidMount() {
+    this.x = Math.floor(
+      (this.scrollerFiller.clientWidth - window.innerWidth) / 2
+    );
+    this.y = Math.floor(
+      (this.scrollerFiller.clientHeight - window.innerHeight) / 2
+    );
     this.resetScroll();
     this.loop = requestAnimationFrame(this.update);
     window.addEventListener("keydown", this.handleKeyDown);
@@ -39,8 +43,8 @@ class InteractionSurface extends React.Component {
   }
 
   update = () => {
-    const scrollX = Math.floor(window.pageXOffset);
-    const scrollY = Math.floor(window.pageYOffset);
+    const scrollX = Math.floor(this.scroller.scrollLeft);
+    const scrollY = Math.floor(this.scroller.scrollTop);
 
     if (scrollX !== this.x) {
       this.wheel = clampValue(this.wheel + scrollX - this.x);
@@ -69,9 +73,10 @@ class InteractionSurface extends React.Component {
   };
 
   resetScroll = () => {
-    const scrollWidth = document.body.clientWidth - window.innerWidth;
-    const scrollHeight = document.body.clientHeight - window.innerHeight;
-    window.scrollTo(scrollWidth / 2, scrollHeight / 2);
+    const scrollWidth = this.scrollerFiller.clientWidth - window.innerWidth;
+    const scrollHeight = this.scrollerFiller.clientHeight - window.innerHeight;
+    this.scroller.scrollLeft = scrollWidth / 2;
+    this.scroller.scrollTop = scrollHeight / 2;
     this.x = Math.floor(scrollWidth / 2);
     this.y = Math.floor(scrollHeight / 2);
   };
@@ -85,6 +90,9 @@ class InteractionSurface extends React.Component {
   render() {
     return (
       <div id="interaction">
+        <div id="scroller" ref={ref => (this.scroller = ref)}>
+          <div id="scrollerFiller" ref={ref => (this.scrollerFiller = ref)} />
+        </div>
         <input
           type="range"
           min={-precision}
