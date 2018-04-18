@@ -13,7 +13,52 @@ const createEvent = (value, type) => {
 
 const precision = 1000;
 const clampValue = value => Math.max(-precision, Math.min(precision, value));
+const keyboardSpeed = precision / 1000;
 // const dragFactor = 0.91;
+
+const keyCodeToAction = keyCode => {
+  switch (keyCode) {
+    case 37:
+    case 65:
+      return "left";
+    case 38:
+    case 87:
+      return "up";
+    case 39:
+    case 68:
+      return "right";
+    case 40:
+    case 83:
+      return "down";
+    case 48:
+      return 0;
+    case 49:
+      return 1;
+    case 50:
+      return 2;
+    case 51:
+      return 3;
+    case 52:
+      return 4;
+    case 53:
+      return 5;
+    case 54:
+      return 6;
+    case 55:
+      return 7;
+    case 56:
+      return 8;
+    case 57:
+      return 9;
+    case 77:
+      return "map";
+    case 73:
+    case 66:
+      return "inventory";
+    default:
+      return null;
+  }
+};
 
 class InteractionSurface extends React.Component {
   static defaultProps = {
@@ -22,14 +67,13 @@ class InteractionSurface extends React.Component {
 
   wheel = 0;
   throttle = 0;
+  lastScrollerX = 0;
+  lastScrollerY = 0;
+  keyboardTurning = null;
+  keyboardThrottling = null;
+  lastFrameAt = Date.now();
 
   componentDidMount() {
-    this.x = Math.floor(
-      (this.scrollerFiller.clientWidth - window.innerWidth) / 2
-    );
-    this.y = Math.floor(
-      (this.scrollerFiller.clientHeight - window.innerHeight) / 2
-    );
     this.resetScroll();
     this.loop = requestAnimationFrame(this.update);
     window.addEventListener("keydown", this.handleKeyDown);
@@ -42,30 +86,42 @@ class InteractionSurface extends React.Component {
     window.removeEventListener("keyup", this.handleKeyUp);
   }
 
-  update = () => {
-    const scrollX = Math.floor(this.scroller.scrollLeft);
-    const scrollY = Math.floor(this.scroller.scrollTop);
+  update = now => {
+    const deltaTime = now - this.lastFrameAt;
+    this.lastFrameAt = now;
+    const scrollerX = Math.floor(this.scroller.scrollLeft);
+    const scrollerY = Math.floor(this.scroller.scrollTop);
 
-    if (scrollX !== this.x) {
-      this.wheel = clampValue(this.wheel + scrollX - this.x);
+    if (scrollerX !== this.scrollerX || this.keyboardTurning) {
+      this.wheel = clampValue(
+        this.wheel +
+          scrollerX -
+          this.scrollerX -
+          this.keyboardTurning * keyboardSpeed * deltaTime
+      );
       if (+this.wheelElement.value !== -this.wheel) {
         const value = Math.abs(this.wheel / precision) > 0.05 ? this.wheel : 0;
         this.wheelElement.value = -value;
         this.addWheelEvent(createEvent(-value / precision, "wheel"));
       }
-      this.x = scrollX;
+      this.scrollerX = scrollerX;
       this.handleResetScroll();
     }
 
-    if (scrollY !== this.y) {
-      this.throttle = clampValue(this.throttle + scrollY - this.y);
+    if (scrollerY !== this.scrollerY || this.keyboardThrottling) {
+      this.throttle = clampValue(
+        this.throttle +
+          scrollerY -
+          this.scrollerY +
+          this.keyboardThrottling * keyboardSpeed * deltaTime
+      );
       if (+this.throttleElement.value !== this.throttle) {
         const value =
           Math.abs(this.throttle / precision) > 0.05 ? this.throttle : 0;
         this.throttleElement.value = value;
         this.addThrottleEvent(createEvent(value / precision, "throttle"));
       }
-      this.y = scrollY;
+      this.scrollerY = scrollerY;
       this.handleResetScroll();
     }
 
@@ -77,13 +133,102 @@ class InteractionSurface extends React.Component {
     const scrollHeight = this.scrollerFiller.clientHeight - window.innerHeight;
     this.scroller.scrollLeft = scrollWidth / 2;
     this.scroller.scrollTop = scrollHeight / 2;
-    this.x = Math.floor(scrollWidth / 2);
-    this.y = Math.floor(scrollHeight / 2);
+    this.scrollerX = Math.floor(scrollWidth / 2);
+    this.scrollerY = Math.floor(scrollHeight / 2);
   };
 
   handleResetScroll = debounce(this.resetScroll, 500);
-  handleKeyDown = ({ nativeEvent }) => {};
-  handleKeyUp = ({ nativeEvent }) => {};
+
+  handleKeyDown = event => {
+    const action = this.startAction(keyCodeToAction(event.keyCode));
+
+    if (action) {
+      event.preventDefault();
+    }
+  };
+  handleKeyUp = event => {
+    const action = this.stopAction(keyCodeToAction(event.keyCode));
+
+    if (action) {
+      event.preventDefault();
+    }
+  };
+  startAction = action => {
+    switch (action) {
+      case "left":
+        return (this.keyboardTurning = -1);
+      case "up":
+        return (this.keyboardThrottling = 1);
+      case "right":
+        return (this.keyboardTurning = 1);
+      case "down":
+        return (this.keyboardThrottling = -1);
+      case 0:
+        return;
+      case 1:
+        return;
+      case 2:
+        return;
+      case 3:
+        return;
+      case 4:
+        return;
+      case 5:
+        return;
+      case 6:
+        return;
+      case 7:
+        return;
+      case 8:
+        return;
+      case 9:
+        return;
+      case "map":
+        return;
+      case "inventory":
+        return;
+      default:
+        return;
+    }
+  };
+  stopAction = action => {
+    switch (action) {
+      case "left":
+        return (this.keyboardTurning = false);
+      case "up":
+        return (this.keyboardThrottling = false);
+      case "right":
+        return (this.keyboardTurning = false);
+      case "down":
+        return (this.keyboardThrottling = false);
+      case 0:
+        return;
+      case 1:
+        return;
+      case 2:
+        return;
+      case 3:
+        return;
+      case 4:
+        return;
+      case 5:
+        return;
+      case 6:
+        return;
+      case 7:
+        return;
+      case 8:
+        return;
+      case 9:
+        return;
+      case "map":
+        return;
+      case "inventory":
+        return;
+      default:
+        return;
+    }
+  };
 
   addThrottleEvent = debounce(this.props.addEvent, 200, { maxWait: 700 });
   addWheelEvent = debounce(this.props.addEvent, 200, { maxWait: 700 });
