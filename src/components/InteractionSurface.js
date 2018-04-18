@@ -11,8 +11,10 @@ const createEvent = (value, type) => {
   };
 };
 
-const pointsToValue = points => points / 1;
-const clampValue = value => Math.max(-100, Math.min(100, value));
+const getDimensionSize = () => Math.min(window.innerHeight, window.innerWidth);
+const pointsToValue = points => points / (getDimensionSize() / 300);
+const clampValue = value => Math.round(Math.max(-100, Math.min(100, value)));
+// const dragFactor = 0.91;
 
 class InteractionSurface extends React.Component {
   static defaultProps = {
@@ -24,6 +26,7 @@ class InteractionSurface extends React.Component {
   throttle = 0;
   throttleVelocity = 0;
   movingSince = null;
+  lockedToAxis = null;
   startedAt = [0, 0];
   lastMoveAt = [0, 0];
 
@@ -31,26 +34,30 @@ class InteractionSurface extends React.Component {
     this.loop = requestAnimationFrame(this.update);
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("keyup", this.handleKeyUp);
+    window.addEventListener("touchmove", this.handleTouchMove, {
+      passive: false,
+    });
   }
 
   componentWillUnmount() {
     cancelAnimationFrame(this.loop);
+    window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("keyup", this.handleKeyUp);
+    window.removeEventListener("touchmove", this.handleTouchMove);
   }
 
   update = () => {
     const { wheel, wheelVelocity, throttle, throttleVelocity } = this;
 
-    if (Math.abs(wheelVelocity) > 0) {
-      this.wheel = clampValue(wheel + wheelVelocity);
-      this.wheelVelocity =
-        Math.abs(wheelVelocity) > 1 ? wheelVelocity * 0.95 : 0;
-    }
+    // if (Math.abs(wheelVelocity) > 0) {
+    //   this.wheel = clampValue(wheel + wheelVelocity);
+    //   this.wheelVelocity = wheelVelocity * dragFactor;
+    // }
 
-    if (Math.abs(throttleVelocity) > 0) {
-      this.throttle = clampValue(throttle + throttleVelocity);
-      this.throttleVelocity =
-        Math.abs(throttleVelocity) > 1 ? throttleVelocity * 0.95 : 0;
-    }
+    // if (Math.abs(throttleVelocity) > 0) {
+    //   this.throttle = clampValue(throttle + throttleVelocity);
+    //   this.throttleVelocity = throttleVelocity * dragFactor;
+    // }
 
     if (+this.wheelElement.value !== this.wheel) {
       this.wheelElement.value = this.wheel;
@@ -65,17 +72,18 @@ class InteractionSurface extends React.Component {
   };
 
   handleTouchStart = event => {
-    event.preventDefault();
     this.startMoving(event.touches[0].clientX, event.touches[0].clientY);
   };
   handleMouseDown = ({ nativeEvent }) =>
     this.startMoving(nativeEvent.clientX, nativeEvent.clientY);
 
   handleTouchMove = event => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (this.movingSince) {
-      this.moveBy(event.touches[0].clientX, event.touches[0].clientY);
+    if (event.target.id === "interactionSurface") {
+      event.preventDefault();
+
+      if (this.movingSince) {
+        this.moveBy(event.touches[0].clientX, event.touches[0].clientY);
+      }
     }
   };
   handleMouseMove = ({ nativeEvent }) => {
@@ -103,39 +111,59 @@ class InteractionSurface extends React.Component {
     this.throttleVelocity = 0;
   };
   moveBy = (x, y) => {
-    this.wheel = clampValue(this.wheel + pointsToValue(x - this.lastMoveAt[0]));
-    this.throttle = clampValue(
-      this.throttle - pointsToValue(y - this.lastMoveAt[1])
-    );
+    if (!this.lockedToAxis) {
+      const totalWheel = Math.abs(x - this.startedAt[0]);
+      const totalThrottle = Math.abs(y - this.startedAt[1]);
+
+      if (totalThrottle > 10) {
+        this.lockedToAxis = "throttle";
+      } else if (totalWheel > 10) {
+        this.lockedToAxis = "wheel";
+      }
+    }
+
+    if (this.lockedToAxis === "wheel") {
+      const wheel = x - this.lastMoveAt[0];
+      this.wheel = clampValue(this.wheel + pointsToValue(wheel));
+    } else if (this.lockedToAxis === "throttle") {
+      const throttle = y - this.lastMoveAt[1];
+      this.throttle = clampValue(this.throttle - pointsToValue(throttle));
+    }
+
     this.lastMoveAt[0] = x;
     this.lastMoveAt[1] = y;
   };
   applyVelocity = () => {
-    const elapsed = (Date.now() - this.movingSince) / 1000;
-    const wheelMoved = this.lastMoveAt[0] - this.startedAt[0];
-    const throttleMoved = this.lastMoveAt[1] - this.startedAt[1];
-    const wheelVelocityChange = wheelMoved / 10 / elapsed;
-    const throttleVelocityChange = throttleMoved / 10 / elapsed;
+    // const elapsed = (Date.now() - this.movingSince) / 1000;
 
-    this.wheelVelocity +=
-      Math.abs(wheelVelocityChange) > 10
-        ? pointsToValue(wheelVelocityChange)
-        : 0;
-    this.throttleVelocity -=
-      Math.abs(throttleVelocityChange) > 10
-        ? pointsToValue(throttleVelocityChange)
-        : 0;
+    // if (elapsed > 0.5) {
+    //   const wheelMoved = this.lastMoveAt[0] - this.startedAt[0];
+    //   const throttleMoved = this.lastMoveAt[1] - this.startedAt[1];
+    //   const wheelVelocityChange = wheelMoved / elapsed;
+    //   const throttleVelocityChange = throttleMoved / elapsed;
+
+    //   if (this.lockedToAxis === "wheel" && Math.abs(wheelVelocityChange) > 10) {
+    //     this.wheelVelocity += pointsToValue(wheelVelocityChange);
+    //   } else if (
+    //     this.lockedToAxis === "throttle" &&
+    //     Math.abs(throttleVelocityChange) > 10
+    //   ) {
+    //     this.throttleVelocity -= pointsToValue(throttleVelocityChange);
+    //   }
+    // }
+
     this.stopMoving();
   };
   stopMoving = () => {
     this.movingSince = null;
+    this.lockedToAxis = null;
     this.startedAt[0] = 0;
     this.startedAt[1] = 0;
     this.lastMoveAt[0] = 0;
     this.lastMoveAt[1] = 0;
   };
 
-  addEvent = throttle(this.props.addEvent, 300, { leading: false });
+  addEvent = throttle(this.props.addEvent, 200, { leading: false });
 
   render() {
     return (
@@ -161,7 +189,6 @@ class InteractionSurface extends React.Component {
           id="interactionSurface"
           onTouchStart={this.handleTouchStart}
           onTouchEnd={this.handleTouchEnd}
-          onTouchMove={this.handleTouchMove}
           onTouchCancel={this.handleTouchCancel}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}

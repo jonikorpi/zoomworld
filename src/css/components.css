@@ -13,6 +13,7 @@ body {
 }
 
 #root {
+  user-select: none;
 }
 
 .hud {
@@ -27,7 +28,7 @@ body {
 }
 
 #world {
-  height: 300vh;
+  height: 200vh;
 }
 
 #inventory {
@@ -64,24 +65,26 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  padding-left: 2.5rem;
+  padding-left: 3rem;
+}
+
+#wheel,
+#throttle {
+  position: absolute;
+  width: 61.8vmin;
 }
 
 #wheel {
-  position: absolute;
-  left: 14.6%;
-  right: 14.6%;
-  bottom: 9%;
-  width: 70.8vw;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
 }
 
 #throttle {
-  position: absolute;
-  left: 91%;
-  top: 85.4%;
-  width: 70.8vh;
-  transform: rotate(-90deg);
-  transform-origin: left;
+  top: 50%;
+  left: 100%;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center bottom;
 }
 
 #interactionSurface {
@@ -91,6 +94,8 @@ body {
   outline: none;
   pointer-events: all;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -ms-touch-action: none;
+  touch-action: none;
 }
 
 #interactionSurface:active {
