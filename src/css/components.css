@@ -1,6 +1,7 @@
 :root,
 html,
 body {
+  height: 500vh;
 }
 
 body {
@@ -31,106 +32,39 @@ body {
 }
 
 #interaction {
-  pointer-events: none;
   position: fixed;
   left: 0;
   top: 0;
   right: 0;
-  height: 100%;
-}
-
-#scroller {
-  pointer-events: all;
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  height: 100%;
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-  -ms-overflow-style: none;
-}
-
-#scrollerFiller {
-  width: 100000vw;
-  height: 100000vh;
-}
-
-#wheel,
-#throttle {
-  position: absolute;
-  width: 61.8vmin;
-}
-
-#wheel {
-  left: 50vw;
   bottom: 0;
-  transform: translateX(-50%);
 }
 
-#throttle {
-  top: 50vh;
-  left: 100vw;
-  transform: translateX(-50%) rotate(-90deg);
-  transform-origin: center bottom;
+.movementButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.333%;
+  height: 100%;
+  color: transparent;
+  outline: none;
+}
+
+.movementButton.right {
+  left: auto;
+  right: 0;
+}
+
+.movementButton.forward {
+  left: 33.333%;
+  height: 50%;
+}
+
+.movementButton.backward {
+  left: 33.333%;
+  height: 50%;
+  top: 50%;
 }
 
 strong {
   font-weight: bold;
 }
-
-/* Scrollbars */
-
-/* #scroller::-moz-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-#scroller::-moz-scrollbar-track {
-  background: none;
-  color: none;
-  box-shadow: none;
-}
-
-#scroller::-moz-scrollbar-thumb {
-  background: none;
-  color: none;
-  box-shadow: none;
-}
-
-#scroller::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-#scroller::-webkit-scrollbar-track {
-  background: none;
-  color: none;
-  box-shadow: none;
-}
-
-#scroller::-webkit-scrollbar-thumb {
-  background: none;
-  color: none;
-  box-shadow: none;
-}
-
-#scroller::scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-#scroller::scrollbar-track {
-  background: none;
-  color: none;
-  box-shadow: none;
-}
-
-#scroller::scrollbar-thumb {
-  background: none;
-  color: none;
-  box-shadow: none;
-} */

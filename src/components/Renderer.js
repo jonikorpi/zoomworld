@@ -19,9 +19,9 @@ const clearConfiguration = {
   color: [0, 0, 0, 0],
 };
 
-// const mapScale = 0.014;
-// const worldScale = 1;
-// const inventoryScale = 8;
+const mapScale = 0.014;
+const worldScale = 1;
+const inventoryScale = 8;
 const defaultCamera = [0, 0, 0];
 
 export default class Renderer extends React.Component {
@@ -48,48 +48,44 @@ export default class Renderer extends React.Component {
     try {
       const time = performance.timing.navigationStart + performance.now();
 
-      // const scrollHeight =
-      //   document.body.clientHeight - window.innerHeight;
-      // const scrolled = window.pageYOffset;
+      const scrollHeight = document.body.clientHeight - window.innerHeight;
+      const scrolled = window.pageYOffset;
 
-      // const scaleMapToWorld = easeOut(3)(
-      //   Math.min(1, scrolled / (scrollHeight / 2))
-      // );
-      // const scaleWorldToInventory = easeIn(3)(
-      //   Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
-      // );
-      // const scale =
-      //   mapScale +
-      //   scaleMapToWorld * (worldScale - mapScale) +
-      //   scaleWorldToInventory * (inventoryScale - worldScale);
+      const scaleMapToWorld = easeOut(3)(
+        Math.min(1, scrolled / (scrollHeight / 2))
+      );
+      const scaleWorldToInventory = easeIn(3)(
+        Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
+      );
+      const scale =
+        mapScale +
+        scaleMapToWorld * (worldScale - mapScale) +
+        scaleWorldToInventory * (inventoryScale - worldScale);
 
-      // const panMapToWorld = easeOut(196)(
-      //   Math.min(1, scrolled / (scrollHeight / 2))
-      // );
-      // const panWorldToInventory = easeIn(2)(
-      //   Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
-      // );
-      // const mapPosition = [-33, -125, 0];
-      // const worldPosition = this.getCamera(time).position;
-      // const inventoryPosition = worldPosition;
+      const panMapToWorld = easeOut(196)(
+        Math.min(1, scrolled / (scrollHeight / 2))
+      );
+      const panWorldToInventory = easeIn(2)(
+        Math.max(0, (scrolled - scrollHeight / 2) / (scrollHeight / 2))
+      );
+      const mapPosition = [-33, -125, 0];
+      const worldPosition = this.getCamera(time).position;
+      const inventoryPosition = worldPosition;
 
-      // const betweenMapAndWorld = scaleMapToWorld < 1;
+      const betweenMapAndWorld = scaleMapToWorld < 1;
 
-      // const camera = betweenMapAndWorld
-      //   ? [
-      //       lerp(mapPosition[0], worldPosition[0], panMapToWorld),
-      //       lerp(mapPosition[1], worldPosition[1], panMapToWorld),
-      //       lerp(mapPosition[2], worldPosition[2], panMapToWorld),
-      //     ]
-      //   : [
-      //       // TODO: useless
-      //       lerp(worldPosition[0], inventoryPosition[0], panWorldToInventory),
-      //       lerp(worldPosition[1], inventoryPosition[1], panWorldToInventory),
-      //       lerp(worldPosition[2], inventoryPosition[2], panWorldToInventory),
-      //     ];
-
-      const camera = this.getCamera(time).position;
-      const scale = 1;
+      const camera = betweenMapAndWorld
+        ? [
+            lerp(mapPosition[0], worldPosition[0], panMapToWorld),
+            lerp(mapPosition[1], worldPosition[1], panMapToWorld),
+            lerp(mapPosition[2], worldPosition[2], panMapToWorld),
+          ]
+        : [
+            // TODO: useless
+            lerp(worldPosition[0], inventoryPosition[0], panWorldToInventory),
+            lerp(worldPosition[1], inventoryPosition[1], panWorldToInventory),
+            lerp(worldPosition[2], inventoryPosition[2], panWorldToInventory),
+          ];
 
       const xRatio = Math.max(1, viewportWidth / viewportHeight) * 50;
       const yRatio = Math.max(1, viewportHeight / viewportWidth) * 50;
