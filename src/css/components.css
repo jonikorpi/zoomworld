@@ -39,6 +39,21 @@ body {
   bottom: 0;
 }
 
+#wheel,
+#throttle {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  bottom: 3.5rem;
+  width: 5rem;
+  color: red;
+  transform: translateX(-50%);
+}
+
+#throttle {
+  transform: translateX(-50%) rotate(-90deg);
+}
+
 .movementButton {
   position: absolute;
   top: 0;

@@ -203,6 +203,24 @@ class InteractionSurface extends React.Component {
   render() {
     return (
       <div id="interaction">
+        <input
+          id="throttle"
+          type="range"
+          value={this.state.throttle}
+          min="-1"
+          max="1"
+          step="0.01"
+          className="safeAll"
+        />
+        <input
+          id="wheel"
+          type="range"
+          value={this.state.wheel}
+          min="-1"
+          max="1"
+          step="0.01"
+          className="safeAll"
+        />
         <button
           type="button"
           className="movementButton forward"
