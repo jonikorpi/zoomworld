@@ -28,4 +28,6 @@ const getNeighbours = (vision, x, y) =>
 // https://medium.com/@dtipson/creating-an-es6ish-compose-in-javascript-ac580b95104a
 const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
 
-export { listTilesInRange, getNeighbours, compose };
+const clamp = (value, from = 0, to = 1) => Math.min(1, Math.max(-1, value));
+
+export { listTilesInRange, getNeighbours, compose, clamp };

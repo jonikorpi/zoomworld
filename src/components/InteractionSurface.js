@@ -1,5 +1,7 @@
 import React from "react";
 
+import { clamp } from "../utilities/helpers.js";
+
 const increment = 0.25;
 const createEvent = (value, type) => ({
   [type]: {
@@ -7,7 +9,7 @@ const createEvent = (value, type) => ({
   },
 });
 
-const clampValue = value => Math.min(1, Math.max(-1, value.toPrecision(2)));
+const clampValue = value => clamp(value.toPrecision(2), -1);
 const throttleForward = ({ throttle }) => ({
   throttle: clampValue(
     throttle + increment <= 0 ? throttle + increment * 2 : throttle + increment

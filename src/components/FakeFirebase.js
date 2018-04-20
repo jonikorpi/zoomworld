@@ -7,7 +7,7 @@ export default class FakeFirebase extends React.Component {
   static defaultProps = {
     x: 0,
     y: 0,
-    angle: 0,
+    angle: Math.PI / 2,
     moveAround: true,
   };
 
@@ -21,8 +21,10 @@ export default class FakeFirebase extends React.Component {
         throttle: 0,
         wheel: 0,
         velocity: 0,
+        throttlePower: 10,
+        wheelPower: 10,
         mass: 10,
-        drag: 0.5,
+        drag: 10,
         windX: 0,
         windY: 0,
         x: x,

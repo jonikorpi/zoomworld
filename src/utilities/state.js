@@ -1,4 +1,5 @@
 import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
+import { clamp } from "../utilities/helpers.js";
 
 // const eventBufferLength = 5000;
 
@@ -43,14 +44,16 @@ const mergeEvent = (stateObject, { data }) => {
 };
 
 const simulate = (stateObject, from, to) => {
-  const { throttle, wheel, mass, drag, windX, windY } = stateObject;
+  const { throttlePower, wheelPower, mass, windX, windY } = stateObject;
   const time = (to - from) / 1000;
   const weight = mass * 2;
+  const drag = clamp(stateObject.drag / 20);
 
   // Throttle
-  const force = (throttle > 0 ? 1 : 0.5) * throttle * 5;
+  const throttle = clamp(stateObject.throttle, -1);
+  const force = (throttle > 0 ? 1 : 0.5) * throttle * (throttlePower / 2);
   const acceleration = force / weight;
-  const dragImpact = Math.pow(drag, time / weight);
+  const dragImpact = clamp(Math.pow(drag, time / weight));
   const velocity =
     acceleration -
     acceleration * dragImpact +
@@ -58,8 +61,10 @@ const simulate = (stateObject, from, to) => {
   const distance = velocity * time;
 
   // Turn
+  const wheel = clamp(stateObject.wheel, -1);
   const turnVelocity =
-    2 *
+    wheelPower /
+    5 *
     wheel /
     mass *
     Math.sign(velocity) *
