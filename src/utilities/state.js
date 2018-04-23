@@ -18,11 +18,6 @@ const stateAtTime = (now, state, events) => {
   return stateObject;
 };
 
-const positionAtTime = (now, state, events) => {
-  const { x, y, angle } = stateAtTime(now, state, events);
-  return [x, y, angle];
-};
-
 // const findLastEventEndingTime = (end, { time, data: { duration } }) =>
 //   time + duration > end ? time + duration : end;
 
@@ -115,7 +110,6 @@ const precompute = events => {
 };
 
 export {
-  positionAtTime,
   stateAtTime,
   // findLastEventEndingTime,
   precompute,
