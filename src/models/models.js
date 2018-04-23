@@ -14,6 +14,18 @@ let models = {
     primitive: "line loop",
     directionless: true,
   },
+  destination: {
+    data: "player",
+    color: [1, 1, 1, 0.414],
+    scale: 0.056,
+    primitive: "line loop",
+  },
+  wake: {
+    data: "player",
+    color: [1, 1, 1, 0.854],
+    scale: 0.146,
+    primitive: "line strip",
+  },
   tileShade: {
     data: "tile",
     color: [0.324854902, 0.462164706, 0.529145098, 1],
@@ -53,12 +65,6 @@ let models = {
     data: "player",
     color: [0.91, 0.91, 0.91, 1],
     scale: 0.146,
-  },
-  destination: {
-    data: "player",
-    color: [1, 1, 1, 0.414],
-    scale: 0.056,
-    primitive: "line loop",
   },
 };
 

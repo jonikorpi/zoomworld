@@ -94,6 +94,16 @@ export default class World extends React.Component {
                   models={["player", "playerShade"]}
                   timeOffset={-200}
                 />
+                {[-1000, -2000, -3000].map(offset => (
+                  <Entity
+                    renderer={renderer}
+                    state={state}
+                    events={events}
+                    models={["wake"]}
+                    timeOffset={offset - 200}
+                    key={offset}
+                  />
+                ))}
               </React.Fragment>
             )}
           </FakeFirebase>
@@ -130,6 +140,16 @@ export default class World extends React.Component {
                   state={state}
                   events={events}
                   models={["destination"]}
+                  timeOffset={offset}
+                  key={offset}
+                />
+              ))}
+              {[-1000, -2000, -3000].map(offset => (
+                <Entity
+                  renderer={renderer}
+                  state={state}
+                  events={events}
+                  models={["wake"]}
                   timeOffset={offset}
                   key={offset}
                 />
