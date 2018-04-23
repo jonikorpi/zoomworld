@@ -124,27 +124,13 @@ export default class World extends React.Component {
                 models={["player", "playerShade"]}
                 shouldLerp={true}
               />
-              {[
-                1000,
-                2000,
-                3000,
-                4000,
-                5000,
-                6000,
-                7000,
-                8000,
-                9000,
-                10000,
-                11000,
-                12000,
-                13000,
-              ].map(offset => (
+              {[1500, 3000, 4500, 6000, 7500].map(offset => (
                 <Entity
                   renderer={renderer}
                   state={state}
                   events={events}
-                  models={["target"]}
                   shouldLerp={true}
+                  models={["destination"]}
                   timeOffset={offset}
                   key={offset}
                 />

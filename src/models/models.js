@@ -54,10 +54,10 @@ let models = {
     color: [0.91, 0.91, 0.91, 1],
     scale: 0.146,
   },
-  target: {
+  destination: {
     data: "player",
-    color: [1, 1, 0, 1],
-    scale: 0.146,
+    color: [1, 1, 1, 0.414],
+    scale: 0.056,
     primitive: "line loop",
   },
 };
