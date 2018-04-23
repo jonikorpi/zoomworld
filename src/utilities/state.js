@@ -5,7 +5,11 @@ import { clamp } from "../utilities/helpers.js";
 
 const stateAtTime = (now, state, events) => {
   const stateObject = { ...state };
-  simulate(stateObject, stateObject.time, events[0] ? events[0].time : now);
+  simulate(
+    stateObject,
+    Math.min(stateObject.time, now),
+    events[0] ? Math.min(events[0].time, now) : now
+  );
 
   events.forEach(event => {
     if (event.time < now) {
