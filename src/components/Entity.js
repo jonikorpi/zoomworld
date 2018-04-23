@@ -1,7 +1,7 @@
 import React from "react";
 import uuid4 from "uuid/v4";
 
-import { positionAtTime } from "../utilities/state.js";
+import { stateAtTime } from "../utilities/state.js";
 import { lerp, angleLerp } from "../utilities/graphics.js";
 
 export default class Entity extends React.Component {
@@ -15,10 +15,11 @@ export default class Entity extends React.Component {
     mayMove: true,
     timeOffset: 0,
     shouldLerp: false,
-    positionGetter: positionAtTime,
+    positionGetter: stateAtTime,
   };
 
   ID = uuid4();
+  stateObject = { position: [] };
 
   componentWillMount() {
     const {
@@ -55,32 +56,21 @@ export default class Entity extends React.Component {
       shouldLerp,
       positionGetter,
     } = this.props;
-    const currentPosition = mayMove
+    const { stateObject } = this;
+    const position = mayMove
       ? positionGetter(time + timeOffset, state, events)
-      : [state.x, state.y, state.angle];
+      : state;
 
-    const position =
-      // shouldLerp && this.lastPosition
-      //   ? [
-      //       lerp(this.lastPosition[0], currentPosition[0], 0.5),
-      //       lerp(this.lastPosition[1], currentPosition[1], 0.5),
-      //       angleLerp(this.lastPosition[2], currentPosition[2], 0.25),
-      //     ]
-      //   :
-      currentPosition;
+    stateObject.position[0] = position.x;
+    stateObject.position[1] = position.y;
+    stateObject.position[2] = position.angle;
+    stateObject.models = models;
 
     if (onUpdate) {
-      onUpdate(position);
+      onUpdate(stateObject);
     }
 
-    this.lastPosition = position;
-
-    return {
-      models: models,
-      position: position,
-      // mountedAt: this.mountedAt,
-      // unmountedAt: this.unmountedAt,
-    };
+    return stateObject;
   };
 
   render() {

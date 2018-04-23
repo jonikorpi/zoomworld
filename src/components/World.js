@@ -20,7 +20,7 @@ export default class World extends React.Component {
     vision: 5,
   };
 
-  updateCurrentTile = position => {
+  updateCurrentTile = ({ position }) => {
     const [x, y] = this.state.currentTile;
     const newX = Math.floor(position[0]);
     const newY = Math.floor(position[1]);
