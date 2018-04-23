@@ -86,14 +86,15 @@ export default class World extends React.Component {
         {players.map(({ x, y, playerID }, index) => (
           <FakeFirebase key={playerID} index={index + 123} x={x} y={y}>
             {({ state, events }) => (
-              <Entity
-                renderer={renderer}
-                state={state}
-                events={events}
-                models={["player", "playerShade"]}
-                timeOffset={-200}
-                shouldLerp={true}
-              />
+              <React.Fragment>
+                <Entity
+                  renderer={renderer}
+                  state={state}
+                  events={events}
+                  models={["player", "playerShade"]}
+                  timeOffset={-200}
+                />
+              </React.Fragment>
             )}
           </FakeFirebase>
         ))}
@@ -122,14 +123,12 @@ export default class World extends React.Component {
                 state={state}
                 events={events}
                 models={["player", "playerShade"]}
-                shouldLerp={true}
               />
               {[1500, 3000, 4500, 6000, 7500].map(offset => (
                 <Entity
                   renderer={renderer}
                   state={state}
                   events={events}
-                  shouldLerp={true}
                   models={["destination"]}
                   timeOffset={offset}
                   key={offset}

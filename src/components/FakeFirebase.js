@@ -73,7 +73,7 @@ export default class FakeFirebase extends React.Component {
       this.counter = this.props.index || 123;
       this.timer = window.setInterval(
         this.addRandomEvent,
-        2000 + random(1, this.counter++) * 10000
+        2000 + random(1, this.counter++) * 30000
       );
     }
   }

@@ -14,7 +14,6 @@ export default class Entity extends React.Component {
     models: ["placeholder"],
     mayMove: true,
     timeOffset: 0,
-    shouldLerp: false,
     positionGetter: stateAtTime,
   };
 
@@ -53,7 +52,6 @@ export default class Entity extends React.Component {
       mayMove,
       models,
       timeOffset,
-      shouldLerp,
       positionGetter,
     } = this.props;
     const { stateObject } = this;
