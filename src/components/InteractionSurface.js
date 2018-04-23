@@ -1,6 +1,7 @@
 import React from "react";
 
 import { clamp } from "../utilities/helpers.js";
+import debounce from "lodash.debounce";
 
 const increment = 0.25;
 const createEvent = (value, type) => ({
@@ -93,12 +94,15 @@ class InteractionSurface extends React.Component {
 
   componentDidUpdate(previousProps, { throttle, wheel }) {
     if (throttle !== this.state.throttle) {
-      this.props.addEvent(createEvent(this.state.throttle, "throttle"));
+      this.addThrottleEvent(createEvent(this.state.throttle, "throttle"));
     }
     if (wheel !== this.state.wheel) {
-      this.props.addEvent(createEvent(this.state.wheel, "wheel"));
+      this.addWheelEvent(createEvent(this.state.wheel, "wheel"));
     }
   }
+
+  addThrottleEvent = debounce(this.props.addEvent, 100, { leading: true });
+  addWheelEvent = debounce(this.props.addEvent, 100, { leading: true });
 
   handleKeyDown = event => {
     const action = this.startAction(keyCodeToAction(event.keyCode));
