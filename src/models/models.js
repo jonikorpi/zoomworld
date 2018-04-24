@@ -14,12 +14,6 @@ let models = {
     primitive: "line loop",
     directionless: true,
   },
-  destination: {
-    data: "player",
-    color: [1, 1, 1, 0.414],
-    scale: 0.056,
-    primitive: "line loop",
-  },
   wake: {
     data: "player",
     color: [1, 1, 1, 0.854],
@@ -65,6 +59,12 @@ let models = {
     data: "player",
     color: [0.91, 0.91, 0.91, 1],
     scale: 0.146,
+  },
+  destination: {
+    data: "player",
+    color: [1, 1, 1, 0.414],
+    scale: 0.056,
+    primitive: "line loop",
   },
 };
 

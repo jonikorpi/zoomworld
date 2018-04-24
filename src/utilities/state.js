@@ -48,15 +48,24 @@ const simulate = (stateObject, from, to) => {
   const weight = mass * 2;
   const drag = clamp(stateObject.drag / 20);
 
+  // drag = -velocity*dragCoeff;
+  // velocity += acceleration;
+  // velocity += drag;
+
   // Throttle
   const throttle = clamp(stateObject.throttle, -1);
   const force = (throttle > 0 ? 1 : 0.5) * throttle * (throttlePower / 2);
   const acceleration = force / weight;
-  const dragImpact = clamp(Math.pow(drag, time / weight));
-  const velocity = acceleration * (1 - dragImpact);
+
+  const thrustDrag = Math.pow(drag, time / weight);
+  const momentumDrag = Math.pow(1 - drag, time / (weight / 5));
+
+  const thrust = acceleration * (1 - thrustDrag);
+  const momentum = stateObject.velocity;
+  const drift = momentum * momentumDrag;
+  const velocity = thrust + drift;
   const distance =
-    velocity * time +
-    stateObject.velocity * weight * (1 - Math.pow(dragImpact, 3));
+    thrust * time + momentum * (weight * drag) * (1 - momentumDrag);
 
   // Turn
   const wheel = clamp(stateObject.wheel, -1);
@@ -95,7 +104,7 @@ const simulate = (stateObject, from, to) => {
   stateObject.x += newX;
   stateObject.y += newY;
   stateObject.angle = (stateObject.angle - turnAngle) % (2 * Math.PI);
-  stateObject.velocity = velocity + stateObject.velocity * dragImpact;
+  stateObject.velocity = velocity;
   stateObject.time = to;
 
   return stateObject;
