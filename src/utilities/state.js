@@ -44,54 +44,75 @@ const mergeEvent = (stateObject, { data }) => {
 
 const simulate = (stateObject, from, to) => {
   const { throttlePower, wheelPower, mass, windX, windY } = stateObject;
-  const time = (to - from) / 1000;
+  const time = (to - from) / 100;
   const weight = mass * 2;
-  const drag = clamp(stateObject.drag / 20);
-
-  // drag = -velocity*dragCoeff;
-  // velocity += acceleration;
-  // velocity += drag;
+  const drag = stateObject.drag / 20;
 
   // Throttle
-  const throttle = clamp(stateObject.throttle, -1);
+  const throttle = stateObject.throttle;
   const force = (throttle > 0 ? 1 : 0.5) * throttle * (throttlePower / 2);
   const acceleration = force / weight;
+  const thrustVelocity = acceleration * (1 - Math.pow(drag, time / weight));
 
-  const thrustDrag = Math.pow(drag, time / weight);
-  const momentumDrag = Math.pow(1 - drag, time / (weight / 5));
-
-  const thrust = acceleration * (1 - thrustDrag);
   const momentum = stateObject.velocity;
-  const drift = momentum * momentumDrag;
-  const velocity = thrust + drift;
+  const momentumEndsAt = -(weight / Math.log(1 - drag));
+  const momentumDistanceTime = Math.min(time, momentumEndsAt);
+  // const momentumTurningVelocityTime =
+  //   time > Math.log(1 - drag) * Math.pow(1 - drag, time / weight) / weight;
+
+  const momentumVelocity =
+    Math.max(
+      0,
+      Math.abs(momentum) * Math.pow(1 - drag, time / weight) -
+        Math.abs(momentum) * Math.pow(1 - drag, momentumEndsAt / weight)
+    ) * Math.sign(momentum);
+  // const momentumTurningVelocity =
+  //   momentum * Math.pow(1 - drag, momentumDistanceTime / weight);
+  const velocity = thrustVelocity + momentumVelocity;
+  // const velocityForTurning = thrustVelocity + momentumTurningVelocity;
+
+  const momentumDistance =
+    momentum * Math.pow(1 - drag, momentumDistanceTime / weight);
   const distance =
-    thrust * time + momentum * (weight * drag) * (1 - momentumDrag);
+    thrustVelocity * time + momentumDistance * momentumDistanceTime;
 
   // Turn
-  const wheel = clamp(stateObject.wheel, -1);
-  const turnVelocity =
+  const wheel = stateObject.wheel;
+  const turnVelocityFromThrust =
     wheelPower /
     5 *
     wheel /
     mass *
-    Math.sign(velocity) *
+    Math.sign(thrustVelocity) *
     Math.max(
       0,
-      Math.min(1, Math.abs(velocity) * mass * mass) - Math.abs(velocity)
+      Math.min(1, Math.abs(thrustVelocity) * mass * mass) -
+        Math.abs(thrustVelocity)
     );
-  const turnAngle = turnVelocity * time;
+  const turnVelocityFromMomentum =
+    wheelPower /
+    5 *
+    wheel /
+    mass *
+    Math.sign(momentumVelocity) *
+    Math.max(
+      0,
+      Math.min(1, Math.abs(momentumVelocity) * mass * mass) -
+        Math.abs(momentumVelocity)
+    );
+  const turnAngle =
+    turnVelocityFromThrust * time +
+    turnVelocityFromMomentum * momentumDistanceTime;
   const curveAngle = Math.abs(turnAngle);
-  const radius = distance / curveAngle;
+  const length = distance / curveAngle;
   const curveSin = Math.sin(curveAngle);
   const curveCos = Math.cos(curveAngle);
 
   // Place
-  const radiusIsFinite = isFinite(radius);
-  const curveX = radiusIsFinite ? radius * curveSin : distance;
-  const curveY = radiusIsFinite
-    ? turnVelocity < 0
-      ? radius - radius * curveCos
-      : -radius + radius * curveCos
+  const lengthIsFinite = isFinite(length);
+  const curveX = lengthIsFinite ? length * curveSin : distance;
+  const curveY = lengthIsFinite
+    ? turnAngle < 0 ? length - length * curveCos : -length + length * curveCos
     : 0;
 
   // Transform
