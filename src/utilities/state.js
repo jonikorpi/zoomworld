@@ -49,7 +49,7 @@ const mergeEvent = (stateObject, { data }) => {
 
 const simulate = (stateObject, from, to, id) => {
   const { throttlePower, wheelPower, mass, windX, windY } = stateObject;
-  const time = (to - from) / 100;
+  const time = (to - from) / 1000;
 
   if (time <= 0) {
     return false;
@@ -68,16 +68,16 @@ const simulate = (stateObject, from, to, id) => {
   const momentumTime = Math.min(time, momentumEndsAt);
 
   const thrustVelocity = thrust * (1 - Math.pow(drag, time / weight));
-  const momentumVelocity =
+  const momentumSpeed =
     Math.max(
       0,
       Math.abs(momentum) * Math.pow(1 - drag, time / weight) -
         Math.abs(momentum) * Math.pow(1 - drag, momentumEndsAt / weight)
     ) * Math.sign(momentum);
-  const velocity = thrustVelocity + momentumVelocity;
+  const velocity = thrustVelocity + momentumSpeed;
 
-  const momentumDistance = momentum * Math.pow(1 - drag, momentumTime / weight);
-  const distance = thrustVelocity * time + momentumDistance * momentumTime;
+  const momentumVelocity = momentum * Math.pow(1 - drag, momentumTime / weight);
+  const distance = thrustVelocity * time + momentumVelocity * momentumTime;
 
   // Turn
   const wheel = stateObject.wheel;
@@ -86,12 +86,23 @@ const simulate = (stateObject, from, to, id) => {
     5 *
     wheel /
     mass *
-    Math.sign(velocity) *
+    Math.sign(thrustVelocity) *
     Math.max(
       0,
-      Math.min(1, Math.abs(velocity) * mass * mass) - Math.abs(velocity)
+      Math.min(1, Math.abs(thrustVelocity) * weight) - Math.abs(thrustVelocity)
     );
-  const turnAngle = turnVelocity * time;
+  const turnMomentumVelocity =
+    wheelPower /
+    5 *
+    wheel /
+    mass *
+    Math.sign(momentumVelocity) *
+    Math.max(
+      0,
+      Math.min(1, Math.abs(momentumVelocity) * weight) -
+        Math.abs(momentumVelocity)
+    );
+  const turnAngle = turnVelocity * time + turnMomentumVelocity * momentumTime;
   const curveAngle = Math.abs(turnAngle);
   const length = distance / curveAngle;
   const curveSin = Math.sin(curveAngle);
