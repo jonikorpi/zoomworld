@@ -51,6 +51,10 @@ const simulate = (stateObject, from, to, id) => {
   const { throttlePower, wheelPower, mass, windX, windY } = stateObject;
   const time = (to - from) / 100;
 
+  if (time <= 0) {
+    return false;
+  }
+
   // Forces
   const weight = mass * 2;
   const drag = stateObject.drag / 20;
@@ -62,8 +66,6 @@ const simulate = (stateObject, from, to, id) => {
   // Derivative calculations to figure out when momentum ends
   const momentumEndsAt = -(weight / Math.log(1 - drag));
   const momentumTime = Math.min(time, momentumEndsAt);
-  // const momentumTurningVelocityTime =
-  //   time > Math.log(1 - drag) * Math.pow(1 - drag, time / weight) / weight;
 
   const thrustVelocity = thrust * (1 - Math.pow(drag, time / weight));
   const momentumVelocity =
@@ -73,9 +75,6 @@ const simulate = (stateObject, from, to, id) => {
         Math.abs(momentum) * Math.pow(1 - drag, momentumEndsAt / weight)
     ) * Math.sign(momentum);
   const velocity = thrustVelocity + momentumVelocity;
-  // const momentumTurningVelocity =
-  //   momentum * Math.pow(1 - drag, momentumTime / weight);
-  // const velocityForTurning = thrustVelocity + momentumTurningVelocity;
 
   const momentumDistance = momentum * Math.pow(1 - drag, momentumTime / weight);
   const distance = thrustVelocity * time + momentumDistance * momentumTime;
