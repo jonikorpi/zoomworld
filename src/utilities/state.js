@@ -1,24 +1,29 @@
 import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
 import { clamp } from "../utilities/helpers.js";
 
-// const eventBufferLength = 5000;
+const eventBufferLength = 100;
 
 const stateAtTime = (now, state, events) => {
   const stateObject = { ...state };
   simulate(
     stateObject,
-    Math.min(stateObject.time, now),
-    events[0] ? Math.min(events[0].time, now) : now
+    stateObject.time,
+    events.length > 0 ? events[0].time : now
   );
 
   events.forEach(event => {
     if (event.time < now) {
       mergeEvent(stateObject, event);
-      simulate(stateObject, event.time, Math.min(event.validUntil, now));
+      simulate(
+        stateObject,
+        event.time,
+        Math.min(event.validUntil, now),
+        event[".key"]
+      );
     }
   });
 
-  delete stateObject.validUntil;
+  // delete stateObject.validUntil;
   return stateObject;
 };
 
@@ -42,67 +47,52 @@ const mergeEvent = (stateObject, { data }) => {
   return stateObject;
 };
 
-const simulate = (stateObject, from, to) => {
+const simulate = (stateObject, from, to, id) => {
   const { throttlePower, wheelPower, mass, windX, windY } = stateObject;
   const time = (to - from) / 100;
+
+  // Forces
   const weight = mass * 2;
   const drag = stateObject.drag / 20;
-
-  // Throttle
   const throttle = stateObject.throttle;
   const force = (throttle > 0 ? 1 : 0.5) * throttle * (throttlePower / 2);
-  const acceleration = force / weight;
-  const thrustVelocity = acceleration * (1 - Math.pow(drag, time / weight));
-
+  const thrust = force / weight;
   const momentum = stateObject.velocity;
+
+  // Derivative calculations to figure out when momentum ends
   const momentumEndsAt = -(weight / Math.log(1 - drag));
-  const momentumDistanceTime = Math.min(time, momentumEndsAt);
+  const momentumTime = Math.min(time, momentumEndsAt);
   // const momentumTurningVelocityTime =
   //   time > Math.log(1 - drag) * Math.pow(1 - drag, time / weight) / weight;
 
+  const thrustVelocity = thrust * (1 - Math.pow(drag, time / weight));
   const momentumVelocity =
     Math.max(
       0,
       Math.abs(momentum) * Math.pow(1 - drag, time / weight) -
         Math.abs(momentum) * Math.pow(1 - drag, momentumEndsAt / weight)
     ) * Math.sign(momentum);
-  // const momentumTurningVelocity =
-  //   momentum * Math.pow(1 - drag, momentumDistanceTime / weight);
   const velocity = thrustVelocity + momentumVelocity;
+  // const momentumTurningVelocity =
+  //   momentum * Math.pow(1 - drag, momentumTime / weight);
   // const velocityForTurning = thrustVelocity + momentumTurningVelocity;
 
-  const momentumDistance =
-    momentum * Math.pow(1 - drag, momentumDistanceTime / weight);
-  const distance =
-    thrustVelocity * time + momentumDistance * momentumDistanceTime;
+  const momentumDistance = momentum * Math.pow(1 - drag, momentumTime / weight);
+  const distance = thrustVelocity * time + momentumDistance * momentumTime;
 
   // Turn
   const wheel = stateObject.wheel;
-  const turnVelocityFromThrust =
+  const turnVelocity =
     wheelPower /
     5 *
     wheel /
     mass *
-    Math.sign(thrustVelocity) *
+    Math.sign(velocity) *
     Math.max(
       0,
-      Math.min(1, Math.abs(thrustVelocity) * mass * mass) -
-        Math.abs(thrustVelocity)
+      Math.min(1, Math.abs(velocity) * mass * mass) - Math.abs(velocity)
     );
-  const turnVelocityFromMomentum =
-    wheelPower /
-    5 *
-    wheel /
-    mass *
-    Math.sign(momentumVelocity) *
-    Math.max(
-      0,
-      Math.min(1, Math.abs(momentumVelocity) * mass * mass) -
-        Math.abs(momentumVelocity)
-    );
-  const turnAngle =
-    turnVelocityFromThrust * time +
-    turnVelocityFromMomentum * momentumDistanceTime;
+  const turnAngle = turnVelocity * time;
   const curveAngle = Math.abs(turnAngle);
   const length = distance / curveAngle;
   const curveSin = Math.sin(curveAngle);
@@ -146,5 +136,5 @@ export {
   stateAtTime,
   // findLastEventEndingTime,
   precompute,
-  // eventBufferLength,
+  eventBufferLength,
 };

@@ -1,6 +1,10 @@
 import React from "react";
 
-import { stateAtTime, precompute } from "../utilities/state.js";
+import {
+  stateAtTime,
+  precompute,
+  eventBufferLength,
+} from "../utilities/state.js";
 import { random } from "../utilities/graphics.js";
 
 export default class FakeFirebase extends React.Component {
@@ -50,13 +54,18 @@ export default class FakeFirebase extends React.Component {
     const events = precompute(this.state.events);
     const now = performance.timing.navigationStart + performance.now();
 
-    const finishedEvents = [...events].filter(event => event.validUntil <= now);
-    const unfinishedEvents = [...events].filter(
-      event => event.validUntil > now
+    const finishedEvents = events.filter(
+      event => event.validUntil <= now - eventBufferLength
+    );
+    const unfinishedEvents = events.filter(
+      event => event.validUntil > now - eventBufferLength
     );
 
     this.setState({
-      state: stateAtTime(now, state, finishedEvents),
+      state:
+        finishedEvents.length > 0
+          ? stateAtTime(now, state, finishedEvents)
+          : state,
       events: [
         ...unfinishedEvents,
         {
