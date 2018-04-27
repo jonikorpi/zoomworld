@@ -49,7 +49,7 @@ const mergeEvent = (stateObject, { data }) => {
 
 const simulate = (stateObject, from, to, id) => {
   const { throttlePower, wheelPower, mass, windX, windY } = stateObject;
-  const time = (to - from) / 500;
+  const time = (to - from) / 1000;
 
   if (time <= 0) {
     return stateObject;
@@ -73,7 +73,9 @@ const simulate = (stateObject, from, to, id) => {
     Math.max(
       0,
       Math.abs(momentum) * Math.pow(1 - drag, time / weight) -
-        Math.abs(momentum) * Math.pow(1 - drag, momentumEndsAt / weight)
+        Math.abs(momentum) *
+          Math.pow(1 - drag, momentumEndsAt / weight) *
+          (1 - Math.pow(1 - drag, time / weight))
     );
   const momentumVelocity = momentum * Math.pow(1 - drag, momentumTime / weight);
 
