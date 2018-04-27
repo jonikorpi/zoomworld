@@ -52,7 +52,7 @@ const simulate = (stateObject, from, to, id) => {
   const time = (to - from) / 500;
 
   if (time <= 0) {
-    return false;
+    return stateObject;
   }
 
   // Forces
