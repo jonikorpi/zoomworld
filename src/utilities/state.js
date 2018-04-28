@@ -67,22 +67,26 @@ const simulate = (stateObject, from, to, id) => {
   const momentumEndsAt = -(weight / Math.log(1 - drag));
   const momentumTime = Math.min(time, momentumEndsAt);
 
+  // Velocities
   const thrustVelocity = thrust * (1 - Math.pow(drag, time / weight));
+  const momentumBaseDrag = Math.pow(1 - drag, time / weight);
+  const absMomentum = Math.abs(momentum);
   const momentumSpeed =
     Math.sign(momentum) *
     Math.max(
       0,
-      Math.abs(momentum) * Math.pow(1 - drag, time / weight) -
-        Math.abs(momentum) *
+      absMomentum * momentumBaseDrag -
+        absMomentum *
           Math.pow(1 - drag, momentumEndsAt / weight) *
-          (1 - Math.pow(1 - drag, time / weight))
+          (1 - momentumBaseDrag)
     );
   const momentumVelocity = momentum * Math.pow(1 - drag, momentumTime / weight);
-
-  const distance = thrustVelocity * time + momentumVelocity * momentumTime;
   const trueVelocity = thrustVelocity + momentumSpeed;
 
-  // Turn
+  // Displacement
+  const distance = thrustVelocity * time + momentumVelocity * momentumTime;
+
+  // Turning
   const wheel = stateObject.wheel;
   const turnVelocity =
     wheelPower /
