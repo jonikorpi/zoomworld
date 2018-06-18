@@ -56,21 +56,21 @@ const simulate = (stateObject, from, to, id) => {
   }
 
   // Forces
-  const drag = stateObject.drag / 20;
   const wheel = stateObject.wheel;
-  const weight = mass * (2 + Math.abs(wheel * 2));
+  const dragFactor = stateObject.drag / 20;
+  const dragForce = mass * (2 + Math.abs(wheel * 2));
   const throttle = stateObject.throttle;
   const force = (throttle > 0 ? 1 : 0.5) * throttle * (throttlePower / 2);
-  const thrust = force / weight;
+  const thrust = force / dragForce;
   const momentum = stateObject.velocity;
 
   // Derivative calculations to figure out when momentum ends
-  const momentumEndsAt = -(weight / Math.log(1 - drag));
+  const momentumEndsAt = -(dragForce / Math.log(1 - dragFactor));
   const momentumTime = Math.min(time, momentumEndsAt);
 
   // Velocities
-  const thrustVelocity = thrust * (1 - Math.pow(drag, time / weight));
-  const momentumBaseDrag = Math.pow(1 - drag, time / weight);
+  const thrustVelocity = thrust * (1 - Math.pow(dragFactor, time / dragForce));
+  const momentumBaseDrag = Math.pow(1 - dragFactor, time / dragForce);
   const absMomentum = Math.abs(momentum);
   const momentumSpeed =
     Math.sign(momentum) *
@@ -78,10 +78,11 @@ const simulate = (stateObject, from, to, id) => {
       0,
       absMomentum * momentumBaseDrag -
         absMomentum *
-          Math.pow(1 - drag, momentumEndsAt / weight) *
+          Math.pow(1 - dragFactor, momentumEndsAt / dragForce) *
           (1 - momentumBaseDrag)
     );
-  const momentumVelocity = momentum * Math.pow(1 - drag, momentumTime / weight);
+  const momentumVelocity =
+    momentum * Math.pow(1 - dragFactor, momentumTime / dragForce);
   const trueVelocity = thrustVelocity + momentumSpeed;
 
   // Displacement

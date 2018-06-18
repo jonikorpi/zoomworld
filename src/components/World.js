@@ -134,7 +134,7 @@ export default class World extends React.Component {
                 events={events}
                 models={["player", "playerShade"]}
               />
-              {/* {[1500, 3000, 4500, 6000, 7500].map(offset => (
+              {[1500, 3000, 4500, 6000, 7500].map(offset => (
                 <Entity
                   renderer={renderer}
                   state={state}
@@ -143,7 +143,7 @@ export default class World extends React.Component {
                   timeOffset={offset}
                   key={offset}
                 />
-              ))} */}
+              ))}
               {/* {[-1000, -2000, -3000].map(offset => (
                 <Entity
                   renderer={renderer}
