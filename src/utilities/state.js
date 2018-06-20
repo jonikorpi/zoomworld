@@ -1,7 +1,7 @@
 import { easeIn, easeOut, easeInOut } from "../utilities/graphics";
 import { clamp } from "../utilities/helpers.js";
 
-const eventBufferLength = 100;
+const eventBufferLength = 5000;
 
 const stateAtTime = (now, state, events) => {
   const stateObject = { ...state };
@@ -55,7 +55,7 @@ const simulate = (stateObject, from, to, id) => {
     return stateObject;
   }
 
-  // Forces
+  // Forces from this event
   const wheel = stateObject.wheel;
   const dragFactor = stateObject.drag / 20;
   const dragForce = mass * (2 + Math.abs(wheel * 2));

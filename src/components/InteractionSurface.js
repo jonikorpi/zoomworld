@@ -3,7 +3,7 @@ import React from "react";
 import { clamp } from "../utilities/helpers.js";
 import debounce from "lodash.debounce";
 
-const increment = 0.25;
+const increment = 1;
 const createEvent = (value, type) => ({
   [type]: {
     set: value,
@@ -215,7 +215,7 @@ class InteractionSurface extends React.Component {
           value={this.state.throttle}
           min="-1"
           max="1"
-          step="0.01"
+          // step="0.01"
           className="safeAll"
         />
         <input
@@ -224,7 +224,7 @@ class InteractionSurface extends React.Component {
           value={this.state.wheel}
           min="-1"
           max="1"
-          step="0.01"
+          // step="0.01"
           className="safeAll"
         />
         <button
